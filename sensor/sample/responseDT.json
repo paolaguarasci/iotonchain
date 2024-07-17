@@ -1,0 +1,18 @@
+{
+  "$dtId": "thermostat67",
+  "$etag": "W/\"62027ffa-3c6c-4eb5-94d8-42663524e492\"",
+  "DisplayName": "Thermostat 67",
+  "Location": "Puget Sound",
+  "FirmwareVersion": "1.3.9",
+  "Temperature": 70.1530397973531,
+  "ComfortIndex": 0,
+  "$metadata": {
+    "$model": "dtmi:contosocom:DigitalTwins:Thermostat;1",
+    "$lastUpdateTime": "2024-07-16T21:26:53.9074748Z",
+    "DisplayName": { "lastUpdateTime": "2024-07-16T20:10:14.6751745Z" },
+    "Location": { "lastUpdateTime": "2024-07-16T20:10:14.6751745Z" },
+    "FirmwareVersion": { "lastUpdateTime": "2024-07-16T20:10:14.6751745Z" },
+    "Temperature": { "lastUpdateTime": "2024-07-16T21:26:53.9074748Z" },
+    "ComfortIndex": { "lastUpdateTime": "2024-07-16T20:10:14.6751745Z" }
+  }
+}
