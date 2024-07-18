@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "sensor"
+version = "0.0.1"
+description = "Script collection to work with digital twin"
+authors = ["Paola Guarasci <paolaguarasci@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+azure-digitaltwins-core = "^1.2.0"
+azure-identity = "^1.17.1"
+clingo = "^5.7.1"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
