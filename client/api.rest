@@ -1,0 +1,2 @@
+
+GET https://localhost:8443/api/v1/company/batch

@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import "normalize.css/normalize.css";
+@import "primeng/resources/themes/lara-dark-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeflex/primeflex.css";
+@import "primeflex/themes/primeone-dark.css";
+
+// SET SCALE (default 16px)
+html {
+  font-size: 12px;
+  font-size: 14px;
+  font-size: 16px;
+  font-size: 18px;
+  font-size: 20px;
+}
