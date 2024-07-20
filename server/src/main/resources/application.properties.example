@@ -32,3 +32,8 @@ app.chain.pubkey.locale=
 app.chain.pvtkey.locale=
 ####################################################################################
 spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8080/realms/iotonchain
+server.ssl.key-store-type=
+server.ssl.key-store=
+server.ssl.key-store-password=
+server.ssl.key-alias=
+server.ssl.enabled=
