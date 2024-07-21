@@ -12,8 +12,9 @@ import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping( "/api/v1/company/batch")
+@RequestMapping("/api/v1/company/batch")
 public class BatchController {
   private final BatchService batchService;
   private final CompanyService companyService;
@@ -29,34 +30,24 @@ public class BatchController {
   private final ProductTypeService productTypeService;
   
   @GetMapping
-//  public ResponseEntity<List<BatchToOwner>> getAllProductsByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
-  public ResponseEntity<List<BatchToOwner>> getAllProductsByCompanyLogged() {
-    log.debug("Get all product for company logged");
-//    if (principal != null) {
-//      String companyLogged = principal.getClaimAsString("given_name");
-//      return ResponseEntity.ok(mapper.mapForProductOwner(batchService.getAllProductByCompanyLogged(companyLogged)));
-//    } else {
-      String companyLogged = "barillaSPA";
-      return ResponseEntity.ok(mapper.mapForProductOwner(batchService.getAllProductByCompanyLogged(companyLogged)));
-      // return ResponseEntity.ok(List.of());
-//    }
+  public ResponseEntity<List<BatchToOwner>> getAllProductsByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
+    log.debug("Get all product for company logged {}", principal);
+    String companyLogged = principal.getClaimAsString("preferred_username");
+    return ResponseEntity.ok(mapper.mapForProductOwner(batchService.getAllProductByCompanyLogged(companyLogged)));
   }
   
-
+  
   @PostMapping
-  public ResponseEntity<BatchToOwner> createBatch(@RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException {
-    log.debug("Create one batch of product type for company logged");
-    String companyLogged = "barillaSPA";
-//    if (principal != null) {
-//      companyLogged = principal.getClaimAsString("given_name");
-//    }
+  public ResponseEntity<BatchToOwner> createBatch(@AuthenticationPrincipal Jwt principal, @RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException {
+    log.debug("Create one batch of product type for company logged {}", dto.toString());
+    String companyLogged = principal.getClaimAsString("preferred_username");
     Company company = companyService.getOneByName(companyLogged);
     ProductType productType = productTypeService.getOneById(dto.getProductTypeID());
-
-    if(company == null || productType == null) {
+    
+    if (company == null || productType == null) {
       return ResponseEntity.badRequest().body(null);
     }
-
+    
     return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId())));
   }
 }

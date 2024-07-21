@@ -33,7 +33,7 @@
 
         <div *ngIf="isLogged" class="flex flax-row justify-content-center align-items-center">
           <p-button icon="pi pi-times" [rounded]="true" (onClick)="handleLotout()" [text]="true" [raised]="true" severity="danger" class="mx-3"/>
-          <div>Hi, {{profile.username}}!</div>
+          <div *ngIf="profile">Hi, {{profile.username}}!</div>
         </div>
 
         <div *ngIf="!isLogged">

@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CompanyServiceImpl implements CompanyService {
   private final CompanyRepository companyRepository;
+  
   @Override
   public Company makeOne(String name) {
     return companyRepository.save(Company.builder().name(name).build());

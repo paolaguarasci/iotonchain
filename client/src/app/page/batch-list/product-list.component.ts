@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { CompanyService } from '../../services/company.service';
 import { TransferService } from '../../services/transfer.service';
 import { ToastModule } from 'primeng/toast';
+import { KeycloakService } from 'keycloak-angular';
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -58,11 +59,15 @@ export class ComapnyBatchListComponent implements OnInit {
     private productService: CompanyBatchService,
     private companyService: CompanyService,
     private transferService: TransferService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private keycloakService: KeycloakService
   ) {}
-  ngOnInit(): void {
+  async ngOnInit() {
     this.updateList();
     this.updateClients();
+
+    let profile = await this.keycloakService.loadUserProfile();
+    console.log(profile);
   }
 
   updateList() {

@@ -22,22 +22,23 @@ import java.util.List;
 public class TransferServiceImpl implements TransferService {
   private final TransferRepository transferRepository;
   private final BatchService batchService;
+  
   @Override
   public Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
     batchService.move(companyLogged, batch, company, quantity);
     ChainTransaction tx = saveOnChain();
     // assert tx != null;
     return transferRepository.save(Transfer.builder()
-        .batchID(batch.getBatchId())
-        .unity(batch.getProductType().getUnity())
-        .companySenderID(companyLogged.getId().toString())
-        .companyRecipientID(company.getId().toString())
-        .type(Transfer.TransferType.ONESHOT)
-        .quantity(quantity)
-        .transferDateStart(LocalDateTime.now())
-        .status(Transfer.TransferStatus.COMPLETED)
-        .lastUpdate(LocalDateTime.now())
-        .txTransactionList(List.of(tx))
+      .batchID(batch.getBatchId())
+      .unity(batch.getProductType().getUnity())
+      .companySenderID(companyLogged.getId().toString())
+      .companyRecipientID(company.getId().toString())
+      .type(Transfer.TransferType.ONESHOT)
+      .quantity(quantity)
+      .transferDateStart(LocalDateTime.now())
+      .status(Transfer.TransferStatus.COMPLETED)
+      .lastUpdate(LocalDateTime.now())
+      .txTransactionList(List.of(tx))
       .build());
   }
   

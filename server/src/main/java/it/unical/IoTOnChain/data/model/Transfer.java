@@ -20,36 +20,29 @@ import java.util.UUID;
 @Setter
 public class Transfer implements Serializable {
   
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+  @Enumerated(EnumType.STRING)
+  @Builder.Default
+  private TransferType type = TransferType.ONESHOT;
+  @Enumerated(EnumType.STRING)
+  @Builder.Default
+  private TransferStatus status = TransferStatus.INIT;
+  private String batchID;
+  private int quantity;
+  private String unity;
+  private String companySenderID;
+  private String companyRecipientID;
+  private LocalDateTime transferDateStart;
+  private LocalDateTime lastUpdate;
+  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  private List<ChainTransaction> txTransactionList = new ArrayList<>();
   public enum TransferType {
     ONESHOT, WITHACCEPTANCE;
   }
   
-  public enum TransferStatus  implements Serializable {
+  public enum TransferStatus implements Serializable {
     COMPLETED, INIT, PENDING, REJECTED;
   }
-  
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
-  
-  @Enumerated(EnumType.STRING)
-  @Builder.Default
-  private TransferType type = TransferType.ONESHOT;
-  
-  @Enumerated(EnumType.STRING)
-  @Builder.Default
-  private TransferStatus status = TransferStatus.INIT;
-  
-  private String batchID;
-  private int quantity;
-  private String unity;
-  
-  private String companySenderID;
-  private String companyRecipientID;
-  
-  private LocalDateTime transferDateStart;
-  private LocalDateTime lastUpdate;
-  
-  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  private List<ChainTransaction> txTransactionList = new ArrayList<>();
 }

@@ -24,9 +24,11 @@ public interface GenericMapper {
   BatchToOwner map(Batch bath);
   
   List<ProductTypeToOwner> mapForProductTypeOwner(List<ProductType> allProductTypesByLoggedCompany);
+  
   ProductTypeToOwner map(ProductType entity);
   
   List<CompanyLite> mapCompanyLite(List<Company> allCompanyClient);
+  
   CompanyLite map(Company entity);
   
   TransferToOwnerDTO map(Transfer transfer);

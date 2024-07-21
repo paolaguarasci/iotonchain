@@ -1,6 +1,9 @@
 package it.unical.IoTOnChain.config;
 
-import it.unical.IoTOnChain.data.model.*;
+import it.unical.IoTOnChain.data.model.Batch;
+import it.unical.IoTOnChain.data.model.Company;
+import it.unical.IoTOnChain.data.model.ProductType;
+import it.unical.IoTOnChain.data.model.Recipe;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.service.*;
@@ -10,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,28 +35,28 @@ public class InitDB implements CommandLineRunner {
   public void run(String... args) throws Exception {
     log.info("Init DB - Start");
     
-    Company paolaSPA = makeCompany("paolaSPA");
+    Company paolaSPA = makeCompany("paolaspa");
     ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico ligure", "kg", null);
     Batch basilicoBatch = produce(paolaSPA, basilicoType, 10, "batchId_123_basilico");
-
-    Company nicolaSPA = makeCompany("nicolaSPA");
+    
+    Company nicolaSPA = makeCompany("nicolaspa");
     ProductType aglioType = makeProductTypeAndAssociateToCompany(nicolaSPA, "aglio", "kg", null);
     Batch aglioBatch = produce(nicolaSPA, aglioType, 10, "batchId_123_aglio");
-
-    Company filippoSPA = makeCompany("filippoSPA");
+    
+    Company filippoSPA = makeCompany("filippospa");
     ProductType olioType = makeProductTypeAndAssociateToCompany(filippoSPA, "olio", "lt", null);
     Batch olioBatch = produce(filippoSPA, olioType, 10, "batchId_123_olio");
-
-    Company barillaSPA = makeCompany("barillaSPA");
+    
+    Company barillaSPA = makeCompany("barillaspa");
     Map<ProductType, List<String>> ingredientsOfPestoLigure = new HashMap<>();
     ingredientsOfPestoLigure.put(basilicoType, List.of("80", "%"));
     ingredientsOfPestoLigure.put(aglioType, List.of("5", "%"));
     ingredientsOfPestoLigure.put(olioType, List.of("15", "%"));
     Recipe pestoRecipe = makeRecipe("pesto ligure", ingredientsOfPestoLigure);
     ProductType pestoType = makeProductTypeAndAssociateToCompany(barillaSPA, "pesto", "kg", pestoRecipe);
-
+    
     Batch pestoBatch = null;
-
+    
     try {
       pestoBatch = produce(barillaSPA, pestoType, 1, "batchId_123_pesto");
       log.error("Hai prodotto del pesto!");

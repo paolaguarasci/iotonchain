@@ -7,6 +7,8 @@ import it.unical.IoTOnChain.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,14 +25,13 @@ public class CompanyController {
   private final GenericMapper mapper;
   
   @GetMapping("/client")
-//  public ResponseEntity<List<CompanyLite>> getAllCompanies(@AuthenticationPrincipal Jwt principal) {
-  public ResponseEntity<List<CompanyLite>> getAllCompanies() {
-    log.debug("Get all client for company logged");
-    String companyLogged = "barillaSPA";
-//    if (principal != null) {
-//      companyLogged = principal.getClaimAsString("given_name");
-//    }
+  public ResponseEntity<List<CompanyLite>> getAllCompanies(@AuthenticationPrincipal Jwt principal) {
+    log.debug("Get all client for company logged {}", principal.getClaimAsString("preferred_username"));
+    String companyLogged = principal.getClaimAsString("preferred_username");
     Company company = companyService.getOneByName(companyLogged);
+    if (company == null) {
+      return ResponseEntity.notFound().build();
+    }
     return ResponseEntity.ok(mapper.mapCompanyLite(companyService.getAllCompanyClient(company)));
   }
   

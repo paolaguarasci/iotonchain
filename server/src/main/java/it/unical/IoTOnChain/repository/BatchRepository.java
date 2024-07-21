@@ -12,6 +12,7 @@ import java.util.UUID;
 @Repository
 public interface BatchRepository extends JpaRepository<Batch, UUID> {
   List<Batch> findAllByCompanyOwner(Company company);
+  
   List<Batch> findAllByBatchIdAndCompanyOwner(String batchId, Company company);
   
   List<Batch> findAllByCompanyOwnerAndProductType(Company companyOwner, ProductType productType);

@@ -45,6 +45,9 @@ import { CompanyBatchService } from '../../services/company-batch.service';
     InputTextModule,
     FormsModule,
     InputNumberModule,
+    DialogModule,
+    ButtonModule,
+    InputTextModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './product-type-list.component.html',
@@ -62,9 +65,13 @@ export class ProductTypeListComponent implements OnInit {
 
   selectedProductToReciperRow!: any;
   selectedProductToReciperRowquantity!: any;
+  selectedBatchToProduce!: any;
+
+  newBatchQty!: any;
+  newBatchBid!: any;
 
   newBatch!: any;
-
+  createBatchDialogVisible: boolean = false;
   constructor(
     private productTypeService: ProductTypeService,
     private batchService: CompanyBatchService,
@@ -107,6 +114,11 @@ export class ProductTypeListComponent implements OnInit {
     });
   }
 
+  showDialogCreateBatch(ptypeSelected: any) {
+    this.createBatchDialogVisible = true;
+    this.selectedBatchToProduce = ptypeSelected;
+  }
+
   editProduct(product: any) {
     this.product = { ...product };
     this.productDialog = true;
@@ -142,8 +154,6 @@ export class ProductTypeListComponent implements OnInit {
       if (this.product.id) {
         this.products[this.findIndexById(this.product.id)] = this.product;
 
-
-
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
@@ -154,18 +164,15 @@ export class ProductTypeListComponent implements OnInit {
         this.product.id = this.createId();
         this.product.image = 'product-placeholder.svg';
 
-
         this.products.push(this.product);
         let newPType = {
-         name: this.product.name,
-         unity: this.product.unity ?? "kg",
-         state: "",
-        }
+          name: this.product.name,
+          unity: this.product.unity ?? 'kg',
+          state: '',
+        };
         this.productTypeService.createOne(this.product).subscribe({
-          next: (res: any) => {
-            
-          },
-          error: (err: any) => {}
+          next: (res: any) => {},
+          error: (err: any) => {},
         });
 
         this.messageService.add({
@@ -259,15 +266,17 @@ export class ProductTypeListComponent implements OnInit {
     });
   }
 
-  hadleProduceBatchFromProductType(productType: any) {
+  hadleProduceBatchFromProductType() {
     this.newBatch = {
-      batchId: 'nuovo-batch',
-      quantity: 100,
-      unity: 'kg',
-      productTypeID: productType.id,
+      batchId: this.newBatchBid,
+      quantity: parseInt(this.newBatchQty, 10),
+      unity: this.selectedBatchToProduce.unity,
+      productTypeID: this.selectedBatchToProduce.id,
     };
     this.batchService.produceBatch(this.newBatch).subscribe({
       next: (res: any) => {
+        this.createBatchDialogVisible = false;
+
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',

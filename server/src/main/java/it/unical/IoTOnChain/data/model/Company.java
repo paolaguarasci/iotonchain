@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class Company  implements Serializable {
+public class Company implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
@@ -29,7 +29,7 @@ public class Company  implements Serializable {
   @OneToMany(cascade = CascadeType.ALL)
   @Builder.Default
   private List<Batch> products = new ArrayList<>();
-  
+
 //  @OneToMany(cascade = CascadeType.ALL)
 //  @Builder.Default
 //  private List<CertificateDocument> certificateList = new ArrayList<>();

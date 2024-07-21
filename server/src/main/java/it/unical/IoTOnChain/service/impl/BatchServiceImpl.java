@@ -29,11 +29,11 @@ public class BatchServiceImpl implements BatchService {
   
   @Override
   public List<Batch> getAllProductByCompanyLogged(String companyLogged) {
-    if(companyLogged == null || companyLogged.isEmpty()) {
+    if (companyLogged == null || companyLogged.isEmpty()) {
       return List.of();
     }
     Optional<Company> company = companyRepository.findByName(companyLogged);
-    if(company.isPresent()) {
+    if (company.isPresent()) {
       return batchRepository.findAllByCompanyOwner(company.get());
     }
     return List.of();
@@ -117,7 +117,7 @@ public class BatchServiceImpl implements BatchService {
       log.debug("(companyService.companyExist(owner) {} \n" +
         "      companyService.companyExist(company) {} \n" +
         "      batch.getCompanyOwner().equals(owner) {} \n" +
-        "      batch.getQuantity() >= quantity) {} ", companyService.companyExist(owner),  companyService.companyExist(company), batch.getCompanyOwner().equals(owner), batch.getQuantity() >= quantity);
+        "      batch.getQuantity() >= quantity) {} ", companyService.companyExist(owner), companyService.companyExist(company), batch.getCompanyOwner().equals(owner), batch.getQuantity() >= quantity);
       throw new MoveIsNotPossibleException("Non si puo' fare!");
     }
     

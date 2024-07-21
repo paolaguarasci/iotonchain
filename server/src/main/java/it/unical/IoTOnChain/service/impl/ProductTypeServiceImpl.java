@@ -1,7 +1,6 @@
 package it.unical.IoTOnChain.service.impl;
 
 import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.ProcessingState;
 import it.unical.IoTOnChain.data.model.ProductType;
 import it.unical.IoTOnChain.data.model.Recipe;
 import it.unical.IoTOnChain.repository.CompanyRepository;
@@ -10,8 +9,6 @@ import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +22,10 @@ public class ProductTypeServiceImpl implements ProductTypeService {
   private final CompanyRepository companyRepository;
   
   
-  
   @Override
   public ProductType createProductTypeForCompany(Company company, String productTypeName, String unity, Recipe recipe) {
-  
     
-  
+    
     Optional<Company> companyFromDb = companyRepository.findById(company.getId());
     if (companyFromDb.isPresent()) {
       Company companyToUpdate = companyFromDb.get();
@@ -50,11 +45,11 @@ public class ProductTypeServiceImpl implements ProductTypeService {
   @Override
   public List<ProductType> getAllProductTypesByLoggedCompany(String companyLogged) {
     
-    if(companyLogged == null || companyLogged.isEmpty()) {
+    if (companyLogged == null || companyLogged.isEmpty()) {
       return List.of();
     }
     Optional<Company> company = companyRepository.findByName(companyLogged);
-    if(company.isPresent()) {
+    if (company.isPresent()) {
       // return productTypeRepository.findAllByCompany(company.get());
       return company.get().getProductTypeList();
     }

@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface TransferService {
   Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
+  
   Transfer makeTransactionWithAcceptance(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
   
   List<Transfer> getAllForCompanyLogged(Company companyOwner);

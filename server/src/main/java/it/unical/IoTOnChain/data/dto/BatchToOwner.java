@@ -1,23 +1,17 @@
 package it.unical.IoTOnChain.data.dto;
 
 import it.unical.IoTOnChain.data.model.Batch;
-import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.Location;
-import it.unical.IoTOnChain.data.model.ProductType;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
+@ToString
 public class BatchToOwner implements Serializable {
   private String id;
   private String batchId;

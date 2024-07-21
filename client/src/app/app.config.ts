@@ -7,11 +7,13 @@ import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withFetch,
+  withInterceptorsFromDi,
   withXsrfConfiguration,
 } from '@angular/common/http';
-import { KeycloakService } from 'keycloak-angular';
+import { KeycloakBearerInterceptor, KeycloakService } from 'keycloak-angular';
 import { environment } from '../environments/environment';
 
 export const initializeKeycloak = (keycloak: KeycloakService) => {
@@ -32,15 +34,8 @@ export const initializeKeycloak = (keycloak: KeycloakService) => {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(
-      withFetch(),
-      withXsrfConfiguration({
-        cookieName: 'XSRF-TOKEN',
-        headerName: 'X-XSRF-TOKEN',
-      })
-    ),
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),
     {
       provide: APP_INITIALIZER,
@@ -48,7 +43,14 @@ export const appConfig: ApplicationConfig = {
       multi: true,
       deps: [KeycloakService],
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: KeycloakBearerInterceptor,
+      multi: true,
+    },
     KeycloakService,
+    provideHttpClient(withInterceptorsFromDi()), // serve per keycloak, non e' chiaro dalla documentazione!
+    // provideHttpClient(),
   ],
 };
 
