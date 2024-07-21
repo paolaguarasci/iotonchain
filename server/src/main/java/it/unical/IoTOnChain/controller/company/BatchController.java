@@ -1,5 +1,6 @@
 package it.unical.IoTOnChain.controller.company;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.dto.BatchToOwner;
 import it.unical.IoTOnChain.data.dto.CreateBatchDTOFromOwner;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
@@ -10,6 +11,7 @@ import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
@@ -28,6 +33,7 @@ public class BatchController {
   private final CompanyService companyService;
   private final GenericMapper mapper;
   private final ProductTypeService productTypeService;
+  private final ObjectMapper objectMapper;
   
   @GetMapping
   public ResponseEntity<List<BatchToOwner>> getAllProductsByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
@@ -37,6 +43,7 @@ public class BatchController {
   }
   
   
+  @SneakyThrows
   @PostMapping
   public ResponseEntity<BatchToOwner> createBatch(@AuthenticationPrincipal Jwt principal, @RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException {
     log.debug("Create one batch of product type for company logged {}", dto.toString());
@@ -48,6 +55,12 @@ public class BatchController {
       return ResponseEntity.badRequest().body(null);
     }
     
-    return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId())));
+    try {
+      return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId())));
+    } catch (NoSuchElementException e) {
+      Map<String, String> errors = new HashMap<>();
+      errors.put("message", "Not enough materials");
+      return ResponseEntity.badRequest().body(null);
+    }
   }
 }

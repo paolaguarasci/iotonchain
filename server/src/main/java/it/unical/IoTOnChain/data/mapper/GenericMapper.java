@@ -1,13 +1,7 @@
 package it.unical.IoTOnChain.data.mapper;
 
-import it.unical.IoTOnChain.data.dto.BatchToOwner;
-import it.unical.IoTOnChain.data.dto.CompanyLite;
-import it.unical.IoTOnChain.data.dto.ProductTypeToOwner;
-import it.unical.IoTOnChain.data.dto.TransferToOwnerDTO;
-import it.unical.IoTOnChain.data.model.Batch;
-import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.ProductType;
-import it.unical.IoTOnChain.data.model.Transfer;
+import it.unical.IoTOnChain.data.dto.*;
+import it.unical.IoTOnChain.data.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -34,4 +28,9 @@ public interface GenericMapper {
   TransferToOwnerDTO map(Transfer transfer);
   
   List<TransferToOwnerDTO> mapListTransfer(List<Transfer> allForCompanyLogged);
+  
+  Recipe map(CreateRecipeDTOFromOwner recipe);
+  Recipe mapListRecipe(CreateRecipeDTOFromOwner recipe);
+  RecipeRow map(CreateRecipeRowDTOFromOwner recipe);
+  List<RecipeRow> mapListRecipeRow(List<CreateRecipeRowDTOFromOwner> recipes);
 }

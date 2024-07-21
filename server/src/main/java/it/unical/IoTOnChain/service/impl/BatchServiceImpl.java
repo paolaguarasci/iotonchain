@@ -38,6 +38,7 @@ public class BatchServiceImpl implements BatchService {
   
   private Map<String, Object> checkQuantityOfType(Company company, ProductType type, Long quantity) {
     List<Batch> batches = batchRepository.findAllByCompanyOwnerAndProductType(company, type);
+    log.debug("La compagnia {} ha {} lotti di tipo {}", company.getName(), batches.size(), type.getName());
     Map<String, Object> map = new HashMap<>();
     Set<Batch> newBatches = new HashSet<>();
     int k = 0;
@@ -49,9 +50,6 @@ public class BatchServiceImpl implements BatchService {
         break;
       }
     }
-//    log.debug("batches: {}", batches.size());
-//    log.debug("batches: {}", batches);
-//    log.debug("New batches: {}", newBatches.size());
     map.put("k", k);
     map.put("batch", newBatches);
     return map;
@@ -61,22 +59,30 @@ public class BatchServiceImpl implements BatchService {
   public Batch produce(Company company, ProductType type, int quantity, String batchId) throws NoEnoughRawMaterialsException {
     boolean checkMaterial = true;
     Set<Batch> rawMaterials = new HashSet<>();
+    log.debug("company {}", company);
+    log.debug("ptype {}", type);
+    log.debug("quantity {}", quantity);
+    log.debug("batchid {}", batchId);
+    
     if (type.getRecipe() != null) {
       for (RecipeRow recipeRow : type.getRecipe().getRecipeRow()) {
         // FIXME potenziali side effect quando si mischiano diverse unita' di misura!
-        Map<String, Object> checkQuantityOfType = new HashMap<>();
-        checkQuantityOfType = checkQuantityOfType(company, recipeRow.getProduct(), recipeRow.getQuantity());
-        if(batchId.equals("batchId_123_pesto")) {
+        Map<String, Object> checkQuantityOfType1 = new HashMap<>();
+        checkQuantityOfType1 = checkQuantityOfType(company, recipeRow.getProduct(), recipeRow.getQuantity());
+
           log.debug("Controllo {}", recipeRow.getProduct().getName());
-        }
-         if (Long.parseLong(String.valueOf(checkQuantityOfType.get("k"))) < ((quantity / 100.00) * recipeRow.getQuantity())) {
+         if (Long.parseLong(String.valueOf(checkQuantityOfType1.get("k"))) < ((quantity / 100.00) * recipeRow.getQuantity())) {
           checkMaterial = false;
           break;
         }
-        Set<Batch> batchRawMaterialsLocal = (Set<Batch>) checkQuantityOfType.get("batch");
-        rawMaterials.addAll(batchRawMaterialsLocal);
+        rawMaterials.addAll((Set<Batch>) checkQuantityOfType1.get("batch"));
       }
     }
+    log.debug("raw materials {}", rawMaterials);
+    log.debug("check materials {}", checkMaterial);
+    
+    // TODO DEVO ELIMINARE DAI LOTTI!
+    
     if (type.getRecipe() == null || checkMaterial) {
       // salva sulla chain!
       return batchRepository.save(Batch.builder()

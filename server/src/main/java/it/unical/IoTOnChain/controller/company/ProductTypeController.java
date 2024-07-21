@@ -4,6 +4,7 @@ import it.unical.IoTOnChain.data.dto.CreateProductTypeDTOFromOwner;
 import it.unical.IoTOnChain.data.dto.ProductTypeToOwner;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.Company;
+import it.unical.IoTOnChain.data.model.Recipe;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.ProductTypeService;
@@ -42,6 +43,6 @@ public class ProductTypeController {
     log.debug("Create product type {}", dto);
     String companyLogged = principal.getClaimAsString("preferred_username");
     Company company = companyService.getOneByName(companyLogged);
-    return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(company, dto.getName(), dto.getUnity(), null)));
+    return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(company, dto.getName(), dto.getUnity(), mapper.map(dto.getRecipe()) )));
   }
 }

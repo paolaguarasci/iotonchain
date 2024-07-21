@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { TableModule } from 'primeng/table';
@@ -19,6 +19,7 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ListboxModule } from 'primeng/listbox';
+import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { ProductTypeService } from '../../services/product-type.service';
 import { CompanyBatchService } from '../../services/company-batch.service';
 @Component({
@@ -48,6 +49,14 @@ import { CompanyBatchService } from '../../services/company-batch.service';
     DialogModule,
     ButtonModule,
     InputTextModule,
+    TableModule,
+    ToastModule,
+    CommonModule,
+    TagModule,
+    DropdownModule,
+    ButtonModule,
+    InputTextModule,
+    OverlayPanelModule, ToastModule, TableModule, ButtonModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './product-type-list.component.html',
@@ -55,23 +64,31 @@ import { CompanyBatchService } from '../../services/company-batch.service';
 })
 export class ProductTypeListComponent implements OnInit {
   // productTypeList!: any[];
-
+  selectedRecipe!: any;
   productDialog: boolean = false;
   products!: any[];
   product!: any;
   selectedProducts!: any[] | null;
   submitted: boolean = false;
   statuses!: any[];
-
+  inforecipe !: any;
   selectedProductToReciperRow!: any;
   selectedProductToReciperRowquantity!: any;
   selectedBatchToProduce!: any;
-
+  showInfoDialog = false;
   newBatchQty!: any;
   newBatchBid!: any;
-
+  unityOfMeasuremente = [
+    { name: 'Liter', code: 'lt' },
+    { name: 'Kilograms', code: 'kg' },
+    { name: 'Unit', code: 'unit' },
+  ];
   newBatch!: any;
   createBatchDialogVisible: boolean = false;
+
+
+  @ViewChild('recipedetails', { static: false }) divHello!: OverlayPanel;
+
   constructor(
     private productTypeService: ProductTypeService,
     private batchService: CompanyBatchService,
@@ -80,12 +97,19 @@ export class ProductTypeListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+this.update();
+    this.statuses = [];
+  }
+showRecipeInfo(product: any, $event: any) {
+  this.divHello.show($event);
+  this.inforecipe = product.recipe.recipeRow
+}
+  update() {
     this.productTypeService.getAll().subscribe({
       next: (res: any) => (this.products = res),
       error: (err: any) => console.log(err),
     });
-
-    this.statuses = [];
   }
 
   openNew() {
@@ -146,47 +170,33 @@ export class ProductTypeListComponent implements OnInit {
     this.productDialog = false;
     this.submitted = false;
   }
-
   saveProduct() {
     this.submitted = true;
-
-    if (this.product.name?.trim()) {
-      if (this.product.id) {
-        this.products[this.findIndexById(this.product.id)] = this.product;
-
+    this.product.state = 'FINAL';
+    this.product.unity = this.product.unity.code;
+    this.productTypeService.createOne(this.product).subscribe({
+      next: (res: any) => {
+        this.update();
         this.messageService.add({
           severity: 'success',
           summary: 'Successful',
-          detail: 'Product Updated',
+          detail: 'Product Type Created',
           life: 3000,
         });
-      } else {
-        this.product.id = this.createId();
-        this.product.image = 'product-placeholder.svg';
-
-        this.products.push(this.product);
-        let newPType = {
-          name: this.product.name,
-          unity: this.product.unity ?? 'kg',
-          state: '',
-        };
-        this.productTypeService.createOne(this.product).subscribe({
-          next: (res: any) => {},
-          error: (err: any) => {},
-        });
-
+      },
+      error: (err: any) => {
         this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Created',
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Creation error',
           life: 3000,
         });
-      }
+      },
+    });
 
-      this.products = [...this.products];
-      this.productDialog = false;
-      this.product = {};
-    }
+    this.products = [...this.products];
+    this.productDialog = false;
+    this.product = {};
   }
 
   findIndexById(id: string): number {
@@ -221,28 +231,6 @@ export class ProductTypeListComponent implements OnInit {
         return 'danger';
     }
     return 'warning';
-  }
-
-  addRecipeRow(product: any) {
-    let prod = this.products.filter((row: any) => {
-      return row.id === product.id;
-    });
-    if (prod[0].recipe) {
-      prod[0].recipe.recipeRow.push({
-        unity: '%',
-        quantity: this.selectedProductToReciperRowquantity,
-        note: null,
-        product: this.selectedProductToReciperRow,
-      });
-    } else {
-      prod[0].recipe = {
-        note: null,
-        recipeRow: [],
-      };
-    }
-
-    this.selectedProductToReciperRowquantity = null;
-    this.selectedProductToReciperRow = null;
   }
 
   deleteRepiceRow(prod: any, row: any) {
@@ -294,5 +282,66 @@ export class ProductTypeListComponent implements OnInit {
         });
       },
     });
+  }
+
+  onRowEditInit(reciperow: any) {
+    // this.clonedProducts[product.id as string] = { ...product };
+  }
+
+  onRowEditSave(reciperow: any) {
+    // if (product.price > 0) {
+    //     delete this.clonedProducts[product.id as string];
+    //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product is updated' });
+    // } else {
+    //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Price' });
+    // }
+  }
+
+  onRowEditCancel(reciperow: any, index: number) {
+    // this.products[index] = this.clonedProducts[product.id as string];
+    // delete this.clonedProducts[product.id as string];
+  }
+
+  onRowCancel(product: any, index: number) {
+    product.recipe.recipeRow.splice(index, 1);
+    if (product.recipe.recipeRow.length == 0) {
+      delete product.recipe;
+    }
+  }
+
+  addRecipe(product: any) {
+    if (!product.recipe) {
+      product.recipe = {
+        note: null,
+        recipeRow: [
+          {
+            unity: '%',
+            quantity: 0,
+            note: null,
+            product: null,
+          },
+        ],
+      };
+    }
+  }
+
+  addRecipeRow(product: any) {
+    if (
+      product.recipe &&
+      product.recipe.recipeRow &&
+      (product.recipe.recipeRow.length == 0 ||
+        (product.recipe.recipeRow.length > 0 &&
+          product.recipe.recipeRow[product.recipe.recipeRow.length - 1]
+            .product != null &&
+          product.recipe.recipeRow[product.recipe.recipeRow.length - 1]
+            .quantity != null))
+    ) {
+      product.recipe.recipeRow.push({
+        unity: '%',
+        quantity: 0,
+        note: null,
+        product: null,
+      });
+    }
   }
 }

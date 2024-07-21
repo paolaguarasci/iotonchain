@@ -36,22 +36,15 @@
                 <th pSortableColumn="name" style="min-width:15rem">
                     Name <p-sortIcon field="name" />
                 </th>
+                <th pSortableColumn="unity">
+                    Unity <p-sortIcon field="unit" />
+                </th>
                 <th>
-                    Image
+                    Recipe
                 </th>
-                <th pSortableColumn="price">
-                    Price <p-sortIcon field="price" />
+                <th>
+                    Produce Batch of
                 </th>
-                <th pSortableColumn="category" style="min-width:10rem">
-                    Category <p-sortIcon field="category" />
-                </th>
-                <th pSortableColumn="rating">
-                    Reviews <p-sortIcon field="rating" />
-                </th>
-                <th pSortableColumn="inventoryStatus" style="min-width:10rem">
-                    Status <p-sortIcon field="inventoryStatus" />
-                </th>
-                <th></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-product>
@@ -63,24 +56,22 @@
                     {{ product.name }}
                 </td>
                 <td>
-                    <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image"
-                        [alt]="product.name" width="50" class="shadow-4" />
+                    {{ product.unity }}
                 </td>
-                <td>
-                    {{ product.price | currency : 'USD' }}
+                <td class="text-center">
+
+                    <i class="pi" *ngIf="!product.recipe"
+                        [ngClass]="{ 'text-green-500 pi-check-circle': product.recipe, 'text-red-500 pi-times-circle': !product.recipe }"></i>
+
+                    <p-button *ngIf="product.recipe" icon="pi pi-info-circle"
+                        (onClick)="showRecipeInfo(product, $event)" [disabled]="!product.recipe"
+                        class="flex-auto md:flex-initial white-space-nowrap" />
+
                 </td>
+
                 <td>
-                    {{ product.category }}
-                </td>
-                <td>
-                    <p-rating [(ngModel)]="product.rating" [readonly]="true" [cancel]="false" />
-                </td>
-                <td>
-                    <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" />
-                </td>
-                <td>
-                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="false" [outlined]="true" severity="success"
-                        (onClick)="editProduct(product)" />
+                    <!-- <p-button icon="pi pi-pencil" class="mr-2" [rounded]="false" [outlined]="true" severity="success"
+                        (onClick)="editProduct(product)" /> -->
 
                     <p-button icon="pi pi-plus" class="mr-2" [rounded]="false" [outlined]="true" severity="success"
                         (onClick)="showDialogCreateBatch(product)" />
@@ -95,7 +86,7 @@
         </ng-template>
     </p-table>
 
-    <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true"
+    <p-dialog [(visible)]="productDialog" [style]="{ width: '45rem' }" header="Product Details" [modal]="true"
         styleClass="p-fluid">
         <ng-template pTemplate="content">
             <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.image"
@@ -108,27 +99,84 @@
                 </small>
             </div>
             <div class="field">
-                <label for="description">Description</label>
-                <textarea id="description" pInputTextarea [(ngModel)]="product.description" required rows="3" cols="20">
-                  </textarea>
+                <label for="description">Unity of measurement</label>
+                <!-- <textarea id="description" pInputTextarea [(ngModel)]="product.description" required rows="3" cols="20">
+                  </textarea> -->
+
+                <p-dropdown [options]="unityOfMeasuremente" [(ngModel)]="product.unity" optionLabel="name"
+                    placeholder="Unity" />
+
             </div>
-            <div class="field">
+            <div class="field" *ngIf="product.recipe">
                 <label for="description">Recipe</label>
-                <div *ngIf="product.recipe">
-                    <p-listbox [options]="product.recipe.recipeRow" [listStyle]="{ 'max-height': '250px' }"
-                        [listStyle]="{'max-height': '220px'}">
-                        <ng-template let-row pTemplate="item" (click)="deleteRepiceRow(product, row)">
-                            <div class="flex align-items-center gap-2">
-                                <div>{{ row.quantity }}</div>
-                                <div>{{ row.id }}</div>
-                            </div>
+                <div>
+                    <p-table [value]="product.recipe.recipeRow" dataKey="id" editMode="row">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width:75%">Raw Material</th>
+                                <th style="width:25%">Percentage</th>
+                                <th style="width:25%"></th>
+                            </tr>
                         </ng-template>
-                    </p-listbox>
+                        <ng-template pTemplate="body" let-reciperow let-editing="editing" let-ri="rowIndex">
+                            <tr [pEditableRow]="reciperow">
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown optionLabel="name" [options]="products" appendTo="body"
+                                                [(ngModel)]="reciperow.product" [style]="{'width':'100%'}" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <div *ngIf="reciperow.product">
+                                                {{reciperow.product.name}}
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="number" [(ngModel)]="reciperow.quantity" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{reciperow.quantity}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <div class="flex align-items-center justify-content-center gap-2">
+                                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
+                                            icon="pi pi-pencil" (click)="onRowEditInit(reciperow)"
+                                            class="p-button-rounded p-button-text">
+                                        </button>
+                                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
+                                            icon="pi pi-check" (click)="onRowEditSave(reciperow)"
+                                            class="p-button-rounded p-button-text p-button-success mr-2">
+                                        </button>
+                                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
+                                            icon="pi pi-times" (click)="onRowEditCancel(reciperow, ri)"
+                                            class="p-button-rounded p-button-text p-button-danger">
+                                        </button>
+                                        <button *ngIf="!editing" pButton pRipple type="button" pCancelEditableRow
+                                            icon="pi pi-times" (click)="onRowCancel(product, ri)"
+                                            class="p-button-rounded p-button-text p-button-danger">
+                                        </button>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
                 </div>
             </div>
         </ng-template>
 
         <ng-template pTemplate="footer">
+            <p-button *ngIf="!product.recipe" label="Add recipe" icon="pi pi-plus" [text]="true"
+                (onClick)="addRecipe(product)" />
+            <p-button *ngIf="product.recipe" label="Add ingredient" icon="pi pi-plus" [text]="true"
+                (onClick)="addRecipeRow(product)" />
             <p-button label="Cancel" icon="pi pi-times" [text]="true" (onClick)="hideDialog()" />
             <p-button label="Save" icon="pi pi-check" [text]="true" (onClick)="saveProduct()" />
         </ng-template>
@@ -155,7 +203,8 @@
             <input [(ngModel)]="newBatchBid" pInputText id="username" class="flex-auto" autocomplete="off" />
         </div>
         <div class="flex align-items-center gap-3 mb-5">
-            <label *ngIf="selectedBatchToProduce" for="email" class="font-semibold w-6rem">Quantity ({{selectedBatchToProduce.unity}})</label>
+            <label *ngIf="selectedBatchToProduce" for="email" class="font-semibold w-6rem">Quantity
+                ({{selectedBatchToProduce.unity}})</label>
             <input [(ngModel)]="newBatchQty" pInputText id="email" type="number" class="flex-auto" autocomplete="off" />
         </div>
         <ng-template pTemplate="footer">
@@ -165,3 +214,28 @@
         </ng-template>
     </p-dialog>
 </div>
+
+
+<p-overlayPanel #recipedetails [style]="{ width: '450px' }" [showCloseIcon]="true">
+    <ng-template pTemplate="content">
+        <p-table [value]="inforecipe" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="reciperow.product.name">
+                        Name <p-sortIcon field="reciperow.product.name" />
+                    </th>
+                    <th>%</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-reciperow>
+                <tr>
+                    <td>
+                        {{ reciperow.product.name }}
+                    </td>
+
+                    <td>{{ reciperow.quantity }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+</p-overlayPanel>

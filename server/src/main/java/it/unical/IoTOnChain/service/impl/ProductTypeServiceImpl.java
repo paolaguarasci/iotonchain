@@ -5,6 +5,7 @@ import it.unical.IoTOnChain.data.model.ProductType;
 import it.unical.IoTOnChain.data.model.Recipe;
 import it.unical.IoTOnChain.repository.CompanyRepository;
 import it.unical.IoTOnChain.repository.ProductTypeRepository;
+import it.unical.IoTOnChain.repository.RecipeRepository;
 import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class ProductTypeServiceImpl implements ProductTypeService {
   private final ProductTypeRepository productTypeRepository;
   private final CompanyRepository companyRepository;
+  private final RecipeRepository recipeRepository;
   
   
   @Override
@@ -32,6 +34,9 @@ public class ProductTypeServiceImpl implements ProductTypeService {
       if (companyToUpdate.getProductTypeList().stream().anyMatch(el -> el.getName().equals(productTypeName))) {
         log.debug("Product type {} already exists", productTypeName);
       } else {
+        if(recipe != null && recipe.getId() == null) {
+          recipe = recipeRepository.save(recipe);
+        }
         ProductType ppSaved = productTypeRepository.save(ProductType.builder().name(productTypeName).unity(unity).recipe(recipe).build());
         companyToUpdate.getProductTypeList().add(ppSaved);
         companyRepository.save(companyToUpdate);

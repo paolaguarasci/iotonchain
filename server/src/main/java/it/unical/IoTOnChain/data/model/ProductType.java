@@ -10,7 +10,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 @Getter
 @Setter
 @Builder
@@ -29,6 +28,19 @@ public class ProductType implements Serializable {
   @ToString.Exclude
   private Company company;
   
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
   private Recipe recipe;
+  
+  @Override
+  public final boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ProductType that)) return false;
+    
+    return getId().equals(that.getId());
+  }
+  
+  @Override
+  public int hashCode() {
+    return getId().hashCode();
+  }
 }
