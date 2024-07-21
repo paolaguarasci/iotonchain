@@ -11,6 +11,10 @@ export class TransferService {
     return this.http.get('/api/v1/company/transfer');
   }
 
+  getAllByBatchId(batchid: any) {
+    return this.http.get(`/api/v1/company/transfer/${batchid}`);
+  }
+
   createOne(data: any) {
     return this.http.post('/api/v1/company/transfer', data);
   } 

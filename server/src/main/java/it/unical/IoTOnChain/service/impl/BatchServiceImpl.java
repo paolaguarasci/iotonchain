@@ -1,9 +1,6 @@
 package it.unical.IoTOnChain.service.impl;
 
-import it.unical.IoTOnChain.data.model.Batch;
-import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.ProductType;
-import it.unical.IoTOnChain.data.model.RecipeRow;
+import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.BatchRepository;
@@ -47,13 +44,14 @@ public class BatchServiceImpl implements BatchService {
     for (Batch batch : batches) {
       k += batch.getQuantity();
       newBatches.add(batch);
+      log.debug("Aggiungo il lotto {}", batch.getBatchId());
       if (k >= quantity) {
         break;
       }
     }
-    log.debug("batches: {}", batches.size());
-    log.debug("batches: {}", batches);
-    log.debug("New batches: {}", newBatches.size());
+//    log.debug("batches: {}", batches.size());
+//    log.debug("batches: {}", batches);
+//    log.debug("New batches: {}", newBatches.size());
     map.put("k", k);
     map.put("batch", newBatches);
     return map;
@@ -62,23 +60,23 @@ public class BatchServiceImpl implements BatchService {
   @Override
   public Batch produce(Company company, ProductType type, int quantity, String batchId) throws NoEnoughRawMaterialsException {
     boolean checkMaterial = true;
-    Map<String, Object> checkQuantityOfType = new HashMap<>();
-    log.debug("Sto provando a produrre {} ", batchId);
+    Set<Batch> rawMaterials = new HashSet<>();
     if (type.getRecipe() != null) {
       for (RecipeRow recipeRow : type.getRecipe().getRecipeRow()) {
         // FIXME potenziali side effect quando si mischiano diverse unita' di misura!
+        Map<String, Object> checkQuantityOfType = new HashMap<>();
         checkQuantityOfType = checkQuantityOfType(company, recipeRow.getProduct(), recipeRow.getQuantity());
-        if (Long.parseLong(String.valueOf(checkQuantityOfType.get("k"))) < ((quantity / 100.00) * recipeRow.getQuantity())) {
+        if(batchId.equals("batchId_123_pesto")) {
+          log.debug("Controllo {}", recipeRow.getProduct().getName());
+        }
+         if (Long.parseLong(String.valueOf(checkQuantityOfType.get("k"))) < ((quantity / 100.00) * recipeRow.getQuantity())) {
           checkMaterial = false;
           break;
         }
+        Set<Batch> batchRawMaterialsLocal = (Set<Batch>) checkQuantityOfType.get("batch");
+        rawMaterials.addAll(batchRawMaterialsLocal);
       }
     }
-    
-    log.debug("Quantity k {}", checkQuantityOfType.get("k"));
-    log.debug("Quantity batch {}", checkQuantityOfType.get("batch"));
-    
-    
     if (type.getRecipe() == null || checkMaterial) {
       // salva sulla chain!
       return batchRepository.save(Batch.builder()
@@ -86,7 +84,7 @@ public class BatchServiceImpl implements BatchService {
         .companyProducer(company)
         .batchId(batchId)
         .productType(type)
-        .rawMaterialList((Set<Batch>) checkQuantityOfType.get("batch"))
+        .rawMaterialList(rawMaterials)
         .productionDate(LocalDateTime.now())
         .quantity(quantity)
         .build());
@@ -109,7 +107,7 @@ public class BatchServiceImpl implements BatchService {
       log.debug("Move {} {}", batch.getBatchId(), batch.getQuantity());
       log.debug("Batch to move {}", batch);
       productTypeService.createProductTypeForCompany(company, batch.getProductType().getName(), batch.getProductType().getUnity(), batch.getProductType().getRecipe());
-      Batch newBatch = this.produce(company, batch.getProductType(), quantity, batch.getBatchId() + "_X");
+      Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, batch.getBatchId() + "_X", batch);
       newBatch.setCompanyProducer(owner);
       batchRepository.save(newBatch);
     } else {
@@ -130,5 +128,19 @@ public class BatchServiceImpl implements BatchService {
       return null;
     }
     return batches.getFirst();
+  }
+  
+  @Override
+  public Batch produceByMovement(Company company, ProductType productType, int quantity, String s, Batch old) {
+      // salva sulla chain!
+      return batchRepository.save(Batch.builder()
+        .companyOwner(company)
+        .companyProducer(company)
+        .batchId(s)
+        .productType(productType)
+        .rawMaterialList(old.getRawMaterialList())
+        .productionDate(LocalDateTime.now())
+        .quantity(quantity)
+        .build());
   }
 }

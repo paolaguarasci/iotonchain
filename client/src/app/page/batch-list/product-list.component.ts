@@ -36,7 +36,7 @@ import { KeycloakService } from 'keycloak-angular';
     DialogModule,
     CheckboxModule,
     RadioButtonModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [
     CompanyBatchService,
@@ -55,6 +55,7 @@ export class ComapnyBatchListComponent implements OnInit {
   selectedTransferType!: any;
   selectedBatch!: any;
   visibleTrasferDialog: boolean = false;
+
   constructor(
     private productService: CompanyBatchService,
     private companyService: CompanyService,
@@ -90,6 +91,17 @@ export class ComapnyBatchListComponent implements OnInit {
   showTrasferDialog(items: any) {
     this.visibleTrasferDialog = true;
     this.selectedBatch = items;
+  }
+
+  showInfoDialog(item: any) {
+    this.transferService.getAllByBatchId(item.batchId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
 
   handleCleanup() {

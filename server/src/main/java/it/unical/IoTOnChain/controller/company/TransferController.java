@@ -31,13 +31,21 @@ public class TransferController {
   private final TransferService transferService;
   private final GenericMapper mapper;
   
-  
   @GetMapping()
   private ResponseEntity<List<TransferToOwnerDTO>> listAll(@AuthenticationPrincipal Jwt principal) {
     log.debug("Create one batch of product type for company logged");
     String companyLogged = principal.getClaimAsString("preferred_username");
     Company companyOwner = companyService.getOneByName(companyLogged);
     return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLogged(companyOwner)));
+  }
+  
+  
+  @GetMapping("/{batch_id}")
+  private ResponseEntity<List<TransferToOwnerDTO>> listAllByBatchId(@AuthenticationPrincipal Jwt principal, @PathVariable String batch_id) {
+    log.debug("Create one batch of product type for company logged");
+    String companyLogged = principal.getClaimAsString("preferred_username");
+    Company companyOwner = companyService.getOneByName(companyLogged);
+    return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, batch_id)));
   }
   
   @PostMapping()

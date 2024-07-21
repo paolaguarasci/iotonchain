@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,6 +51,11 @@ public class TransferServiceImpl implements TransferService {
   @Override
   public List<Transfer> getAllForCompanyLogged(Company companyOwner) {
     return transferRepository.findAllByCompanySenderIDOrCompanyRecipientID(companyOwner.getId().toString(), companyOwner.getId().toString());
+  }
+  
+  @Override
+  public List<Transfer> getAllForCompanyLoggedAndBatchId(Company companyOwner, String batchId) {
+    return transferRepository.findAllByCompanySenderIDOrCompanyRecipientID(companyOwner.getId().toString(),companyOwner.getId().toString()).stream().filter(transfer -> transfer.getBatchID().equals(batchId)).toList();
   }
   
   

@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,7 +16,6 @@ import java.io.Serializable;
 public class BatchToOwner implements Serializable {
   private String id;
   private String batchId;
-  // private String name;
   private int quantity;
   private String unity;
   private boolean isFinal;
@@ -23,8 +23,8 @@ public class BatchToOwner implements Serializable {
   private String companyOwnerID;
   private String companyProducerID;
   private ProductTypeToOwner productType;
-  private Batch.ProcessProductType processType;
-//  private Location productionLocation;
-//  private Set<Batch> rawMaterialList = new HashSet<>();
+  private String processType;
+  private LocationDTO productionLocation;
+  private Set<BatchToOwner> rawMaterialList;
 
 }

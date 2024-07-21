@@ -33,7 +33,7 @@
                                     }}</span>
                                 <div class="flex flex-row-reverse md:flex-row gap-2">
                                     <!-- <p-button icon="pi pi-heart" [outlined]="true" /> -->
-                                    <p-button icon="pi pi-info-circle"
+                                    <p-button icon="pi pi-info-circle" (onClick)="showInfoDialog(item)"
                                         class="flex-auto md:flex-initial white-space-nowrap" />
                                     <p-button icon="pi pi-send" class="flex-auto md:flex-initial white-space-nowrap"
                                         (onClick)="showTrasferDialog(item)" label="Transfer"

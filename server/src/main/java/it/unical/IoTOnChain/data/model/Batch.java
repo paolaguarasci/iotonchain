@@ -48,9 +48,11 @@ public class Batch implements Serializable {
   private ProcessProductType processType;
   @ManyToOne
   private Location productionLocation;
+
   @ManyToMany
   @Builder.Default
   private Set<Batch> rawMaterialList = new HashSet<>();
+  
 //  @OneToMany
 //  @Builder.Default
 //  private Set<AnalysisDocument> analysisList = new HashSet<>();

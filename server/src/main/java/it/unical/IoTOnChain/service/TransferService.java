@@ -14,4 +14,6 @@ public interface TransferService {
   Transfer makeTransactionWithAcceptance(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
   
   List<Transfer> getAllForCompanyLogged(Company companyOwner);
+  
+  List<Transfer> getAllForCompanyLoggedAndBatchId(Company companyOwner, String batchId);
 }
