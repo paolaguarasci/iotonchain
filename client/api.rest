@@ -1,2 +1,18 @@
 
+### 
 GET https://localhost:8443/api/v1/company/batch
+###
+POST http://localhost:8443/api/v1/company/batch
+Content-Type: application/json
+
+{
+  "batchId": "nuovo-batch",
+  "quantity": 100,
+  "unity": "kg",
+  "productTypeID": "14749481-b9e2-49bb-a3fc-92151eaa97a1"
+}
+
+###
+GET https://localhost:8443/api/v1/company/product-type
+###
+GET https://localhost:8443/api/v1/company/client

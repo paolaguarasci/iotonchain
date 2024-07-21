@@ -4,13 +4,14 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class CompanyBatchService {
+export class TransferService {
   constructor(private http: HttpClient) {}
+
   getAll() {
-    return this.http.get('/api/v1/company/batch');
+    return this.http.get('/api/v1/company/transfer');
   }
 
-  produceBatch(data: any) {
-    return this.http.post('/api/v1/company/batch', data);
-  }
+  createOne(data: any) {
+    return this.http.post('/api/v1/company/transfer', data);
+  } 
 }

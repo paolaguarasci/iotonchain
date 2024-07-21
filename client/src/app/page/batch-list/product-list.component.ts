@@ -1,12 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CompanyBatchService } from '../../services/company-batch.service';
 
-import { SelectItem } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
 import { DataViewModule } from 'primeng/dataview';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
+import { CheckboxModule } from 'primeng/checkbox';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { FormsModule } from '@angular/forms';
+import { CompanyService } from '../../services/company.service';
+import { TransferService } from '../../services/transfer.service';
+import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -16,38 +27,100 @@ import { DropdownModule } from 'primeng/dropdown';
     TagModule,
     CommonModule,
     DropdownModule,
+    FormsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputTextModule,
+    InputSwitchModule,
+    DialogModule,
+    CheckboxModule,
+    RadioButtonModule,
+    ToastModule
   ],
-  providers: [CompanyBatchService],
+  providers: [
+    CompanyBatchService,
+    CompanyService,
+    MessageService,
+    TransferService,
+  ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
 export class ComapnyBatchListComponent implements OnInit {
   products: any[] = [];
-  constructor(private productService: CompanyBatchService) {}
+  companyClients: any[] = [];
+  selectedQuantity = 0;
+  selectedCompanyClient: any = null;
+  selectedTransferType!: any;
+  selectedBatch!: any;
+  visibleTrasferDialog: boolean = false;
+  constructor(
+    private productService: CompanyBatchService,
+    private companyService: CompanyService,
+    private transferService: TransferService,
+    private messageService: MessageService
+  ) {}
   ngOnInit(): void {
-    this.productService.getAll().subscribe((res: any) => {
-      this.products = res;
-    });
-
-
-
-
-    // this.products = [
-    //   {
-    //     id: '1000',
-    //     code: 'f230fh0g3',
-    //     name: 'Bamboo Watch',
-    //     description: 'Product Description',
-    //     image: 'bamboo-watch.jpg',
-    //     price: 65,
-    //     category: 'Accessories',
-    //     quantity: 24,
-    //     inventoryStatus: 'INSTOCK',
-    //     rating: 5
-    // }
-    // ]
+    this.updateList();
+    this.updateClients();
   }
-  getSeverity(items: any) {
-    return null;
+
+  updateList() {
+    this.productService.getAll().subscribe({
+      next: (res: any) => {
+        this.products = res;
+      },
+      error: (err: any) => {},
+    });
+  }
+  updateClients() {
+    this.companyService.getAllClients().subscribe({
+      next: (res: any) => {
+        this.companyClients = res;
+      },
+      error: (err: any) => {},
+    });
+  }
+
+  showTrasferDialog(items: any) {
+    this.visibleTrasferDialog = true;
+    this.selectedBatch = items;
+  }
+
+  handleCleanup() {
+    this.visibleTrasferDialog = false;
+  }
+
+  save() {
+    this.visibleTrasferDialog = false;
+    let dataToTransfer = {
+      batchID: this.selectedBatch.batchId,
+      quantity: this.selectedQuantity,
+      unity: 'kg',
+      companyRecipientID: this.selectedCompanyClient.id,
+      type: this.selectedTransferType,
+    };
+    console.log(dataToTransfer);
+
+    this.transferService.createOne(dataToTransfer).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.updateList();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'Trasfer completed successfully',
+          life: 3000,
+        });
+      },
+      error: (err: any) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error occurred',
+          life: 3000,
+        });
+      },
+    });
   }
 }
