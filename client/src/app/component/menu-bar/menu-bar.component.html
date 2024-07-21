@@ -1,12 +1,7 @@
 <div class="card">
   <p-menubar [model]="items">
     <ng-template pTemplate="start">
-      <p-avatar
-      image="/ms-icon-310x310.png"
-      shape="square"
-      size="xlarge"
-      class="mr-2"
-    />
+      <p-avatar image="/ms-icon-310x310.png" shape="square" size="xlarge" class="mr-2" />
     </ng-template>
 
     <ng-template pTemplate="item" let-item>
@@ -17,11 +12,7 @@
         </a>
       </ng-container>
       <ng-template #urlRef>
-        <a
-          *ngIf="item.url; else noLink"
-          [href]="item.url"
-          class="p-menuitem-link"
-        >
+        <a *ngIf="item.url; else noLink" [href]="item.url" class="p-menuitem-link">
           <span [class]="item.icon"></span>
           <span class="ml-2">{{ item.label }}</span>
         </a>
@@ -37,16 +28,18 @@
 
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2">
-        <input
-          type="text"
-          pInputText
-          placeholder="Search"
-          class="w-8rem sm:w-auto"
-        />
-        <p-avatar
-          image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-          shape="circle"
-        />
+        <input type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
+
+
+        <div *ngIf="isLogged" class="flex flax-row justify-content-center align-items-center">
+          <p-button icon="pi pi-times" [rounded]="true" (onClick)="handleLotout()" [text]="true" [raised]="true" severity="danger" class="mx-3"/>
+          <div>Hi, {{profile.username}}!</div>
+        </div>
+
+        <div *ngIf="!isLogged">
+          <p-button icon="pi pi-user" [rounded]="true" (onClick)="handleLogin()" [text]="true" [raised]="true"  class="mx-3"
+          severity="info" />
+        </div>
       </div>
     </ng-template>
   </p-menubar>

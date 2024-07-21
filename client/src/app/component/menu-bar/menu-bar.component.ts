@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { KeycloakService } from 'keycloak-angular';
+import { KeycloakProfile } from 'keycloak-js';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
+import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
@@ -19,14 +22,25 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
     CommonModule,
     TieredMenuModule,
     CommonModule,
+    ButtonModule,
   ],
-
   templateUrl: './menu-bar.component.html',
   styleUrl: './menu-bar.component.scss',
 })
 export class MenuBarComponent implements OnInit {
+  isLogged = false;
+  username = '';
+  profile!: KeycloakProfile;
   items: MenuItem[] | undefined;
-  ngOnInit() {
+
+  constructor(private readonly keycloakService: KeycloakService) {}
+
+  async ngOnInit() {
+    this.isLogged = await this.keycloakService.isLoggedIn();
+    if (this.isLogged) {
+      this.profile = await this.keycloakService.loadUserProfile();
+      console.log(this.profile);
+    }
     this.items = [
       {
         label: 'Home',
@@ -108,21 +122,11 @@ export class MenuBarComponent implements OnInit {
       // },
     ];
   }
+
+  handleLotout() {
+    this.keycloakService.logout();
+  }
+  handleLogin() {
+    this.keycloakService.login();
+  }
 }
-
-/*
-
-  {
-    path: 'product',
-    component: ProductListComponent,
-  },
-  {
-    path: 'product-type',
-    component: ProductTypeListComponent,
-  },
-  {
-    path: 'production-step',
-    component: CreateStepsComponent,
-  },
-
-*/

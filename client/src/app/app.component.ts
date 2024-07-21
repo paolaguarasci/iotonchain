@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PrimeNGConfig } from 'primeng/api';
 import { MenuBarComponent } from './component/menu-bar/menu-bar.component';
+import { KeycloakAngularModule } from 'keycloak-angular';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +13,7 @@ import { MenuBarComponent } from './component/menu-bar/menu-bar.component';
 })
 export class AppComponent implements OnInit {
   title = 'client';
-  constructor(
-    private primengConfig: PrimeNGConfig
-  ) {
+  constructor(private primengConfig: PrimeNGConfig) {
     this.primengConfig.csp.set({ nonce: '...' });
   }
 
