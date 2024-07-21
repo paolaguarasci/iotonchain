@@ -7,8 +7,10 @@ import it.unical.IoTOnChain.data.model.RecipeRow;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.BatchRepository;
+import it.unical.IoTOnChain.repository.CompanyRepository;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
+import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,20 @@ import java.util.*;
 @Slf4j
 public class BatchServiceImpl implements BatchService {
   private final BatchRepository batchRepository;
+  private final ProductTypeService productTypeService;
   private final CompanyService companyService;
+  private final CompanyRepository companyRepository;
   
   @Override
   public List<Batch> getAllProductByCompanyLogged(String companyLogged) {
-    return batchRepository.findAll();
+    if(companyLogged == null || companyLogged.isEmpty()) {
+      return List.of();
+    }
+    Optional<Company> company = companyRepository.findByName(companyLogged);
+    if(company.isPresent()) {
+      return batchRepository.findAllByCompanyOwner(company.get());
+    }
+    return List.of();
   }
   
   private Map<String, Object> checkQuantityOfType(Company company, ProductType type, Long quantity) {
@@ -97,13 +108,27 @@ public class BatchServiceImpl implements BatchService {
       // TODO trovare una soluzione per l'assegnazione dei lotti di produzione, fare inserire manualmente?
       log.debug("Move {} {}", batch.getBatchId(), batch.getQuantity());
       log.debug("Batch to move {}", batch);
+      productTypeService.createProductTypeForCompany(company, batch.getProductType().getName(), batch.getProductType().getUnity(), batch.getProductType().getRecipe());
       Batch newBatch = this.produce(company, batch.getProductType(), quantity, batch.getBatchId() + "_X");
       newBatch.setCompanyProducer(owner);
       batchRepository.save(newBatch);
     } else {
-      // Il trasferimento non è fattibile.
+      // Il trasferimento non è fattibile
+      log.debug("(companyService.companyExist(owner) {} \n" +
+        "      companyService.companyExist(company) {} \n" +
+        "      batch.getCompanyOwner().equals(owner) {} \n" +
+        "      batch.getQuantity() >= quantity) {} ", companyService.companyExist(owner),  companyService.companyExist(company), batch.getCompanyOwner().equals(owner), batch.getQuantity() >= quantity);
       throw new MoveIsNotPossibleException("Non si puo' fare!");
     }
     
+  }
+  
+  @Override
+  public Batch getOneByBatchIdAndCompany(Company companyOwner, String batchID) {
+    List<Batch> batches = batchRepository.findAllByBatchIdAndCompanyOwner(batchID, companyOwner);
+    if (batches.isEmpty()) {
+      return null;
+    }
+    return batches.getFirst();
   }
 }

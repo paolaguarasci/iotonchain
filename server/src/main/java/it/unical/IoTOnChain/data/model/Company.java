@@ -33,4 +33,17 @@ public class Company  implements Serializable {
 //  @OneToMany(cascade = CascadeType.ALL)
 //  @Builder.Default
 //  private List<CertificateDocument> certificateList = new ArrayList<>();
+  
+  
+  @Override
+  public final boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Company company)) return false;
+    return getId().equals(company.getId());
+  }
+  
+  @Override
+  public int hashCode() {
+    return getId().hashCode();
+  }
 }

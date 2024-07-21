@@ -15,4 +15,6 @@ public interface BatchService {
   Batch produce(Company company, ProductType type, int quantity, String batchId) throws NoEnoughRawMaterialsException;
   
   void move(Company owner , Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
+  
+  Batch getOneByBatchIdAndCompany(Company companyOwner, String batchID);
 }

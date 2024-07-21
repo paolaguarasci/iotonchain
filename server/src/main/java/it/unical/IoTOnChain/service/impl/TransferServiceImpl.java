@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -25,17 +26,34 @@ public class TransferServiceImpl implements TransferService {
   public Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
     batchService.move(companyLogged, batch, company, quantity);
     ChainTransaction tx = saveOnChain();
+    // assert tx != null;
     return transferRepository.save(Transfer.builder()
         .batchID(batch.getBatchId())
+        .unity(batch.getProductType().getUnity())
+        .companySenderID(companyLogged.getId().toString())
         .companyRecipientID(company.getId().toString())
         .type(Transfer.TransferType.ONESHOT)
         .quantity(quantity)
         .transferDateStart(LocalDateTime.now())
         .status(Transfer.TransferStatus.COMPLETED)
+        .lastUpdate(LocalDateTime.now())
+        .txTransactionList(List.of(tx))
       .build());
   }
   
-  private ChainTransaction saveOnChain() {
+  @Override
+  public Transfer makeTransactionWithAcceptance(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
     return null;
+  }
+  
+  @Override
+  public List<Transfer> getAllForCompanyLogged(Company companyOwner) {
+    return transferRepository.findAllByCompanySenderIDOrCompanyRecipientID(companyOwner.getId().toString(), companyOwner.getId().toString());
+  }
+  
+  
+  private ChainTransaction saveOnChain() {
+    // TODO
+    return ChainTransaction.builder().txId("txid").build();
   }
 }
