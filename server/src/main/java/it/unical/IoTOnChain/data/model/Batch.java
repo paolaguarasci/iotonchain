@@ -22,7 +22,7 @@ import java.util.UUID;
 // @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 // @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class Batch implements Serializable {
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
@@ -40,10 +40,10 @@ public class Batch implements Serializable {
   private Company companyOwner;
   @ManyToOne
   private Company companyProducer;
-  
+
   @ManyToOne(fetch = FetchType.EAGER)
   private ProductType productType;
-  
+
   @Enumerated(EnumType.STRING)
   private ProcessProductType processType;
   @ManyToOne
@@ -52,7 +52,7 @@ public class Batch implements Serializable {
   @ManyToMany
   @Builder.Default
   private Set<Batch> rawMaterialList = new HashSet<>();
-  
+
 //  @OneToMany
 //  @Builder.Default
 //  private Set<AnalysisDocument> analysisList = new HashSet<>();
@@ -71,9 +71,9 @@ public class Batch implements Serializable {
 //  public String getCompanyBatchProductIdDellaChain_Leggibile() {
 //    return tokenBatchProductId + "->>" + batchId + "__" + companyProducer.getName().replaceAll(" ", "");
 //  }
-  
+
   public enum ProcessProductType {
     Automatic, Manual, SemiAutomatic
   }
-  
+
 }

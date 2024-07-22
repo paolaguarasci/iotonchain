@@ -1,6 +1,9 @@
 package it.unical.IoTOnChain.service.impl;
 
-import it.unical.IoTOnChain.data.model.*;
+import it.unical.IoTOnChain.data.model.Batch;
+import it.unical.IoTOnChain.data.model.Company;
+import it.unical.IoTOnChain.data.model.ProductType;
+import it.unical.IoTOnChain.data.model.RecipeRow;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.BatchRepository;
@@ -23,7 +26,7 @@ public class BatchServiceImpl implements BatchService {
   private final ProductTypeService productTypeService;
   private final CompanyService companyService;
   private final CompanyRepository companyRepository;
-  
+
   @Override
   public List<Batch> getAllProductByCompanyLogged(String companyLogged) {
     if (companyLogged == null || companyLogged.isEmpty()) {
@@ -35,7 +38,7 @@ public class BatchServiceImpl implements BatchService {
     }
     return List.of();
   }
-  
+
   private Map<String, Object> checkQuantityOfType(Company company, ProductType type, Long quantity) {
     List<Batch> batches = batchRepository.findAllByCompanyOwnerAndProductType(company, type);
     log.debug("La compagnia {} ha {} lotti di tipo {}", company.getName(), batches.size(), type.getName());
@@ -54,7 +57,7 @@ public class BatchServiceImpl implements BatchService {
     map.put("batch", newBatches);
     return map;
   }
-  
+
   @Override
   public Batch produce(Company company, ProductType type, int quantity, String batchId) throws NoEnoughRawMaterialsException {
     boolean checkMaterial = true;
@@ -63,15 +66,15 @@ public class BatchServiceImpl implements BatchService {
     log.debug("ptype {}", type);
     log.debug("quantity {}", quantity);
     log.debug("batchid {}", batchId);
-    
+
     if (type.getRecipe() != null) {
       for (RecipeRow recipeRow : type.getRecipe().getRecipeRow()) {
         // FIXME potenziali side effect quando si mischiano diverse unita' di misura!
         Map<String, Object> checkQuantityOfType1 = new HashMap<>();
         checkQuantityOfType1 = checkQuantityOfType(company, recipeRow.getProduct(), recipeRow.getQuantity());
 
-          log.debug("Controllo {}", recipeRow.getProduct().getName());
-         if (Long.parseLong(String.valueOf(checkQuantityOfType1.get("k"))) < ((quantity / 100.00) * recipeRow.getQuantity())) {
+        log.debug("Controllo {}", recipeRow.getProduct().getName());
+        if (Long.parseLong(String.valueOf(checkQuantityOfType1.get("k"))) < ((quantity / 100.00) * recipeRow.getQuantity())) {
           checkMaterial = false;
           break;
         }
@@ -80,9 +83,9 @@ public class BatchServiceImpl implements BatchService {
     }
     log.debug("raw materials {}", rawMaterials);
     log.debug("check materials {}", checkMaterial);
-    
+
     // TODO DEVO ELIMINARE DAI LOTTI!
-    
+
     if (type.getRecipe() == null || checkMaterial) {
       // salva sulla chain!
       return batchRepository.save(Batch.builder()
@@ -95,13 +98,13 @@ public class BatchServiceImpl implements BatchService {
         .quantity(quantity)
         .build());
     }
-    
+
     log.debug("ciao");
     throw new NoEnoughRawMaterialsException("");
   }
-  
+
   @Override
-  public void move(Company owner, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
+  public Batch move(Company owner, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
     if (companyService.companyExist(owner)
       && companyService.companyExist(company)
       && batch.getCompanyOwner().equals(owner)
@@ -116,6 +119,7 @@ public class BatchServiceImpl implements BatchService {
       Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, batch.getBatchId() + "_X", batch);
       newBatch.setCompanyProducer(owner);
       batchRepository.save(newBatch);
+      return newBatch;
     } else {
       // Il trasferimento non è fattibile
       log.debug("(companyService.companyExist(owner) {} \n" +
@@ -124,9 +128,8 @@ public class BatchServiceImpl implements BatchService {
         "      batch.getQuantity() >= quantity) {} ", companyService.companyExist(owner), companyService.companyExist(company), batch.getCompanyOwner().equals(owner), batch.getQuantity() >= quantity);
       throw new MoveIsNotPossibleException("Non si puo' fare!");
     }
-    
   }
-  
+
   @Override
   public Batch getOneByBatchIdAndCompany(Company companyOwner, String batchID) {
     List<Batch> batches = batchRepository.findAllByBatchIdAndCompanyOwner(batchID, companyOwner);
@@ -135,18 +138,18 @@ public class BatchServiceImpl implements BatchService {
     }
     return batches.getFirst();
   }
-  
+
   @Override
   public Batch produceByMovement(Company company, ProductType productType, int quantity, String s, Batch old) {
-      // salva sulla chain!
-      return batchRepository.save(Batch.builder()
-        .companyOwner(company)
-        .companyProducer(company)
-        .batchId(s)
-        .productType(productType)
-        .rawMaterialList(old.getRawMaterialList())
-        .productionDate(LocalDateTime.now())
-        .quantity(quantity)
-        .build());
+    // salva sulla chain!
+    return batchRepository.save(Batch.builder()
+      .companyOwner(company)
+      .companyProducer(company)
+      .batchId(s)
+      .productType(productType)
+      .rawMaterialList(old.getRawMaterialList())
+      .productionDate(LocalDateTime.now())
+      .quantity(quantity)
+      .build());
   }
 }

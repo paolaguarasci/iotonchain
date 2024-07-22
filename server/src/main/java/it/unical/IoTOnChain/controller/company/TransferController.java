@@ -25,32 +25,32 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/company/transfer")
 public class TransferController {
-  
+
   private final BatchService batchService;
   private final CompanyService companyService;
   private final TransferService transferService;
   private final GenericMapper mapper;
-  
+
   @GetMapping()
   private ResponseEntity<List<TransferToOwnerDTO>> listAll(@AuthenticationPrincipal Jwt principal) {
     log.debug("Create one batch of product type for company logged");
-    String companyLogged = principal.getClaimAsString("preferred_username");
+    String companyLogged = principal.getClaimAsString("company");
     Company companyOwner = companyService.getOneByName(companyLogged);
     return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLogged(companyOwner)));
   }
-  
-  
+
+
   @GetMapping("/{batch_id}")
   private ResponseEntity<List<TransferToOwnerDTO>> listAllByBatchId(@AuthenticationPrincipal Jwt principal, @PathVariable String batch_id) {
     log.debug("Create one batch of product type for company logged");
-    String companyLogged = principal.getClaimAsString("preferred_username");
+    String companyLogged = principal.getClaimAsString("company");
     Company companyOwner = companyService.getOneByName(companyLogged);
     return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, batch_id)));
   }
-  
+
   @PostMapping()
   private ResponseEntity<TransferToOwnerDTO> createOne(@AuthenticationPrincipal Jwt principal, @RequestBody TransferRequestDTO dto) throws NoEnoughRawMaterialsException, MoveIsNotPossibleException {
-    String companyLogged = principal.getClaimAsString("preferred_username");
+    String companyLogged = principal.getClaimAsString("company");
     log.debug("Transfer batch {} ", dto.toString());
     Company companyOwner = companyService.getOneByName(companyLogged);
     Company companyReceiver = companyService.getOneById(dto.getCompanyRecipientID());

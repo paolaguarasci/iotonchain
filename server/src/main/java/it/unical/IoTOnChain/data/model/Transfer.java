@@ -19,7 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Transfer implements Serializable {
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
@@ -29,20 +29,24 @@ public class Transfer implements Serializable {
   @Enumerated(EnumType.STRING)
   @Builder.Default
   private TransferStatus status = TransferStatus.INIT;
-  private String batchID;
+  private String oldBatchID;
+  private String newBatchID;
   private int quantity;
   private String unity;
   private String companySenderID;
+  private String companySenderUsername;
   private String companyRecipientID;
+  private String companyRecipientUsername;
   private LocalDateTime transferDateStart;
   private LocalDateTime lastUpdate;
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<ChainTransaction> txTransactionList = new ArrayList<>();
+
   public enum TransferType {
-    ONESHOT, WITHACCEPTANCE;
+    ONESHOT, WITHACCEPTANCE
   }
-  
+
   public enum TransferStatus implements Serializable {
-    COMPLETED, INIT, PENDING, REJECTED;
+    COMPLETED, INIT, PENDING, REJECTED
   }
 }

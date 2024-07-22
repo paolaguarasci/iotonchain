@@ -1,6 +1,5 @@
 package it.unical.IoTOnChain.data.dto;
 
-import it.unical.IoTOnChain.data.model.Batch;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

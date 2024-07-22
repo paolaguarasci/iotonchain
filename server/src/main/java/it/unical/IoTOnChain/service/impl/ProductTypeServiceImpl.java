@@ -22,19 +22,19 @@ public class ProductTypeServiceImpl implements ProductTypeService {
   private final ProductTypeRepository productTypeRepository;
   private final CompanyRepository companyRepository;
   private final RecipeRepository recipeRepository;
-  
-  
+
+
   @Override
   public ProductType createProductTypeForCompany(Company company, String productTypeName, String unity, Recipe recipe) {
-    
-    
+
+
     Optional<Company> companyFromDb = companyRepository.findById(company.getId());
     if (companyFromDb.isPresent()) {
       Company companyToUpdate = companyFromDb.get();
       if (companyToUpdate.getProductTypeList().stream().anyMatch(el -> el.getName().equals(productTypeName))) {
         log.debug("Product type {} already exists", productTypeName);
       } else {
-        if(recipe != null && recipe.getId() == null) {
+        if (recipe != null && recipe.getId() == null) {
           recipe = recipeRepository.save(recipe);
         }
         ProductType ppSaved = productTypeRepository.save(ProductType.builder().name(productTypeName).unity(unity).recipe(recipe).build());
@@ -46,10 +46,10 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     }
     return null;
   }
-  
+
   @Override
   public List<ProductType> getAllProductTypesByLoggedCompany(String companyLogged) {
-    
+
     if (companyLogged == null || companyLogged.isEmpty()) {
       return List.of();
     }
@@ -59,9 +59,9 @@ public class ProductTypeServiceImpl implements ProductTypeService {
       return company.get().getProductTypeList();
     }
     return List.of();
-    
+
   }
-  
+
   @Override
   public ProductType getOneById(String productTypeID) {
     return productTypeRepository.findById(UUID.fromString(productTypeID)).orElse(null);

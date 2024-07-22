@@ -20,19 +20,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/company")
 public class CompanyController {
-  
+
   private final CompanyService companyService;
   private final GenericMapper mapper;
-  
+
   @GetMapping("/client")
   public ResponseEntity<List<CompanyLite>> getAllCompanies(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all client for company logged {}", principal.getClaimAsString("preferred_username"));
-    String companyLogged = principal.getClaimAsString("preferred_username");
+    String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok(mapper.mapCompanyLite(companyService.getAllCompanyClient(company)));
   }
-  
+
 }

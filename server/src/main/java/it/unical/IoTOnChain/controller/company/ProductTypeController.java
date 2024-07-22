@@ -4,7 +4,6 @@ import it.unical.IoTOnChain.data.dto.CreateProductTypeDTOFromOwner;
 import it.unical.IoTOnChain.data.dto.ProductTypeToOwner;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.Recipe;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.ProductTypeService;
@@ -26,23 +25,23 @@ public class ProductTypeController {
   private final ProductTypeService productTypeService;
   private final CompanyService companyService;
   private final GenericMapper mapper;
-  
+
   @GetMapping
   public ResponseEntity<List<ProductTypeToOwner>> getAllProductTypesByLoggedCompany(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all product type  for company logged");
-    String companyLogged = principal.getClaimAsString("preferred_username");
+    String companyLogged = principal.getClaimAsString("company");
     if (companyLogged == null) {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok(mapper.mapForProductTypeOwner(productTypeService.getAllProductTypesByLoggedCompany(companyLogged)));
   }
-  
-  
+
+
   @PostMapping
   public ResponseEntity<ProductTypeToOwner> createProductType(@AuthenticationPrincipal Jwt principal, @RequestBody CreateProductTypeDTOFromOwner dto) {
     log.debug("Create product type {}", dto);
-    String companyLogged = principal.getClaimAsString("preferred_username");
+    String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
-    return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(company, dto.getName(), dto.getUnity(), mapper.map(dto.getRecipe()) )));
+    return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(company, dto.getName(), dto.getUnity(), mapper.map(dto.getRecipe()))));
   }
 }
