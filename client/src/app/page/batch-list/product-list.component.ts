@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompanyBatchService } from '../../services/company-batch.service';
 
 import { MessageService, SelectItem } from 'primeng/api';
@@ -19,6 +19,8 @@ import { CompanyService } from '../../services/company.service';
 import { TransferService } from '../../services/transfer.service';
 import { ToastModule } from 'primeng/toast';
 import { KeycloakService } from 'keycloak-angular';
+import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -37,6 +39,8 @@ import { KeycloakService } from 'keycloak-angular';
     CheckboxModule,
     RadioButtonModule,
     ToastModule,
+    OverlayPanelModule,
+    TableModule,
   ],
   providers: [
     CompanyBatchService,
@@ -55,6 +59,9 @@ export class ComapnyBatchListComponent implements OnInit {
   selectedTransferType!: any;
   selectedBatch!: any;
   visibleTrasferDialog: boolean = false;
+  infobatch: any[] = [];
+
+  @ViewChild('txdetails', { static: false }) txdetails!: OverlayPanel;
 
   constructor(
     private productService: CompanyBatchService,
@@ -93,9 +100,19 @@ export class ComapnyBatchListComponent implements OnInit {
     this.selectedBatch = items;
   }
 
-  showInfoDialog(item: any) {
+  showInfoDialog(item: any, $event: any) {
+    this.infobatch = []
     this.transferService.getAllByBatchId(item.batchId).subscribe({
       next: (res: any) => {
+        res.map((tx: any) => {
+          this.infobatch.push({
+            date: tx.transferDateStart,
+            from: tx.companySenderUsername,
+            to: tx.companyRecipientUsername,
+            batchId: tx.newBatchId,
+          });
+        });
+        this.txdetails.show($event);
         console.log(res);
       },
       error: (err: any) => {
