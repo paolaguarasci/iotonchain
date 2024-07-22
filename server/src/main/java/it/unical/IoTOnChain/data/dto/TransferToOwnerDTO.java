@@ -16,7 +16,8 @@ public class TransferToOwnerDTO implements Serializable {
   private String id;
   private String type;
   private String status;
-  private String batchID;
+  private String oldBatchID;
+  private String newBatchID;
   private int quantity;
   private String unity;
   private String companySenderID;
