@@ -36,4 +36,8 @@ public interface GenericMapper {
   RecipeRow map(CreateRecipeRowDTOFromOwner recipe);
 
   List<RecipeRow> mapListRecipeRow(List<CreateRecipeRowDTOFromOwner> recipes);
+
+  List<DocumentToOwnerDTO> mapDocumentsToDTO(List<Document> allByCompanyLogged);
+
+  DocumentToOwnerDTO map(Document entity);
 }
