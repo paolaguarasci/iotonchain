@@ -6,6 +6,7 @@ import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Document;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.DocumentService;
+import it.unical.IoTOnChain.service.NotarizeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ import java.util.List;
 public class DocumentController {
   private final CompanyService companyService;
   private final DocumentService documentService;
+  private final NotarizeService notarizeService;
   private final GenericMapper genericMapper;
   private final Path root = Paths.get("/tmp");
   @GetMapping
@@ -72,5 +74,19 @@ public class DocumentController {
     }
   }
   
-
+  @PostMapping("/notarize/{doc_id}")
+  public ResponseEntity<Object> notarizeDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
+    String companyName = principal.getClaimAsString("company");
+    Company company = companyService.getOneByName(companyName);
+    if (company == null) {
+      return ResponseEntity.badRequest().build();
+    }
+    log.debug("Notarize document for company logged {} ", company.getName());
+    //  0x734a8918ede5dbc461d11f391a79efb0baf6fde8c1a78031f43ca7471a9fae3c
+    try {
+      return ResponseEntity.ok(genericMapper.map(documentService.notarize(company, doc_id)));
+    } catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
+  }
 }

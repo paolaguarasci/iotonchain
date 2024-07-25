@@ -37,7 +37,7 @@ export class DocumentsListComponent implements OnInit {
   documents!: any;
   totalSizePercent: number = 0;
   selectedFile!: any;
-
+uploading = false;
   hashCalculated!: any;
   txId!: any;
 
@@ -78,14 +78,28 @@ export class DocumentsListComponent implements OnInit {
   }
   upload() {
     if (this.selectedFile) {
-      const formData = new FormData();
+      this.uploading = true;
+    const formData = new FormData();
       formData.append('file', this.selectedFile);
       this.documentService.uploadDocument(formData).subscribe({
         next: (res: any) => {
           this.up();
           this.txId = res?.notarize?.txTransactionList[0]?.txId;
+          this.uploading = false;
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Success',
+            detail: 'File Uploaded',
+          });
         },
-        error: (err: any) => {},
+        error: (err: any) => {
+          this.uploading = false;
+          this.messageService.add({
+            severity: 'warning',
+            summary: 'Error',
+            detail: 'File Uploaded error',
+          });
+        },
       });
     }
   }

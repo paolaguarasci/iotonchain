@@ -19,4 +19,6 @@ public interface DocumentService {
   
   
   Document check(String hash);
+  
+  Document notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException;
 }

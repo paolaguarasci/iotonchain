@@ -2,7 +2,11 @@
   <div>
     <input type="file" (change)="onFileSelected($event)">
   </div>
+
   <div class="card flex flex-row align-items-start gap-3 justify-content-center">
+
+
+
     <p-button (onClick)="upload()">
       upload
     </p-button>
@@ -21,4 +25,7 @@
   <div>
     {{ hashCalculated }}
   </div>
+</div>
+<div *ngIf="uploading">
+  <p-progressBar mode="indeterminate" [style]="{ height: '6px' }" />
 </div>

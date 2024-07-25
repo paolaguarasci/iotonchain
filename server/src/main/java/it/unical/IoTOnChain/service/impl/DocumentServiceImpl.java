@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -31,14 +33,32 @@ public class DocumentServiceImpl implements DocumentService {
   @Override
   public Document createOne(Company company, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Document doc =  documentRepository.save(Document.builder().owner(company).path(String.valueOf(resolve)).build());
-    Notarize not = notarizeService.notarize(doc);
-    doc.setNotarize(not);
-    documentRepository.save(doc);
+    // Notarize not = notarizeService.notarize(doc);
+    // doc.setNotarize(not);
+    // documentRepository.save(doc);
     return doc;
   }
   
   @Override
   public Document check(String hash) {
+    return null;
+  }
+  
+  @Override
+  public Document notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+    Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(docId));
+    if (documentOptional.isEmpty()) {
+      return null; // TODO FIXME
+    }
+    if(!documentOptional.get().getOwner().equals(company)) {
+      return null; // TODO FIXME
+    }
+    
+    if(documentOptional.get().getNotarize() == null) {
+      Notarize nx = notarizeService.notarize(documentOptional.get());
+      documentOptional.get().setNotarize(nx);
+      return documentRepository.save(documentOptional.get());
+    }
     return null;
   }
 }
