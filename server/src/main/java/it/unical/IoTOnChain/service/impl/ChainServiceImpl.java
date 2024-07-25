@@ -1,14 +1,11 @@
 package it.unical.IoTOnChain.service.impl;
 
 import it.unical.IoTOnChain.chain.Hash;
-import it.unical.IoTOnChain.data.model.ChainTransaction;
 import it.unical.IoTOnChain.repository.NotarizeRepository;
 import it.unical.IoTOnChain.service.ChainService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
@@ -25,14 +22,10 @@ import org.web3j.tx.response.TransactionReceiptProcessor;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 @Service
 @Slf4j
@@ -58,7 +51,7 @@ public class ChainServiceImpl implements ChainService {
   
   
   @Async
-  public Future<String> signString(byte[] str) throws IOException, TransactionException {
+  public void signString(byte[] str, java.util.function.Function<String, String> func) throws IOException, TransactionException {
     Hash contract = (Hash) this.registrationContract.get("hash");
     TransactionReceipt txReceipt = null;
     Function function = new Function("signHash",
@@ -68,22 +61,18 @@ public class ChainServiceImpl implements ChainService {
     EthSendTransaction txHash = this.transactionManager.sendTransaction(DefaultGasProvider.GAS_PRICE, DefaultGasProvider.GAS_LIMIT, contract.getContractAddress(), txData, BigInteger.ZERO);
     TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY, TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
     txReceipt = receiptProcessor.waitForTransactionReceipt(txHash.getTransactionHash());
-    return new AsyncResult<String>(txReceipt.getTransactionHash());
+    func.apply(txReceipt.getTransactionHash());
   }
   // 6bc2eff5b2bf8f20d6a8c1857c342dd8d98bab567235dceb31d338ecfeb57661
   @Override
   @Async
-  public Future<String> testAsync() {
-    System.out.println("Execute method asynchronously - "
-      + Thread.currentThread().getName());
-    try {
-      Thread.sleep(15000);
-      return new AsyncResult<String>("hello world !!!!");
-    } catch (InterruptedException e) {
-      //
-    }
-    
-    return null;
+  public void testAsync() {
+//    System.out.println("Execute method asynchronously - "
+//      + Thread.currentThread().getName());
+//    try {
+//      Thread.sleep(15000);
+//
+//    }
   }
   
 }

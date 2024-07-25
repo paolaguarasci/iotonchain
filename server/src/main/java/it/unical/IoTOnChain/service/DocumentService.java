@@ -1,6 +1,5 @@
 package it.unical.IoTOnChain.service;
 
-import it.unical.IoTOnChain.data.dto.CreateRecipeDTOFromOwner;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Document;
 import org.web3j.protocol.exceptions.TransactionException;
@@ -20,5 +19,5 @@ public interface DocumentService {
   
   Document check(String hash);
   
-  Document notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException;
+  void notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException;
 }

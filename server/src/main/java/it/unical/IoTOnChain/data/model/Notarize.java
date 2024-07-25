@@ -22,11 +22,13 @@ public class Notarize implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-  private String data; // hash dei dati da notarizzare
+  private String hash; // hash dei dati da notarizzare
   private LocalDateTime notarizedAt;
   
+  // sono mutualmente esclusivi
   @OneToOne
   private Document document;
+  private String data;
   
   @ManyToOne
   private Company company;

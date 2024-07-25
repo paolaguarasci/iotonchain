@@ -2,7 +2,6 @@ package it.unical.IoTOnChain.service.impl;
 
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Document;
-import it.unical.IoTOnChain.data.model.Notarize;
 import it.unical.IoTOnChain.repository.DocumentRepository;
 import it.unical.IoTOnChain.service.DocumentService;
 import it.unical.IoTOnChain.service.NotarizeService;
@@ -33,9 +32,7 @@ public class DocumentServiceImpl implements DocumentService {
   @Override
   public Document createOne(Company company, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Document doc =  documentRepository.save(Document.builder().owner(company).path(String.valueOf(resolve)).build());
-    // Notarize not = notarizeService.notarize(doc);
-    // doc.setNotarize(not);
-    // documentRepository.save(doc);
+    notarizeService.notarize(doc);
     return doc;
   }
   
@@ -45,20 +42,10 @@ public class DocumentServiceImpl implements DocumentService {
   }
   
   @Override
-  public Document notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+  public void notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(docId));
-    if (documentOptional.isEmpty()) {
-      return null; // TODO FIXME
-    }
-    if(!documentOptional.get().getOwner().equals(company)) {
-      return null; // TODO FIXME
-    }
-    
     if(documentOptional.get().getNotarize() == null) {
-      Notarize nx = notarizeService.notarize(documentOptional.get());
-      documentOptional.get().setNotarize(nx);
-      return documentRepository.save(documentOptional.get());
+      notarizeService.notarize(documentOptional.get());
     }
-    return null;
   }
 }

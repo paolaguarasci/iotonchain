@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 @Component
 @Slf4j
@@ -39,9 +38,9 @@ public class InitDB implements CommandLineRunner {
     
     // A quanto ho capito se non fai la get del Future si nchiovetta
     
-    Future<String> s = chainService.testAsync();
+    chainService.testAsync();
     log.info("Init DB - Finished ssss");
-    log.info("Init DB - async {}", s.get());
+    
     
     Company paolaSPA = makeCompany("paolaspa");
     ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico ligure", "kg", null);
