@@ -23,29 +23,29 @@ public class UserInfo implements Serializable, UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-
+  
   @Column(nullable = false, unique = true)
   private String username;
-
+  
   private String keycloakUsername;
   private String keycloakId;
-
+  
   private String email;
-
+  
   private String firstName;
   private String lastName;
-
+  
   @ManyToOne
   private Company company;
-
+  
   @OneToMany
   private List<Role> roles;
-
+  
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of();
   }
-
+  
   @Override
   public String getPassword() {
     return "";

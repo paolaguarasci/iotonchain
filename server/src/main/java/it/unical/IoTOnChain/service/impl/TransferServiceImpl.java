@@ -24,6 +24,7 @@ public class TransferServiceImpl implements TransferService {
   private final TransferRepository transferRepository;
   private final BatchService batchService;
   private final CompanyService companyService;
+  
   @Override
   public Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
     Batch newsBAtch = batchService.move(companyLogged, batch, company, quantity);
@@ -45,17 +46,17 @@ public class TransferServiceImpl implements TransferService {
       .txTransactionList(List.of(tx))
       .build());
   }
-
+  
   @Override
   public Transfer makeTransactionWithAcceptance(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
     return null;
   }
-
+  
   @Override
   public List<Transfer> getAllForCompanyLogged(Company companyOwner) {
     return transferRepository.findAllByCompanySenderIDOrCompanyRecipientID(companyOwner.getId().toString(), companyOwner.getId().toString());
   }
-
+  
   @Override
   public List<Transfer> getAllForCompanyLoggedAndBatchId(Company companyOwner, String batchId) {
     List<Transfer> q1 = transferRepository.findAllByCompanySenderIDOrCompanyRecipientID(companyOwner.getId().toString(), companyOwner.getId().toString());
@@ -68,8 +69,8 @@ public class TransferServiceImpl implements TransferService {
     log.debug("La query Q2 ha restituito {} risultati", q2.size());
     return q2;
   }
-
-
+  
+  
   private ChainTransaction saveOnChain() {
     // TODO
     return ChainTransaction.builder().txId("txid").build();

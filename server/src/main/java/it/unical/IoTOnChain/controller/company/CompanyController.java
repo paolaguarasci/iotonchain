@@ -20,10 +20,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/company")
 public class CompanyController {
-
+  
   private final CompanyService companyService;
   private final GenericMapper mapper;
-
+  
   @GetMapping("/client")
   public ResponseEntity<List<CompanyLite>> getAllCompanies(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all client for company logged {}", principal.getClaimAsString("preferred_username"));
@@ -34,5 +34,5 @@ public class CompanyController {
     }
     return ResponseEntity.ok(mapper.mapCompanyLite(companyService.getAllCompanyClient(company)));
   }
-
+  
 }

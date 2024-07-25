@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -5,5 +6,24 @@ import { Injectable } from '@angular/core';
 })
 export class DocumentService {
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) { }
+
+  getAllDocuments() {
+    return this.httpClient.get(`/api/v1/company/doc`)
+
+  }
+
+
+  getAllAnalisys() {
+    return this.httpClient.get(`/api/v1/company/doc/analisy`)
+  }
+
+  getAllCertificates() {
+    return this.httpClient.get(`/api/v1/company/doc/certificate`)
+  }
+
+
+  uploadDocument(data: any) {
+    return this.httpClient.post(`/api/v1/company/doc/upload`, data)
+  }
 }

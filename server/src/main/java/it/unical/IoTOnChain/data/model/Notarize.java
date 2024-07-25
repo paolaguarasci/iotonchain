@@ -24,13 +24,13 @@ public class Notarize implements Serializable {
   private UUID id;
   private String data; // hash dei dati da notarizzare
   private LocalDateTime notarizedAt;
-
+  
   @OneToOne
   private Document document;
-
+  
   @ManyToOne
   private Company company;
-
+  
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<ChainTransaction> txTransactionList = new ArrayList<>();
 }

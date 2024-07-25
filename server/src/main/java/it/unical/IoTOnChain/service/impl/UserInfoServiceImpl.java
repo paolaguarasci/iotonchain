@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserInfoServiceImpl implements UserInfoService {
   private final UserInfoRepository userInfoRepository;
   private final KeyCloakService keyCloakService;
-
+  
   @Override
   public UserInfo newUser(Company company, String username) {
     keyCloakService.addCompanyNameToOptions(company);

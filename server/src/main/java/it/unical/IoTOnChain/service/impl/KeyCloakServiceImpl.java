@@ -19,7 +19,7 @@ import java.util.*;
 
 public class KeyCloakServiceImpl implements KeyCloakService {
   private final Keycloak keycloak;
-
+  
   KeyCloakServiceImpl() {
     this.keycloak = KeycloakBuilder.builder()
       .serverUrl("http://localhost:8881")
@@ -30,7 +30,7 @@ public class KeyCloakServiceImpl implements KeyCloakService {
       .password("admin")
       .build();
   }
-
+  
   @Override
   public void addCompanyNameToOptionsBatch(List<Company> companies) {
     Set newCompanyList = new HashSet();
@@ -45,7 +45,7 @@ public class KeyCloakServiceImpl implements KeyCloakService {
     upConfig.getAttribute("company").setValidations(newValidation);
     this.keycloak.realm("iotchain").users().userProfile().update(upConfig);
   }
-
+  
   @Override
   public void addCompanyNameToOptions(Company company) {
     UPConfig upConfig = keycloak.realm("iotchain").users().userProfile().getConfiguration();
@@ -62,18 +62,18 @@ public class KeyCloakServiceImpl implements KeyCloakService {
       keycloak.realm("iotchain").users().userProfile().update(upConfig);
     }
   }
-
+  
   @Override
   public String createUser(UserInfo user) {
     String normalizedCompanyName = user.getCompany().getName();
     String username = user.getUsername();
     UserRepresentation newUser = new UserRepresentation();
     CredentialRepresentation newPass = new CredentialRepresentation();
-
+    
     Map<String, List<String>> attributes = new HashMap<>();
     attributes.put("company", Collections.singletonList(normalizedCompanyName));
     newUser.setAttributes(attributes);
-
+    
     newPass.setType(CredentialRepresentation.PASSWORD);
     // newPass.setValue("changeme");
     // newPass.setTemporary(true);

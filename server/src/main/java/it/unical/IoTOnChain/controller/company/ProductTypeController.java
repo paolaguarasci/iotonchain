@@ -25,7 +25,7 @@ public class ProductTypeController {
   private final ProductTypeService productTypeService;
   private final CompanyService companyService;
   private final GenericMapper mapper;
-
+  
   @GetMapping
   public ResponseEntity<List<ProductTypeToOwner>> getAllProductTypesByLoggedCompany(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all product type  for company logged");
@@ -35,8 +35,8 @@ public class ProductTypeController {
     }
     return ResponseEntity.ok(mapper.mapForProductTypeOwner(productTypeService.getAllProductTypesByLoggedCompany(companyLogged)));
   }
-
-
+  
+  
   @PostMapping
   public ResponseEntity<ProductTypeToOwner> createProductType(@AuthenticationPrincipal Jwt principal, @RequestBody CreateProductTypeDTOFromOwner dto) {
     log.debug("Create product type {}", dto);

@@ -3,6 +3,7 @@ import { CreateStepsComponent } from './page/create-steps/create-steps.component
 import { ComapnyBatchListComponent } from './page/batch-list/product-list.component';
 import { ProductTypeListComponent } from './page/product-type-list/product-type-list.component';
 import { DashboardComponent } from './page/dashboard/dashboard.component';
+import { DocumentsListComponent } from './page/documents-list/documents-list.component';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,10 @@ export const routes: Routes = [
   {
     path: 'product',
     component: ComapnyBatchListComponent,
+  },
+  {
+    path: 'document',
+    component: DocumentsListComponent,
   },
   {
     path: 'product-type',

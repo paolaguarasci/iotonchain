@@ -20,6 +20,8 @@ public class SecurityConfig {
         log.error("Errore {}", exception);
       })
       .authorizeHttpRequests((requests) -> requests
+        .requestMatchers("/api/v1/public").permitAll()
+        .requestMatchers("/api/v1/public/**").permitAll()
         .anyRequest().authenticated()
       ).oauth2ResourceServer((oauth2) ->
         oauth2.jwt(Customizer.withDefaults()));

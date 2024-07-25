@@ -1,37 +1,34 @@
-spring.application.name=IoTOnChain
-spring.datasource.url=jdbc:mariadb://localhost:3306/iotonchain
+spring.application.name=
+server.port=
+logging.level.it.unical.IoTOnChain=
+
+#### DB                 ############################################################
+spring.datasource.url=
 spring.datasource.username=
 spring.datasource.password=
-spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-spring.jpa.hibernate.ddl-auto=create-drop
-spring.jpa.open-in-view=false
-spring.jpa.generate-ddl=true
-server.port=8888
-#spring.jpa.show-sql=true
-logging.level.it.unical.IoTOnChain=DEBUG
-# Questo serve altrimenti non riesce a inizializzare i proxy con le query a mano jpql
-spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true
-#### Init configuration ############################################################
-app.init.db=true
-app.init.chain=false
-####################################################################################
-#### Blockchain configuration ######################################################
-app.chain.infurakey=
-app.chain.polygonNetUrlWs=wss://polygon-amoy.infura.io/ws/v3/
-app.chain.polygonNetUrlHttp=https://polygon-amoy-bor-rpc.publicnode.com
+spring.datasource.driver-class-name=
+spring.jpa.hibernate.ddl-auto=
+spring.jpa.open-in-view=
+spring.jpa.generate-ddl=
+#spring.jpa.show-sql=
+spring.jpa.properties.hibernate.enable_lazy_load_no_trans=
+
+#### Init               ############################################################
+app.init.db=
+app.init.chain=
+
+#### Blockchain               ######################################################
+app.chain.polygon=
 app.chain.pvtkey=
 app.chain.address.contract.hash=
 app.chain.address.contract.box=
 app.chain.address.contract.token.v1=
 app.chain.address.contract.token.v2=
-app.chain.address.contract.box.locale=
-app.chain.address.contract.hash.locale=
-app.chain.address.contract.token.v1.locale=
-app.chain.address.contract.token.v2.locale=
-app.chain.pubkey.locale=
-app.chain.pvtkey.locale=
-####################################################################################
-spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8080/realms/iotonchain
+
+#### Keycloak                  ######################################################
+spring.security.oauth2.resourceserver.jwt.issuer-uri=
+
+#### SSL  ###########################################################################
 server.ssl.key-store-type=
 server.ssl.key-store=
 server.ssl.key-store-password=

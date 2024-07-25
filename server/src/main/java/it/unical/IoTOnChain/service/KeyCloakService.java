@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface KeyCloakService {
   void addCompanyNameToOptionsBatch(List<Company> companies);
-
+  
   void addCompanyNameToOptions(Company company);
-
+  
   String createUser(UserInfo user);
 }

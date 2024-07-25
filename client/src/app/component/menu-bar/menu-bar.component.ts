@@ -69,6 +69,7 @@ export class MenuBarComponent implements OnInit {
           {
             label: 'Document',
             icon: 'pi pi-palette',
+            route: '/document',
             items: [
               {
                 label: 'Analisys',

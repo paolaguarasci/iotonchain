@@ -5,5 +5,5 @@ import it.unical.IoTOnChain.data.model.user.UserInfo;
 
 public interface UserInfoService {
   UserInfo newUser(Company company, String username);
-
+  
 }

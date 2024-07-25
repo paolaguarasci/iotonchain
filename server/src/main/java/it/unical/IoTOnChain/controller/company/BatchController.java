@@ -34,15 +34,15 @@ public class BatchController {
   private final GenericMapper mapper;
   private final ProductTypeService productTypeService;
   private final ObjectMapper objectMapper;
-
+  
   @GetMapping
   public ResponseEntity<List<BatchToOwner>> getAllProductsByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all product for company logged {}", principal);
     String companyLogged = principal.getClaimAsString("company");
     return ResponseEntity.ok(mapper.mapForProductOwner(batchService.getAllProductByCompanyLogged(companyLogged)));
   }
-
-
+  
+  
   @SneakyThrows
   @PostMapping
   public ResponseEntity<BatchToOwner> createBatch(@AuthenticationPrincipal Jwt principal, @RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException {
@@ -50,11 +50,11 @@ public class BatchController {
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
     ProductType productType = productTypeService.getOneById(dto.getProductTypeID());
-
+    
     if (company == null || productType == null) {
       return ResponseEntity.badRequest().body(null);
     }
-
+    
     try {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId())));
     } catch (NoSuchElementException e) {

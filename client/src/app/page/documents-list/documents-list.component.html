@@ -1,1 +1,24 @@
-<p>documents-list works!</p>
+<div class="card flex flex-column align-items-start gap-3 justify-content-center">
+  <div>
+    <input type="file" (change)="onFileSelected($event)">
+  </div>
+  <div class="card flex flex-row align-items-start gap-3 justify-content-center">
+    <p-button (onClick)="upload()">
+      upload
+    </p-button>
+
+    <p-button (onClick)="calculateHash()">
+      calculate hash
+    </p-button>
+
+    <p-button (onClick)="check()">
+      check
+    </p-button>
+  </div>
+  <div>
+    {{ documents | json}}
+  </div>
+  <div>
+    {{ hashCalculated }}
+  </div>
+</div>
