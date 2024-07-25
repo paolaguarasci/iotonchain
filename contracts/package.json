@@ -1,0 +1,50 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "net": "npx hardhat node",
+    "deploy:token": "npx hardhat ignition deploy --network polygonAmoy ignition/modules/token.module.ts",
+    "token:deploy": "npx hardhat run --network polygonAmoy scripts/token.deploy.ts",
+    "token:mint": "npx hardhat run --network polygonAmoy scripts/token.mint.ts",
+    "tokenV2:deploy": "npx hardhat run --network polygonAmoy scripts/tokenV2.deploy.ts",
+    "tokenV2:mint": "npx hardhat run --network polygonAmoy scripts/tokenV2.mint.ts",
+    "tokenV2:l1": "npx hardhat run --network polygonAmoy scripts/tokenV2.listner.ts",
+    "tokenV2:t": "npx hardhat run --network polygonAmoy scripts/tokenV2.transfer.ts",
+    "deploy:box": "npx hardhat ignition deploy --network polygonAmoy ignition/modules/box.module.ts",
+    "box:deploy": "npx hardhat run --network polygonAmoy scripts/box.deploy.ts",
+    "box:store": "npx hardhat run --network polygonAmoy scripts/box.store.ts",
+    "deploy:hash": "npx hardhat ignition deploy --network polygonAmoy ignition/modules/hash.module.ts",
+    "hash:deploy": "npx hardhat run --network polygonAmoy scripts/hash.deploy.ts",
+    "hash:sign": "npx hardhat run --network polygonAmoy scripts/hash.sign.ts",
+    "hash:up": "npx hardhat run --network polygonAmoy scripts/hash.update.ts",
+    "hash:listner": "npx hardhat run --network polygonAmoy scripts/hash.listner.ts",
+    "accounts": "npx hardhat accounts",
+    "clean": "rm -rf artifacts && rm -rf cache && rm -rf typechain-types",
+    "test": "npx hardhat test",
+    "test:tv2": "npx hardhat test test/tokenV2.test.ts",
+    "cover": "npx hardhat coverage"
+  },
+  "author": "PaolaGuarasci",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.6",
+    "@nomicfoundation/hardhat-verify": "^2.0.8",
+    "@openzeppelin/contracts": "^5.0.2",
+    "@openzeppelin/contracts-upgradeable": "^5.0.2",
+    "@openzeppelin/hardhat-upgrades": "^3.2.0",
+    "@openzeppelin/test-helpers": "^0.5.16",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.1",
+    "hardhat": "^2.22.5",
+    "hardhat-gas-reporter": "^2.2.0"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/cli": "^2.8.2",
+    "@types/crypto-js": "^4.2.2",
+    "crypto-js": "^4.2.0",
+    "ethers-decode-error": "^2.1.3"
+  }
+}
