@@ -7,11 +7,16 @@ import it.unical.IoTOnChain.service.DocumentService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.exceptions.TransactionException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +28,11 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class DocumentServiceImpl implements DocumentService {
   private final DocumentRepository documentRepository;
+  
   private final NotarizeService notarizeService;
+  
+  private Path rootLocation = Paths.get("/tmp");
+  
   @Override
   public List<Document> getAllByCompanyLogged(Company company) {
     return documentRepository.findAllByOwner(company);
@@ -41,6 +50,8 @@ public class DocumentServiceImpl implements DocumentService {
     return null;
   }
   
+  
+  
   @Override
   public void notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(docId));
@@ -48,4 +59,38 @@ public class DocumentServiceImpl implements DocumentService {
       notarizeService.notarize(documentOptional.get());
     }
   }
+  
+  
+  @Override
+  public Path load(String filename) {
+    return rootLocation.resolve(filename);
+  }
+
+  @Override
+  public Resource loadAsResource(String filename) throws FileNotFoundException {
+    try {
+      Path file = load(filename);
+      Resource resource = new UrlResource(file.toUri());
+      if (resource.exists() || resource.isReadable()) {
+        return resource;
+      }
+      else {
+        throw new FileNotFoundException(
+          "Could not read file: " + filename);
+      }
+    }
+    catch (MalformedURLException e) {
+      throw new FileNotFoundException();
+    }
+  }
+  
+  @Override
+  public Document getOneByCompanyLogged(Company company, String docId) {
+    Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(docId));
+    if(documentOptional.isPresent() && documentOptional.get().getOwner().equals(company)) {
+      return documentOptional.get();
+    }
+    return null;
+  }
+  
 }

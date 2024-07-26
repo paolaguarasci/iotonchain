@@ -12,7 +12,10 @@ import { FormsModule } from '@angular/forms';
 import { ethers } from 'ethers';
 import { sha3_256 } from 'js-sha3';
 import { environment } from '../../../environments/environment';
-
+import { TableModule } from 'primeng/table';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faLink, faStamp } from '@fortawesome/free-solid-svg-icons';
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-documents-list',
   standalone: true,
@@ -25,6 +28,8 @@ import { environment } from '../../../environments/environment';
     ToastModule,
     HttpClientModule,
     CommonModule,
+    TableModule,
+    FontAwesomeModule,
   ],
   providers: [MessageService],
   templateUrl: './documents-list.component.html',
@@ -37,10 +42,11 @@ export class DocumentsListComponent implements OnInit {
   documents!: any;
   totalSizePercent: number = 0;
   selectedFile!: any;
-uploading = false;
+  uploading = false;
   hashCalculated!: any;
   txId!: any;
-
+  faLink = faLink;
+  faStamp = faStamp;
   constructor(
     private documentService: DocumentService,
     private config: PrimeNGConfig,
@@ -57,6 +63,26 @@ uploading = false;
       },
       error: (err: any) => {},
     });
+  }
+downloadOne(document: any) {
+  this.documentService.dowloadOne(document.id).subscribe({
+    next: (res: any) => {
+      saveAs(res);
+    },
+    error: (err: any) => {
+
+    },
+  })
+}
+  notarize(document: any) {
+    this.documentService.notarizeDocument(document.id).subscribe({
+      next: (res: any) => {
+
+      },
+      error: (err: any) => {
+
+      },
+    })
   }
 
   calculateHash() {
@@ -79,7 +105,7 @@ uploading = false;
   upload() {
     if (this.selectedFile) {
       this.uploading = true;
-    const formData = new FormData();
+      const formData = new FormData();
       formData.append('file', this.selectedFile);
       this.documentService.uploadDocument(formData).subscribe({
         next: (res: any) => {
@@ -107,18 +133,19 @@ uploading = false;
     this.selectedFile = event.target.files[0];
   }
 
-  async check() {
+  // 5f3adfdacf3540813b28030767e401853dd21e3337093a4a3339a3f6b79d65ae
+
+  async check(document: any) {
     // URL del provider (qui si utilizza Infura, ma si possono usare altri provider come Alchemy o un nodo locale)
     const providerUrl =
       'https://polygon-amoy.infura.io/v3/fed6b76bf1004a159dd69d39a0824618';
 
     // Creazione di un provider
     const provider = new ethers.JsonRpcProvider(providerUrl);
-    const contractAddress = environment.hashContract
-    const abi: any = environment.hashABI
+    const contractAddress = environment.hashContract;
+    const abi: any = environment.hashABI;
     // Hash della transazione che si desidera leggere
-    const transactionHash =
-      '0xfaaa24f7237e88ecb1fcb19ca9a8d2d0a73aaae801206c3adfad0585c4198ef3';
+    const transactionHash = document.notarize.txTransactionList[0].txId;
 
     try {
       const contract = new ethers.Contract(contractAddress, abi, provider);
@@ -127,7 +154,7 @@ uploading = false;
       if (transaction) {
         const data = transaction.data;
         const decodedInput = contract.interface.parseTransaction({ data });
-        console.log(decodedInput);
+        console.log(decodedInput?.args[0]);
         console.log('Dettagli della Transazione:');
         console.log(transaction);
       } else {

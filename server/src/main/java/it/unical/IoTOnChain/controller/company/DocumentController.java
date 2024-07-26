@@ -3,23 +3,33 @@ package it.unical.IoTOnChain.controller.company;
 import it.unical.IoTOnChain.data.dto.DocumentToOwnerDTO;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.Company;
+import it.unical.IoTOnChain.data.model.Document;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.DocumentService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.entity.ContentType;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -80,5 +90,23 @@ public class DocumentController {
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
+  }
+  
+  
+  @RequestMapping(
+    value = "/{doc_id}",
+    method = RequestMethod.GET,
+    produces = "application/pdf")
+  public ResponseEntity<Resource> getDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
+    String companyName = principal.getClaimAsString("company");
+    Company company = companyService.getOneByName(companyName);
+    if (company == null) {
+      return ResponseEntity.badRequest().build();
+    }
+    Document document = documentService.getOneByCompanyLogged(company, doc_id);
+    if (document == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok().body(documentService.loadAsResource(document.getPath()));
   }
 }

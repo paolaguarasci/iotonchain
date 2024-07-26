@@ -13,6 +13,10 @@ export class DocumentService {
 
   }
 
+  dowloadOne(id: any) {
+    return this.httpClient.get(`/api/v1/company/doc/${id}`)
+
+  }
 
   getAllAnalisys() {
     return this.httpClient.get(`/api/v1/company/doc/analisy`)
@@ -26,4 +30,10 @@ export class DocumentService {
   uploadDocument(data: any) {
     return this.httpClient.post(`/api/v1/company/doc/upload`, data)
   }
+
+  notarizeDocument(id: any) {
+    return this.httpClient.get(`/api/v1/company/doc/notarize/${id}`)
+  }
+
+
 }

@@ -1,12 +1,13 @@
-<div class="card flex flex-column align-items-start gap-3 justify-content-center">
+<div *ngIf="uploading">
+  <p-progressBar mode="indeterminate" [style]="{ height: '6px' }" />
+</div>
+
+<div class="card flex flex-column align-items-start gap-3 justify-content-center mb-3">
   <div>
     <input type="file" (change)="onFileSelected($event)">
   </div>
 
   <div class="card flex flex-row align-items-start gap-3 justify-content-center">
-
-
-
     <p-button (onClick)="upload()">
       upload
     </p-button>
@@ -14,18 +15,49 @@
     <p-button (onClick)="calculateHash()">
       calculate hash
     </p-button>
-
-    <p-button (onClick)="check()">
-      check
-    </p-button>
+    <div>
+      {{ hashCalculated }}
+    </div>
   </div>
-  <div>
+  <!-- <div>
     {{ documents | json}}
-  </div>
-  <div>
-    {{ hashCalculated }}
-  </div>
+  </div> -->
 </div>
-<div *ngIf="uploading">
-  <p-progressBar mode="indeterminate" [style]="{ height: '6px' }" />
+
+
+
+<div>
+  <div class="card">
+    <p-table [value]="documents" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th id="id">id</th>
+          <th id="name">Name</th>
+          <th id="category">Description</th>
+          <th id="quantity">Notarized</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-document>
+        <tr>
+          <td>{{ document.id }}</td>
+          <td>{{ document.title }}</td>
+          <td>{{ document.description }}</td>
+          <td>
+            <div class="flex flex-row gap-3 align-items-center">
+              <i class="pi"
+                [ngClass]="{ 'text-green-500 pi-check-circle': document.notarize, 'text-red-500 pi-times-circle': !document.notarize }"></i>
+              <p-button *ngIf="document.notarize" size="small" (onClick)="check(document)" [rounded]="true"
+                [text]="true">
+                <fa-icon [icon]="faLink"></fa-icon>
+              </p-button>
+              <p-button size="small" (onClick)="downloadOne(document)" [rounded]="true"
+                [text]="true">
+                <fa-icon [icon]="faStamp"></fa-icon>
+              </p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>
