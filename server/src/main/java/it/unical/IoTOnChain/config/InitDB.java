@@ -101,7 +101,11 @@ public class InitDB implements CommandLineRunner {
   }
   
   private Company makeCompany(String name) {
-    return companyService.makeOne(normalizeString(name));
+    Company c = companyService.makeOne(normalizeString(name));
+    if (c == null) {
+      c = companyService.getOneByName(name);
+    }
+    return c;
   }
   
   private Recipe makeRecipe(String name, Map<ProductType, List<String>> ingredients) {

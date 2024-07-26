@@ -93,20 +93,26 @@ public class DocumentController {
   }
   
   
-  @RequestMapping(
-    value = "/{doc_id}",
-    method = RequestMethod.GET,
-    produces = "application/pdf")
-  public ResponseEntity<Resource> getDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
+  @GetMapping( "/{doc_id}")
+  public ResponseEntity<?> getDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
     String companyName = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyName);
     if (company == null) {
-      return ResponseEntity.badRequest().build();
+      return null;
     }
     Document document = documentService.getOneByCompanyLogged(company, doc_id);
     if (document == null) {
-      return ResponseEntity.notFound().build();
+      return null;
     }
-    return ResponseEntity.ok().body(documentService.loadAsResource(document.getPath()));
+    
+    Resource resource = documentService.loadAsResource(document.getPath());
+    
+    String contentType = "application/octet-stream";
+    String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
+    
+    return ResponseEntity.ok()
+      .contentType(MediaType.parseMediaType(contentType))
+      .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+      .body(resource);
   }
 }

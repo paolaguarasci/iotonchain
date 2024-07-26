@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -18,6 +20,10 @@ public class UserInfoServiceImpl implements UserInfoService {
   
   @Override
   public UserInfo newUser(Company company, String username) {
+    Optional<UserInfo> user = userInfoRepository.findByUsername(username);
+    if(user.isPresent()) {
+      return user.get();
+    }
     keyCloakService.addCompanyNameToOptions(company);
     UserInfo newUser = userInfoRepository.save(UserInfo.builder().company(company).username(username).build());
     String kid = keyCloakService.createUser(newUser);

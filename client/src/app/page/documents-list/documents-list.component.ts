@@ -67,7 +67,9 @@ export class DocumentsListComponent implements OnInit {
 downloadOne(document: any) {
   this.documentService.dowloadOne(document.id).subscribe({
     next: (res: any) => {
-      saveAs(res);
+      let filename = res.headers.get("content-disposition").replace('attachment; filename="', '').replace('"', '');
+      console.log(filename)
+      saveAs(res.body, filename);
     },
     error: (err: any) => {
 

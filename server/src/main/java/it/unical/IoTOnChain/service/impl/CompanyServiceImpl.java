@@ -18,6 +18,11 @@ public class CompanyServiceImpl implements CompanyService {
   
   @Override
   public Company makeOne(String name) {
+    
+    if(companyRepository.findByName(name).isPresent()) {
+      // TODO Gestire eccezioni in modo corretto!
+      return null;
+    }
     return companyRepository.save(Company.builder().name(name).build());
   }
   

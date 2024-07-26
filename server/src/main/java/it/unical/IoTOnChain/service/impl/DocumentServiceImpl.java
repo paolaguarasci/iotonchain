@@ -41,7 +41,7 @@ public class DocumentServiceImpl implements DocumentService {
   @Override
   public Document createOne(Company company, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Document doc =  documentRepository.save(Document.builder().owner(company).path(String.valueOf(resolve)).build());
-    notarizeService.notarize(doc);
+    // notarizeService.notarize(doc);
     return doc;
   }
   
