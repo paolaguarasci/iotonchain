@@ -34,6 +34,8 @@
           <th id="id">id</th>
           <th id="name">Name</th>
           <th id="category">Description</th>
+          <th id="category">Path</th>
+          <th id="preview">Preview</th>
           <th id="quantity">Notarized</th>
         </tr>
       </ng-template>
@@ -42,6 +44,11 @@
           <td>{{ document.id }}</td>
           <td>{{ document.title }}</td>
           <td>{{ document.description }}</td>
+          <td>{{ document.path }}</td>
+          <td style="width:14%; min-width:10rem;"><span class="p-column-title">Image</span>
+            <img  *ngIf="document.previewURL" [src]="document.previewURL" [alt]="document.id" width="100"
+                class="shadow-4 border-round" />
+        </td>
           <td>
             <div class="flex flex-row gap-3 align-items-center">
               <i class="pi"
@@ -52,8 +59,12 @@
               </p-button>
               <p-button size="small" (onClick)="downloadOne(document)" [rounded]="true"
                 [text]="true">
-                <fa-icon [icon]="faStamp"></fa-icon>
+                <fa-icon [icon]="faDownload"></fa-icon>
               </p-button>
+              <p-button size="small" (onClick)="notarize(document)" [rounded]="true"
+              [text]="true">
+              <fa-icon [icon]="faStamp"></fa-icon>
+            </p-button>
             </div>
           </td>
         </tr>
@@ -61,3 +72,6 @@
     </p-table>
   </div>
 </div>
+
+
+

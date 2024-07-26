@@ -14,8 +14,10 @@ import { sha3_256 } from 'js-sha3';
 import { environment } from '../../../environments/environment';
 import { TableModule } from 'primeng/table';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faLink, faStamp } from '@fortawesome/free-solid-svg-icons';
+import { faLink, faStamp, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { saveAs } from 'file-saver';
+
+
 @Component({
   selector: 'app-documents-list',
   standalone: true,
@@ -47,6 +49,7 @@ export class DocumentsListComponent implements OnInit {
   txId!: any;
   faLink = faLink;
   faStamp = faStamp;
+  faDownload = faDownload;
   constructor(
     private documentService: DocumentService,
     private config: PrimeNGConfig,
@@ -60,31 +63,51 @@ export class DocumentsListComponent implements OnInit {
     this.documentService.getAllDocuments().subscribe({
       next: (res: any) => {
         this.documents = res;
+        this.documents.forEach((cert: any) => {
+          this.getPreview(cert.id, cert);
+        });
       },
       error: (err: any) => {},
     });
   }
-downloadOne(document: any) {
-  this.documentService.dowloadOne(document.id).subscribe({
-    next: (res: any) => {
-      let filename = res.headers.get("content-disposition").replace('attachment; filename="', '').replace('"', '');
-      console.log(filename)
-      saveAs(res.body, filename);
-    },
-    error: (err: any) => {
 
-    },
-  })
-}
-  notarize(document: any) {
-    this.documentService.notarizeDocument(document.id).subscribe({
+  getPreview(id: any, document: any) {
+    this.documentService.dowloadOne(id).subscribe({
       next: (res: any) => {
-
+        if (res.body) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            document.previewURL = reader.result as string;
+          };
+          reader.readAsDataURL(res.body);
+        } else {
+          document.previewURL = '';
+        }
       },
       error: (err: any) => {
-
+        document.previewURL = '';
       },
-    })
+    });
+  }
+
+  downloadOne(document: any) {
+    this.documentService.dowloadOne(document.id).subscribe({
+      next: (res: any) => {
+        let filename = res.headers
+          .get('content-disposition')
+          .replace('attachment; filename="', '')
+          .replace('"', '');
+        console.log(filename);
+        saveAs(res.body, filename);
+      },
+      error: (err: any) => {},
+    });
+  }
+  notarize(document: any) {
+    this.documentService.notarizeDocument(document.id).subscribe({
+      next: (res: any) => {},
+      error: (err: any) => {},
+    });
   }
 
   calculateHash() {
@@ -108,6 +131,10 @@ downloadOne(document: any) {
     if (this.selectedFile) {
       this.uploading = true;
       const formData = new FormData();
+      formData.append('name', 'Documento fantastico!');
+      formData.append('description', 'lorem ipsum');
+      formData.append('dateStart', Date.now().toString());
+      formData.append('dateEnd', Date.now().toString());
       formData.append('file', this.selectedFile);
       this.documentService.uploadDocument(formData).subscribe({
         next: (res: any) => {

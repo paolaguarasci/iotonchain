@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,9 +40,9 @@ public class DocumentServiceImpl implements DocumentService {
   }
   
   @Override
-  public Document createOne(Company company, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
-    Document doc =  documentRepository.save(Document.builder().owner(company).path(String.valueOf(resolve)).build());
-    // notarizeService.notarize(doc);
+  public Document createOne(Company company, String name, String description, LocalDateTime localDateTime1, LocalDateTime localDateTime2, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
+    Document doc =  documentRepository.save(Document.builder().title(name).description(description).owner(company).path(String.valueOf(resolve)).build());
+    notarizeService.notarize(doc);
     return doc;
   }
   
@@ -55,7 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
   @Override
   public void notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(docId));
-    if(documentOptional.get().getNotarize() == null) {
+    if(documentOptional.isPresent() && documentOptional.get().getNotarize() == null) {
       notarizeService.notarize(documentOptional.get());
     }
   }

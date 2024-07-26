@@ -28,6 +28,9 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +56,7 @@ public class DocumentController {
   }
   
   @PostMapping("/upload")
-  public ResponseEntity<Object> uploadDocument(@AuthenticationPrincipal Jwt principal, MultipartFile file) throws IOException {
+  public ResponseEntity<Object> uploadDocument(@AuthenticationPrincipal Jwt principal, @RequestPart String name, @RequestPart String description, @RequestPart String dateStart, @RequestPart String dateEnd,  MultipartFile file) throws IOException {
     
     String companyName = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyName);
@@ -61,12 +64,19 @@ public class DocumentController {
       return ResponseEntity.badRequest().build();
     }
     log.debug("Upload document for company logged 0 {} ", company.getName());
-    //  0x734a8918ede5dbc461d11f391a79efb0baf6fde8c1a78031f43ca7471a9fae3c
+
+    Instant instant1 = Instant.ofEpochMilli(Long.parseLong(dateStart));
+    Instant instant2 = Instant.ofEpochMilli(Long.parseLong(dateEnd));
+    LocalDateTime localDateTime1 = LocalDateTime.ofInstant(instant1, ZoneId.of("Europe/Rome"));
+    LocalDateTime localDateTime2 = LocalDateTime.ofInstant(instant2, ZoneId.of("Europe/Rome"));
+    log.debug("Local Date Time 1 {}", localDateTime1);
+    log.debug("Local Date Time 2 {}", localDateTime2);
+    
     try {
       Files.deleteIfExists(this.root.resolve(file.getOriginalFilename()));
       Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
       log.debug("Uploaded document to company logged {}", this.root.resolve(file.getOriginalFilename()));
-      return ResponseEntity.ok(genericMapper.map(documentService.createOne(company, this.root.resolve(file.getOriginalFilename()))));
+      return ResponseEntity.ok(genericMapper.map(documentService.createOne(company, name, description, localDateTime1, localDateTime2, this.root.resolve(file.getOriginalFilename()))));
     } catch (Exception e) {
       if (e instanceof FileAlreadyExistsException) {
         throw new RuntimeException("A file of that name already exists.");
@@ -75,7 +85,7 @@ public class DocumentController {
     }
   }
   
-  @PostMapping("/notarize/{doc_id}")
+  @GetMapping("/notarize/{doc_id}")
   public ResponseEntity<Object> notarizeDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
     String companyName = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyName);
@@ -83,7 +93,6 @@ public class DocumentController {
       return ResponseEntity.badRequest().build();
     }
     log.debug("Notarize document for company logged {} ", company.getName());
-    //  0x734a8918ede5dbc461d11f391a79efb0baf6fde8c1a78031f43ca7471a9fae3c
     try {
       documentService.notarize(company, doc_id);
       return ResponseEntity.ok().build();

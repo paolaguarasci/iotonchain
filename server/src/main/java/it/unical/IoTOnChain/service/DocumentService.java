@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -16,7 +17,7 @@ public interface DocumentService {
   
   List<Document> getAllByCompanyLogged(Company company);
   
-  Document createOne(Company company, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException;
+  Document createOne(Company company, String name, String description, LocalDateTime localDateTime1, LocalDateTime localDateTime2, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException;
   
   
   Document check(String hash);

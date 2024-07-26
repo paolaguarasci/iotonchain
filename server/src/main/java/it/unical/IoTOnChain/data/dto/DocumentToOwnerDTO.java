@@ -24,5 +24,5 @@ public class DocumentToOwnerDTO implements Serializable {
   private String title;
   private String description;
   private String link;
-  
+  private String path;
 }
