@@ -16,7 +16,7 @@ import { TableModule } from 'primeng/table';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLink, faStamp, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { saveAs } from 'file-saver';
-
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 @Component({
   selector: 'app-documents-list',
@@ -32,6 +32,7 @@ import { saveAs } from 'file-saver';
     CommonModule,
     TableModule,
     FontAwesomeModule,
+    PdfViewerModule
   ],
   providers: [MessageService],
   templateUrl: './documents-list.component.html',
@@ -73,10 +74,18 @@ export class DocumentsListComponent implements OnInit {
 
   getPreview(id: any, document: any) {
     this.documentService.dowloadOne(id).subscribe({
+
       next: (res: any) => {
+
+        let filename = res.headers
+        .get('content-disposition')
+        .replace('attachment; filename="', '')
+        .replace('"', '');
+
         if (res.body) {
           const reader = new FileReader();
           reader.onload = () => {
+            document.isPdf = filename.includes(".pdf")
             document.previewURL = reader.result as string;
           };
           reader.readAsDataURL(res.body);
