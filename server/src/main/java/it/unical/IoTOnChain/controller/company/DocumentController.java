@@ -55,6 +55,7 @@ public class DocumentController {
     return ResponseEntity.ok(genericMapper.mapDocumentsToDTO(documentService.getAllByCompanyLogged(company)));
   }
   
+  
   @PostMapping("/upload")
   public ResponseEntity<Object> uploadDocument(@AuthenticationPrincipal Jwt principal, @RequestPart String name, @RequestPart String description, @RequestPart String dateStart, @RequestPart String dateEnd,  MultipartFile file) throws IOException {
     
@@ -101,9 +102,21 @@ public class DocumentController {
     }
   }
   
-  
   @GetMapping( "/{doc_id}")
-  public ResponseEntity<?> getDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
+  public ResponseEntity<DocumentToOwnerDTO> getDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
+    String companyName = principal.getClaimAsString("company");
+    Company company = companyService.getOneByName(companyName);
+    if (company == null) {
+      return null;
+    }
+    Document document = documentService.getOneByCompanyLogged(company, doc_id);
+    if (document == null) {
+      return null;
+    }
+    return ResponseEntity.ok().body(genericMapper.map(document));
+  }
+  @GetMapping( "/{doc_id}/resource")
+  public ResponseEntity<?> getDocumentResource(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
     String companyName = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyName);
     if (company == null) {

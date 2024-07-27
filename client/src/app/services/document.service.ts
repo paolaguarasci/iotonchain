@@ -13,8 +13,13 @@ export class DocumentService {
 
   }
 
+  getOneDoc(id: any) {
+    return this.httpClient.get(`/api/v1/company/doc/${id}`)
+
+  }
+
   dowloadOne(id: any) {
-    return this.httpClient.get(`/api/v1/company/doc/${id}`, { observe: 'response', responseType: 'blob' })
+    return this.httpClient.get(`/api/v1/company/doc/${id}/resource`, { observe: 'response', responseType: 'blob' })
 
   }
 

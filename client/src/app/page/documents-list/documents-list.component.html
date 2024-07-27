@@ -46,16 +46,16 @@
           <td>{{ document.description }}</td>
           <td>{{ document.path }}</td>
           <td style="width:14%; min-width:10rem;"><span class="p-column-title">Image</span>
-            <img *ngIf="document.previewURL && !document.isPdf" [src]="document.previewURL" [alt]="document.id" width="100"
-              class="shadow-4 border-round" />
-            <pdf-viewer *ngIf="document.isPdf" [src]="document.previewURL"  [stick-to-page]="true" [show-all]="false" [render-text]="true" [original-size]="false" [page]="1"
-              style="width: 100px; height: 150px;"></pdf-viewer>
+            <img *ngIf="document.previewURL && !document.isPdf" [src]="document.previewURL" [alt]="document.id"
+              width="100" class="shadow-4 border-round" />
+            <pdf-viewer *ngIf="document.isPdf" [src]="document.previewURL" [stick-to-page]="true" [show-all]="false"
+              [render-text]="true" [original-size]="false" [page]="1" style="width: 100px; height: 150px;"></pdf-viewer>
           </td>
           <td>
             <div class="flex flex-row gap-3 align-items-center">
               <i class="pi"
                 [ngClass]="{ 'text-green-500 pi-check-circle': document.notarize, 'text-red-500 pi-times-circle': !document.notarize }"></i>
-              <p-button *ngIf="document.notarize" size="small" (onClick)="check(document)" [rounded]="true"
+              <p-button *ngIf="document.notarize" size="small" (onClick)="goToLanding(document.id)" [rounded]="true"
                 [text]="true">
                 <fa-icon [icon]="faLink"></fa-icon>
               </p-button>

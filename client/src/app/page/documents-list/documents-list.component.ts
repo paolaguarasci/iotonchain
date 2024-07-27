@@ -17,7 +17,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faLink, faStamp, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { saveAs } from 'file-saver';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-
+import { Router } from '@angular/router';
+// a1ec7f7b66095e166cd2633560bb215de7aad87c6732dd440b27c218654a5867
 @Component({
   selector: 'app-documents-list',
   standalone: true,
@@ -54,10 +55,15 @@ export class DocumentsListComponent implements OnInit {
   constructor(
     private documentService: DocumentService,
     private config: PrimeNGConfig,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.up();
+  }
+
+  goToLanding(id: any) {
+this.router.navigate(['/chain', id])
   }
 
   up() {

@@ -1,0 +1,62 @@
+<div class="card" *ngIf="doc">
+  <div class="block bg-primary font-bold text-center p-4 border-round mb-3">
+    <div class="flex align-items-center justify-content-center">
+      <img *ngIf="preview && !isPdf" [src]="preview" [alt]="id" width="300" class="shadow-4 border-round" />
+      <pdf-viewer *ngIf="preview && isPdf" [src]="preview" [stick-to-page]="true" [show-all]="false"
+        [render-text]="true" [original-size]="false" [page]="1" style="width: 300px; height: 450px;"></pdf-viewer>
+    </div>
+
+  </div>
+  <div class="block bg-primary text-center p-4 border-round mb-3">
+    <div class="block bg-primary font-bold text-center border-round">{{doc.title}}</div>
+    <div class="block bg-primary text-center border-round">{{doc.description}}</div>
+  </div>
+
+
+  <div class="block bg-primary text-center p-4 border-round mb-3">
+    <div *ngIf="doc" class="block bg-primary text-center border-round"> <a href="javascript:;" (click)="d()">
+        {{ filename }}
+      </a></div>
+  </div>
+
+  <div class="block bg-primary text-center p-4 border-round mb-3">
+    <div class="block bg-primary font-bold text-center border-round">Hash file</div>
+    <div *ngIf="doc" class="block bg-primary text-center border-round">
+      0x{{ fileHash }}
+    </div>
+  </div>
+
+
+  <div *ngIf="doc.notarize" class="block bg-primary text-center p-4 border-round mb-3">
+    <div class="block bg-primary font-bold text-center border-round">Notarized Date</div>
+    <div *ngIf="doc.notarize" class="block bg-primary text-center border-round">{{
+      formatDataString(doc.notarize.notarizedAt) }}</div>
+  </div>
+
+  <div *ngIf="doc.notarize" class="block bg-primary text-center p-4 border-round mb-3">
+    <div class="block bg-primary font-bold text-center border-round">Hash transaction</div>
+    <div *ngIf="doc.notarize" class="block bg-primary text-center border-round">
+      {{doc.notarize.txTransactionList[0].txId
+      }}</div>
+  </div>
+
+  <div *ngIf="doc.notarize" class="block bg-primary text-center p-4 border-round mb-3">
+
+    <div class="block bg-primary font-bold text-center border-round">Link polygonscan
+    </div>
+    <div *ngIf="doc.notarize" class="block bg-primary text-center border-round">
+      <a target="_blank" [href]="scannerLink + doc.notarize.txTransactionList[0].txId ">Check</a>
+    </div>
+  </div>
+
+  <div class="block bg-primary  text-center p-4 border-round mb-3">
+    <div class="block bg-primary font-bold text-center border-round mb-1">Status</div>
+    <div *ngIf="!doc.notarize" class="block bg-primary text-center border-round">
+      <p-tag icon="pi pi-exclamation-triangle" severity="warning" value="Pending" />
+    </div>
+    <div *ngIf="doc.notarize" class="block bg-primary  text-center border-round ">
+      <p-tag icon="pi pi-check" severity="success" value="Confirmed" />
+    </div>
+  </div>
+
+</div>
