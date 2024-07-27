@@ -1,18 +1,12 @@
 package it.unical.IoTOnChain.data.dto;
 
 
-import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.Notarize;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.File;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -26,3 +20,6 @@ public class DocumentToOwnerDTO implements Serializable {
   private String link;
   private String path;
 }
+
+// tirare fuori i linked batch ai documenti
+//

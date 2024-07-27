@@ -29,4 +29,9 @@ public interface DocumentService {
   Resource loadAsResource(String filename) throws FileNotFoundException;
   
   Document getOneByCompanyLogged(Company company, String docId);
+  
+  List<Document> getByIdList(List<String> documents);
 }
+
+
+// TODO gestire Fail with error 'Hash already signed'

@@ -1,15 +1,13 @@
 package it.unical.IoTOnChain.service.impl;
 
-import it.unical.IoTOnChain.data.model.Batch;
-import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.ProductType;
-import it.unical.IoTOnChain.data.model.RecipeRow;
+import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.BatchRepository;
 import it.unical.IoTOnChain.repository.CompanyRepository;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
+import it.unical.IoTOnChain.service.DocumentService;
 import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +24,7 @@ public class BatchServiceImpl implements BatchService {
   private final ProductTypeService productTypeService;
   private final CompanyService companyService;
   private final CompanyRepository companyRepository;
+  private final DocumentService documentService;
   
   @Override
   public List<Batch> getAllProductByCompanyLogged(String companyLogged) {
@@ -59,7 +58,7 @@ public class BatchServiceImpl implements BatchService {
   }
   
   @Override
-  public Batch produce(Company company, ProductType type, int quantity, String batchId) throws NoEnoughRawMaterialsException {
+  public Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents) throws NoEnoughRawMaterialsException {
     boolean checkMaterial = true;
     Set<Batch> rawMaterials = new HashSet<>();
     log.debug("company {}", company);
@@ -81,14 +80,17 @@ public class BatchServiceImpl implements BatchService {
         rawMaterials.addAll((Set<Batch>) checkQuantityOfType1.get("batch"));
       }
     }
+    
     log.debug("raw materials {}", rawMaterials);
     log.debug("check materials {}", checkMaterial);
     
     // TODO DEVO ELIMINARE DAI LOTTI!
     
+    
     if (type.getRecipe() == null || checkMaterial) {
       // salva sulla chain!
-      return batchRepository.save(Batch.builder()
+      
+      Batch newProd = Batch.builder()
         .companyOwner(company)
         .companyProducer(company)
         .batchId(batchId)
@@ -96,7 +98,15 @@ public class BatchServiceImpl implements BatchService {
         .rawMaterialList(rawMaterials)
         .productionDate(LocalDateTime.now())
         .quantity(quantity)
-        .build());
+        .build();
+      
+      if (documents != null && !documents.isEmpty()) {
+        List<Document> docFromDB = documentService.getByIdList(documents);
+        newProd.setDocumentList(new HashSet<>(docFromDB));
+      }
+      
+      
+      return batchRepository.save(newProd);
     }
     
     log.debug("ciao");

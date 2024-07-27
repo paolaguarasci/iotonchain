@@ -56,7 +56,7 @@ public class BatchController {
     }
     
     try {
-      return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId())));
+      return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId(), dto.getDocuments())));
     } catch (NoSuchElementException e) {
       Map<String, String> errors = new HashMap<>();
       errors.put("message", "Not enough materials");

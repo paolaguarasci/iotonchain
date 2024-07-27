@@ -12,7 +12,7 @@ import java.util.List;
 public interface BatchService {
   List<Batch> getAllProductByCompanyLogged(String companyLogged);
   
-  Batch produce(Company company, ProductType type, int quantity, String batchId) throws NoEnoughRawMaterialsException;
+  Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents) throws NoEnoughRawMaterialsException;
   
   Batch move(Company owner, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
   

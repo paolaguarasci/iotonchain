@@ -14,7 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 @Builder
 @Getter
 @Setter
@@ -35,4 +34,18 @@ public class Notarize implements Serializable {
   
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<ChainTransaction> txTransactionList = new ArrayList<>();
+  
+  
+  @Override
+  public final boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Notarize notarize)) return false;
+    
+    return getId().equals(notarize.getId());
+  }
+  
+  @Override
+  public int hashCode() {
+    return getId().hashCode();
+  }
 }

@@ -32,7 +32,7 @@ public class DocumentServiceImpl implements DocumentService {
   
   private final NotarizeService notarizeService;
   
-  private Path rootLocation = Paths.get("/tmp");
+  private final Path rootLocation = Paths.get("/tmp");
   
   @Override
   public List<Document> getAllByCompanyLogged(Company company) {
@@ -92,6 +92,11 @@ public class DocumentServiceImpl implements DocumentService {
       return documentOptional.get();
     }
     return null;
+  }
+  
+  @Override
+  public List<Document> getByIdList(List<String> documents) {
+    return documentRepository.findAllById(documents.stream().map(UUID::fromString).toList());
   }
   
 }

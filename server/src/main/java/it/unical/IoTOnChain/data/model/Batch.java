@@ -56,9 +56,9 @@ public class Batch implements Serializable {
 //  @OneToMany
 //  @Builder.Default
 //  private Set<AnalysisDocument> analysisList = new HashSet<>();
-//  @OneToMany
-//  @Builder.Default
-//  private Set<CertificateDocument> certificateList = new HashSet<>();
+@OneToMany
+@Builder.Default
+private Set<Document> documentList = new HashSet<>();
 //  @ManyToMany
 //  private Set<TransactionProductProcessing> productionSteps = new HashSet<>();
 //  @ManyToMany

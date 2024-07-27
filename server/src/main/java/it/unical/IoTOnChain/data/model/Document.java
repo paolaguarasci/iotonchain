@@ -11,7 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 @Builder
 @Getter
 @Setter
@@ -31,4 +30,18 @@ public class Document implements Serializable {
   @ManyToOne
   private Company owner;
   // TODO decidere come modellare sto documento: come file, come json... come???
+  
+  
+  @Override
+  public final boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Document document)) return false;
+    
+    return getId().equals(document.getId());
+  }
+  
+  @Override
+  public int hashCode() {
+    return getId().hashCode();
+  }
 }

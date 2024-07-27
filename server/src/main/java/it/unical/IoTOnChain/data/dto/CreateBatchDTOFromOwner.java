@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +19,7 @@ public class CreateBatchDTOFromOwner implements Serializable {
   private String unity;
   // private boolean isFinal;
   private String productTypeID;
+  private List<String> documents;
   // private Batch.ProcessProductType processType;
   // private LocationDTO productionLocation;
 //  private Set<Batch> rawMaterialList = new HashSet<>();
