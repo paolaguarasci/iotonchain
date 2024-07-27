@@ -22,6 +22,8 @@ import { ListboxModule } from 'primeng/listbox';
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { ProductTypeService } from '../../services/product-type.service';
 import { CompanyBatchService } from '../../services/company-batch.service';
+import { DocumentService } from '../../services/document.service';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-product-type-list',
   standalone: true,
@@ -56,7 +58,11 @@ import { CompanyBatchService } from '../../services/company-batch.service';
     DropdownModule,
     ButtonModule,
     InputTextModule,
-    OverlayPanelModule, ToastModule, TableModule, ButtonModule
+    OverlayPanelModule,
+    ToastModule,
+    TableModule,
+    ButtonModule,
+    MultiSelectModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './product-type-list.component.html',
@@ -71,7 +77,7 @@ export class ProductTypeListComponent implements OnInit {
   selectedProducts!: any[] | null;
   submitted: boolean = false;
   statuses!: any[];
-  inforecipe !: any;
+  inforecipe!: any;
   selectedProductToReciperRow!: any;
   selectedProductToReciperRowquantity!: any;
   selectedBatchToProduce!: any;
@@ -85,7 +91,8 @@ export class ProductTypeListComponent implements OnInit {
   ];
   newBatch!: any;
   createBatchDialogVisible: boolean = false;
-
+  documents: any[] = [];
+  selectedDoc!: any;
 
   @ViewChild('recipedetails', { static: false }) divHello!: OverlayPanel;
 
@@ -93,18 +100,47 @@ export class ProductTypeListComponent implements OnInit {
     private productTypeService: ProductTypeService,
     private batchService: CompanyBatchService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private documentService: DocumentService
   ) {}
 
   ngOnInit(): void {
-
-this.update();
-    this.statuses = [];
+    this.clean();
+    this.update();
+    this.getDocs();
   }
-showRecipeInfo(product: any, $event: any) {
-  this.divHello.show($event);
-  this.inforecipe = product.recipe.recipeRow
-}
+
+  getDocs() {
+    this.documentService.getAllDocuments().subscribe({
+      next: (res: any) => {
+        let that = this;
+        res.map((doc: any) => {
+          that.documents.push({
+            name: doc.path,
+            code: doc.id
+          })
+        })
+      },
+      error: (err: any) => {
+
+      }
+    })
+  }
+
+  clean() {
+    this.statuses = [];
+    this.selectedBatchToProduce = null;
+    this.selectedDoc = null;
+    this.selectedProductToReciperRow = null;
+    this.selectedProductToReciperRowquantity = null;
+    this.selectedProducts = null;
+    this.selectedRecipe = null;
+  }
+
+  showRecipeInfo(product: any, $event: any) {
+    this.divHello.show($event);
+    this.inforecipe = product.recipe.recipeRow;
+  }
   update() {
     this.productTypeService.getAll().subscribe({
       next: (res: any) => (this.products = res),
@@ -174,6 +210,7 @@ showRecipeInfo(product: any, $event: any) {
     this.submitted = true;
     this.product.state = 'FINAL';
     this.product.unity = this.product.unity.code;
+
     this.productTypeService.createOne(this.product).subscribe({
       next: (res: any) => {
         this.update();
@@ -259,6 +296,7 @@ showRecipeInfo(product: any, $event: any) {
       batchId: this.newBatchBid,
       quantity: parseInt(this.newBatchQty, 10),
       unity: this.selectedBatchToProduce.unity,
+      documents: this.selectedDoc.map((doc: any) => doc.code),
       productTypeID: this.selectedBatchToProduce.id,
     };
     this.batchService.produceBatch(this.newBatch).subscribe({

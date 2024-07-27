@@ -20,3 +20,14 @@ p-dropdown > *  {
   width: 25rem;
   height: 5rem;
 }
+
+app-product-type-list {
+
+  p-multiselect {
+    width: 100%;
+  }
+
+  p-multiselect > * {
+    width: 100%;
+  }
+}
