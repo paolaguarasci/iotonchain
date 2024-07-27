@@ -42,4 +42,9 @@ public interface GenericMapper {
   DocumentToOwnerDTO map(Document entity);
   
   DocumentPublicDTO mapToPublic(Document check);
+  
+  ProductionProcess map(CreatePPDTOFromOwner process);
+  
+  ProductionStep map(CreateProcessStepDTOFromOwner process);
+  
 }

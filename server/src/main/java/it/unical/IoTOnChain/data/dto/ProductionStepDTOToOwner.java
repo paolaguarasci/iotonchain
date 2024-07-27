@@ -11,11 +11,8 @@ import java.io.Serializable;
 @Setter
 @Builder
 @ToString
-public class ProductTypeToOwner implements Serializable {
-  private String id;
+public class ProductionStepDTOToOwner implements Serializable {
+  private int position;
   private String name;
-  private String unity;
-  private String state;
-  private RecipeToOwner recipe;
-  private PPToOwner productionProcess;
+  private String description;
 }

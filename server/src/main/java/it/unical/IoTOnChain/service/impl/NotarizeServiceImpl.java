@@ -56,7 +56,11 @@ public class NotarizeServiceImpl implements NotarizeService {
     byte[] encodedhash = digest.digest(inputStream.readAllBytes());
     String sha3Hex = bytesToHex(encodedhash);
     log.debug("Notarizzazione di {} - hash: {}", doc.getPath(), sha3Hex);
-    chainService.signString(encodedhash, (String txHash) -> {
+    chainService.signString(encodedhash, (String txHash, String error) -> {
+      if (error != null) {
+        log.debug("Hash tx {} {} {}", txHash, doc.getPath(), error);
+        return "Ciao";
+      }
       Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).document(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
       doc.setNotarize(nx);
@@ -73,7 +77,11 @@ public class NotarizeServiceImpl implements NotarizeService {
     byte[] encodedHash = digest.digest(doc.getBytes(StandardCharsets.UTF_8));
     String sha3Hex = bytesToHex(encodedHash);
     log.debug("Notarizzazione di {} - hash: {}", doc, sha3Hex);
-    chainService.signString(encodedHash, (String txHash) -> {
+    chainService.signString(encodedHash, (String txHash, String error) -> {
+      if (error != null) {
+        log.debug("Hash tx {} {} {}", txHash, doc, error);
+        return "Ciao";
+      }
       Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
       log.debug("Hash tx {} - {}", txHash, doc);

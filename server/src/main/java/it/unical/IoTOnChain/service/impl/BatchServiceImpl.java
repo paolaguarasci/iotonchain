@@ -125,7 +125,7 @@ public class BatchServiceImpl implements BatchService {
       // TODO trovare una soluzione per l'assegnazione dei lotti di produzione, fare inserire manualmente?
       log.debug("Move {} {}", batch.getBatchId(), batch.getQuantity());
       log.debug("Batch to move {}", batch);
-      productTypeService.createProductTypeForCompany(company, batch.getProductType().getName(), batch.getProductType().getUnity(), batch.getProductType().getRecipe());
+      productTypeService.createProductTypeForCompany(company, batch.getProductType().getName(), batch.getProductType().getUnity(), batch.getProductType().getRecipe(), batch.getProductType().getProductionProcess());
       Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, batch.getBatchId() + "_X", batch);
       newBatch.setCompanyProducer(owner);
       batchRepository.save(newBatch);

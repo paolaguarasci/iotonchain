@@ -16,4 +16,5 @@ public class CreateProductTypeDTOFromOwner implements Serializable {
   private String unity;
   private String state;
   private CreateRecipeDTOFromOwner recipe;
+  private CreatePPDTOFromOwner process;
 }

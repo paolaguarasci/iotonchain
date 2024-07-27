@@ -44,6 +44,9 @@ public class Batch implements Serializable {
   @ManyToOne(fetch = FetchType.EAGER)
   private ProductType productType;
   
+  @ManyToOne(fetch = FetchType.EAGER)
+  private ProductionStep productionStep;
+  
   @Enumerated(EnumType.STRING)
   private ProcessProductType processType;
   @ManyToOne

@@ -6,16 +6,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @ToString
-public class ProductTypeToOwner implements Serializable {
+public class PPToOwner implements Serializable {
   private String id;
-  private String name;
-  private String unity;
-  private String state;
-  private RecipeToOwner recipe;
-  private PPToOwner productionProcess;
+  private String note;
+  private List<ProductionStepDTOToOwner> steps;
 }

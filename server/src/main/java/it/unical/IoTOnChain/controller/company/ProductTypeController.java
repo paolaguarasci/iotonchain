@@ -42,6 +42,12 @@ public class ProductTypeController {
     log.debug("Create product type {}", dto);
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
-    return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(company, dto.getName(), dto.getUnity(), mapper.map(dto.getRecipe()))));
+    return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(
+      company,
+      dto.getName(),
+      dto.getUnity(),
+      mapper.map(dto.getRecipe()),
+      mapper.map(dto.getProcess())
+    )));
   }
 }

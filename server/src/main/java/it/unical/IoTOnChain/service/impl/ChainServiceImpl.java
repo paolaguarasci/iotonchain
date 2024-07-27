@@ -51,7 +51,7 @@ public class ChainServiceImpl implements ChainService {
   
   
   @Async
-  public void signString(byte[] str, java.util.function.Function<String, String> func) throws IOException, TransactionException {
+  public void signString(byte[] str, java.util.function.BiFunction<String, String, String> func) throws IOException, TransactionException {
     Hash contract = (Hash) this.registrationContract.get("hash");
     TransactionReceipt txReceipt = null;
     Function function = new Function("signHash",
@@ -60,10 +60,16 @@ public class ChainServiceImpl implements ChainService {
     String txData = FunctionEncoder.encode(function);
     EthSendTransaction txHash = this.transactionManager.sendTransaction(DefaultGasProvider.GAS_PRICE, DefaultGasProvider.GAS_LIMIT, contract.getContractAddress(), txData, BigInteger.ZERO);
     TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY, TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
-    txReceipt = receiptProcessor.waitForTransactionReceipt(txHash.getTransactionHash());
-    func.apply(txReceipt.getTransactionHash());
+    String error = null;
+    try {
+      txReceipt = receiptProcessor.waitForTransactionReceipt(txHash.getTransactionHash());
+    } catch (TransactionException e) {
+      txReceipt = null;
+      error = e.getMessage();
+    }
+    func.apply(txReceipt.getTransactionHash(), error);
   }
-  // 6bc2eff5b2bf8f20d6a8c1857c342dd8d98bab567235dceb31d338ecfeb57661
+
   @Override
   @Async
   public void testAsync() {

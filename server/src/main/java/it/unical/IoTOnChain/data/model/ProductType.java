@@ -31,6 +31,9 @@ public class ProductType implements Serializable {
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
   private Recipe recipe;
   
+  @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+  private ProductionProcess productionProcess;
+  
   @Override
   public final boolean equals(Object o) {
     if (this == o) return true;

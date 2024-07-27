@@ -1,9 +1,6 @@
 package it.unical.IoTOnChain.config;
 
-import it.unical.IoTOnChain.data.model.Batch;
-import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.ProductType;
-import it.unical.IoTOnChain.data.model.Recipe;
+import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.service.*;
@@ -30,6 +27,7 @@ public class InitDB implements CommandLineRunner {
   private final TransferService transferService;
   private final UserInfoService userInfoService;
   private final ChainService chainService;
+  private final ProductionProcessService productionProcessService;
   
   @SneakyThrows
   @Override
@@ -43,15 +41,22 @@ public class InitDB implements CommandLineRunner {
     
     
     Company paolaSPA = makeCompany("paolaspa");
-    ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico ligure", "kg", null);
+    ProductionStep raccoltaBasilico = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
+    ProductionProcess pBasilico = makeProcess("basilico", List.of(raccoltaBasilico));
+    ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico ligure", "kg", null, pBasilico);
     Batch basilicoBatch = produce(paolaSPA, basilicoType, 10, "batchId_123_basilico");
     
     Company nicolaSPA = makeCompany("nicolaspa");
-    ProductType aglioType = makeProductTypeAndAssociateToCompany(nicolaSPA, "aglio", "kg", null);
+    ProductionStep raccoltaAglio = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta dell'aglio").build();
+    ProductionProcess pAglio = makeProcess("processo produttivo dell'aglio", List.of(raccoltaAglio));
+    ProductType aglioType = makeProductTypeAndAssociateToCompany(nicolaSPA, "aglio", "kg", null, pAglio);
     Batch aglioBatch = produce(nicolaSPA, aglioType, 10, "batchId_123_aglio");
     
     Company filippoSPA = makeCompany("filippospa");
-    ProductType olioType = makeProductTypeAndAssociateToCompany(filippoSPA, "olio", "lt", null);
+    ProductionStep raccoltaOlive = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta delle olive").build();
+    ProductionStep franturaOlive = ProductionStep.builder().position(1).name("Frantura").description("Olio al frantoio").build();
+    ProductionProcess pOlio = makeProcess("processo produttivo dell'olio", List.of(raccoltaOlive, franturaOlive));
+    ProductType olioType = makeProductTypeAndAssociateToCompany(filippoSPA, "olio", "lt", null, pOlio);
     Batch olioBatch = produce(filippoSPA, olioType, 10, "batchId_123_olio");
     
     Company barillaSPA = makeCompany("barillaspa");
@@ -60,7 +65,11 @@ public class InitDB implements CommandLineRunner {
     ingredientsOfPestoLigure.put(aglioType, List.of("5", "%"));
     ingredientsOfPestoLigure.put(olioType, List.of("15", "%"));
     Recipe pestoRecipe = makeRecipe("pesto ligure", ingredientsOfPestoLigure);
-    ProductType pestoType = makeProductTypeAndAssociateToCompany(barillaSPA, "pesto", "kg", pestoRecipe);
+    
+    
+    ProductionStep produzionePesto = ProductionStep.builder().position(0).name("Cucino").description("Produco il pesto").build();
+    ProductionProcess pPesto = makeProcess("processo produttivo dell'olio", List.of(produzionePesto));
+    ProductType pestoType = makeProductTypeAndAssociateToCompany(barillaSPA, "pesto", "kg", pestoRecipe, pPesto);
     
     Batch pestoBatch = null;
     
@@ -96,8 +105,8 @@ public class InitDB implements CommandLineRunner {
     return batchService.produce(company, type, quantity, batchId, null);
   }
   
-  private ProductType makeProductTypeAndAssociateToCompany(Company company, String productTypeName, String unity, Recipe recipe) {
-    return productTypeService.createProductTypeForCompany(company, normalizeString(productTypeName), unity, recipe);
+  private ProductType makeProductTypeAndAssociateToCompany(Company company, String productTypeName, String unity, Recipe recipe, ProductionProcess productionProcess) {
+    return productTypeService.createProductTypeForCompany(company, normalizeString(productTypeName), unity, recipe, productionProcess);
   }
   
   private Company makeCompany(String name) {
@@ -110,6 +119,10 @@ public class InitDB implements CommandLineRunner {
   
   private Recipe makeRecipe(String name, Map<ProductType, List<String>> ingredients) {
     return recipeService.createOne(name, ingredients);
+  }
+  
+  private ProductionProcess makeProcess(String name, List<ProductionStep> steps) {
+    return productionProcessService.createOne(name, steps);
   }
   
 }
