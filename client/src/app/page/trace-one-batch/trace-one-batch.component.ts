@@ -4,18 +4,20 @@ import { TimelineModule } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { CompanyBatchService } from '../../services/company-batch.service';
-
-
+import { faWheatAwn } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-trace-one-batch',
   standalone: true,
-  imports: [TimelineModule, CardModule, ButtonModule],
+  imports: [TimelineModule, CardModule, ButtonModule, FontAwesomeModule],
   templateUrl: './trace-one-batch.component.html',
   styleUrl: './trace-one-batch.component.scss'
 })
 export class TraceOneBatchComponent implements OnInit {
   id !: any;
   productionSteps: any[] = []
+
+  faWheatAwn = faWheatAwn
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +59,7 @@ export class TraceOneBatchComponent implements OnInit {
               batch_id: "",
               company: "",
               notarization: "",
+              icon: faWheatAwn
             }
 
             if (batch) {

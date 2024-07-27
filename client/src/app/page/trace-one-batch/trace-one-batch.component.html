@@ -15,7 +15,8 @@
             class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
             [style]="{ 'background-color': step.color }"
           >
-            <i [class]="step.icon"></i>
+
+            <fa-icon [icon]="step.icon"></fa-icon>
           </span>
         </ng-template>
         <ng-template pTemplate="content" let-step>

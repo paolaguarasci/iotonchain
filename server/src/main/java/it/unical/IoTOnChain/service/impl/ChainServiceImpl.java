@@ -61,13 +61,14 @@ public class ChainServiceImpl implements ChainService {
     EthSendTransaction txHash = this.transactionManager.sendTransaction(DefaultGasProvider.GAS_PRICE, DefaultGasProvider.GAS_LIMIT, contract.getContractAddress(), txData, BigInteger.ZERO);
     TransactionReceiptProcessor receiptProcessor = new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY, TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
     String error = null;
+    String msg = null;
     try {
       txReceipt = receiptProcessor.waitForTransactionReceipt(txHash.getTransactionHash());
+      msg = txReceipt.getTransactionHash();
     } catch (TransactionException e) {
-      txReceipt = null;
       error = e.getMessage();
     }
-    func.apply(txReceipt.getTransactionHash(), error);
+    func.apply(msg, error);
   }
 
   @Override
@@ -80,5 +81,8 @@ public class ChainServiceImpl implements ChainService {
 //
 //    }
   }
+  // <i class="fa-solid fa-tractor"></i>
+  // <i class="fa-solid fa-wheat-awn"></i>
+  //
   
 }

@@ -180,6 +180,9 @@ public class BatchServiceImpl implements BatchService {
     ProductionProcess productionProcessGlobal = ProductionProcess.builder().build();
     ProductionProcess productionProcessParent = batch.getProductType().getProductionProcess();
     
+    // mi serve la data e va sortato per data
+    // mi servono le transazioni per certificare il processo
+    
     batch.getRawMaterialList().forEach(material -> {
       
       productionProcessGlobal.getSteps().addAll(material.getProductType().getProductionProcess().getSteps());
