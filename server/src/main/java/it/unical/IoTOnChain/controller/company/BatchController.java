@@ -1,5 +1,6 @@
 package it.unical.IoTOnChain.controller.company;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.dto.BatchToOwner;
 import it.unical.IoTOnChain.data.dto.CreateBatchDTOFromOwner;
@@ -63,4 +64,16 @@ public class BatchController {
       return ResponseEntity.badRequest().body(null);
     }
   }
+  
+  @GetMapping("/{batch_id}/track")
+  public ResponseEntity<String> getTrackInfo(@AuthenticationPrincipal Jwt principal, @PathVariable String batch_id) throws JsonProcessingException {
+    log.debug("Get single product information for company logged {}", principal);
+    String companyLogged = principal.getClaimAsString("company");
+    Company company = companyService.getOneByName(companyLogged);
+    if (company == null) {
+      return ResponseEntity.badRequest().body(null);
+    }
+    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, batch_id)));
+  }
+  // 814cf361-c3e4-4caa-a77e-9656f31664f9
 }

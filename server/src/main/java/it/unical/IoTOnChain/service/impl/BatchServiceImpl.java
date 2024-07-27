@@ -162,4 +162,66 @@ public class BatchServiceImpl implements BatchService {
       .quantity(quantity)
       .build());
   }
+  
+  @Override
+  public Map<String, Object> trackInfo(Company companyLogged, String batchId) {
+    
+    Map<String, Object> info = new HashMap<>();
+    Optional<Batch> batchOptional = batchRepository.findById(UUID.fromString(batchId));
+    
+    if (batchOptional.isEmpty()) {
+      return null;
+    }
+    Batch batch = batchOptional.get();
+    if (!companyService.companyExist(companyLogged) || !batch.getCompanyOwner().equals(companyLogged)) {
+      return null;
+    }
+    
+    ProductionProcess productionProcessGlobal = ProductionProcess.builder().build();
+    ProductionProcess productionProcessParent = batch.getProductType().getProductionProcess();
+    
+    batch.getRawMaterialList().forEach(material -> {
+      
+      productionProcessGlobal.getSteps().addAll(material.getProductType().getProductionProcess().getSteps());
+      List i = new ArrayList();
+      material.getProductType().getProductionProcess().getSteps().stream()
+        .sorted((a, b) -> a.getPosition() > b.getPosition() ? -1 : 1)
+        .forEach((step) -> {
+          Map<String, Object> rawMaterial = new HashMap<>();
+          rawMaterial.put("batch_id", material.getBatchId());
+          rawMaterial.put("step_id", step.getId());
+          rawMaterial.put("name", step.getName());
+          rawMaterial.put("description", step.getDescription());
+          rawMaterial.put("company", material.getCompanyProducer().getName());
+          if(material.getProductionLocation() != null) {
+            rawMaterial.put("location", material.getProductionLocation().getAddress());
+          }
+          i.add(rawMaterial);
+        });
+      
+      info.put(material.getBatchId(), i);
+    });
+    
+    productionProcessGlobal.getSteps().addAll(productionProcessParent.getSteps());
+    
+    // info.put(batch.getBatchId(), productionProcessParent);
+    List y = new ArrayList();
+    batch.getProductType().getProductionProcess().getSteps().stream().forEach((step) -> {
+      Map<String, Object> ppParent = new HashMap<>();
+      ppParent.put("batch_id", batch.getBatchId());
+      ppParent.put("step_id", step.getId());
+      ppParent.put("name", step.getName());
+      ppParent.put("description", step.getDescription());
+      ppParent.put("company", batch.getCompanyProducer().getName());
+      if(batch.getProductionLocation() != null) {
+        ppParent.put("location", batch.getProductionLocation().getAddress());
+      }
+      y.add(ppParent);
+    });
+    info.put(batch.getBatchId(), y);
+    info.put("global", productionProcessGlobal);
+    
+    
+    return info;
+  }
 }

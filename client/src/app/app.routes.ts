@@ -5,6 +5,7 @@ import { ProductTypeListComponent } from './page/product-type-list/product-type-
 import { DashboardComponent } from './page/dashboard/dashboard.component';
 import { DocumentsListComponent } from './page/documents-list/documents-list.component';
 import { LandingChainComponent } from './page/landing-chain/landing-chain.component';
+import { TraceOneBatchComponent } from './page/trace-one-batch/trace-one-batch.component';
 
 export const routes: Routes = [
   {
@@ -30,5 +31,9 @@ export const routes: Routes = [
     {
       path: 'chain/:id',
       component: LandingChainComponent,
+    },
+    {
+      path: 'track/:id',
+      component: TraceOneBatchComponent,
     },
 ];

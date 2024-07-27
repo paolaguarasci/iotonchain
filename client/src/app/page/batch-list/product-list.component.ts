@@ -21,6 +21,7 @@ import { ToastModule } from 'primeng/toast';
 import { KeycloakService } from 'keycloak-angular';
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { TableModule } from 'primeng/table';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -68,8 +69,9 @@ export class ComapnyBatchListComponent implements OnInit {
     private companyService: CompanyService,
     private transferService: TransferService,
     private messageService: MessageService,
-    private keycloakService: KeycloakService
-  ) {}
+    private keycloakService: KeycloakService,
+    private router: Router
+  ) { }
   async ngOnInit() {
     this.updateList();
     this.updateClients();
@@ -83,7 +85,7 @@ export class ComapnyBatchListComponent implements OnInit {
       next: (res: any) => {
         this.products = res;
       },
-      error: (err: any) => {},
+      error: (err: any) => { },
     });
   }
   updateClients() {
@@ -91,8 +93,15 @@ export class ComapnyBatchListComponent implements OnInit {
       next: (res: any) => {
         this.companyClients = res;
       },
-      error: (err: any) => {},
+      error: (err: any) => { },
     });
+  }
+
+
+  goToLanding(id: any) {
+  }
+  goToTrack(id: any) {
+    this.router.navigate(['/track', id])
   }
 
   showTrasferDialog(items: any) {

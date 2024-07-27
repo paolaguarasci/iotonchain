@@ -5,9 +5,13 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class CompanyBatchService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   getAll() {
     return this.http.get('/api/v1/company/batch');
+  }
+
+  getTrack(id: any) {
+    return this.http.get(`/api/v1/company/batch/${id}/track`);
   }
 
   produceBatch(data: any) {

@@ -8,6 +8,7 @@ import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BatchService {
   List<Batch> getAllProductByCompanyLogged(String companyLogged);
@@ -19,4 +20,6 @@ public interface BatchService {
   Batch getOneByBatchIdAndCompany(Company companyOwner, String batchID);
   
   Batch produceByMovement(Company company, ProductType productType, int quantity, String batchId, Batch old);
+  
+  Map<String, Object> trackInfo(Company companyLogged, String batchId);
 }
