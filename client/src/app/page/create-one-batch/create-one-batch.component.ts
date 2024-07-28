@@ -12,6 +12,7 @@ import { concat, flatMap, flatMapDepth } from 'lodash'
 import { DocumentService } from '../../services/document.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
+import { CompanyBatchService } from '../../services/company-batch.service';
 @Component({
   selector: 'app-create-one-batch',
   standalone: true,
@@ -37,7 +38,15 @@ export class CreateOneBatchComponent implements OnInit {
   selectedQuantity !: any;
 
 
-  constructor(private productionTypeService: ProductTypeService, private messageService: MessageService, private route: ActivatedRoute, private router: Router, private documentService: DocumentService) { }
+  constructor(
+    private productionTypeService: ProductTypeService,
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private companyBatchService: CompanyBatchService,
+    private documentService: DocumentService
+  ) { }
+
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((pmap: any) => {
       this.clean()
@@ -144,17 +153,27 @@ export class CreateOneBatchComponent implements OnInit {
 
   save() {
     let toSave = {
-      batch_id: this.selectedBatchId,
+      batchId: this.selectedBatchId,
       description: this.selectedDescription,
-      steps: this.selectedSteps.map((step: any, index: any) => {
-        return { ...step, position: index }
+      documents: this.selectedDocuments.map((doc: any) => doc.id),
+      productionSteps: this.selectedSteps.map((step: any, index: any) => {
+        return { id: step.stepId, position: index }
       }),
-      reciperow: this.selectedRecipe,
-      documents: this.selectedDocuments,
-      quanty: this.selectedQuantity,
-      unity: this.selectedProductTypeFull.unity
+      ingredients: this.selectedRecipe.map((row: any) => row.id),
+      quantity: this.selectedQuantity,
+      unity: this.selectedProductTypeFull.unity,
+      productTypeID: this.selectedProductTypeFull.id
     }
+    // console.log(" --- ", toSave)
 
-    console.log("SAVE ", toSave)
+    this.companyBatchService.produceBatch(toSave).subscribe({
+      next: (res: any) => {
+        console.log("Creazione!", res)
+        this.messageService.add({ severity: 'success', summary: 'OK', detail: "" })
+      },
+      error: (err: any) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err })
+      },
+    })
   }
 }

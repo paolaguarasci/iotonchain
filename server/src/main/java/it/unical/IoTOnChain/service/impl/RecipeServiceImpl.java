@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +33,30 @@ public class RecipeServiceImpl implements RecipeService {
       recipeRows.add(RecipeRow.builder().product(ingredient.getKey()).quantity(Long.valueOf(ingredient.getValue().get(0))).unity(ingredient.getValue().get(1)).build());
     }
     return recipeRepository.save(Recipe.builder().recipeRow(recipeRows).build());
+  }
+  
+  @Override
+  public List<RecipeRow> getRecipeRowsByIdList(List<String> ingredients) {
+    return recipeRowRepository.findAllById(ingredients.stream().map(UUID::fromString).toList());
+  }
+  
+  @Override
+  public Recipe createOneByClone(String name, List<RecipeRow> rowFromDb) {
+    return null;
+  }
+  
+  @Override
+  public Recipe createOneByCloneAndMaterialize(String note, Integer quantity, List<RecipeRow> rowFromDb) {
+    List<RecipeRow> recipeRows = new ArrayList<>();
+    for (RecipeRow recipeRow : rowFromDb) {
+      recipeRows.add(RecipeRow.builder()
+        .unity(recipeRow.getUnity())
+        .quantity(recipeRow.getQuantity() / 100 * quantity)
+        .product(recipeRow.getProduct())
+        .unity(recipeRow.getProduct().getUnity())
+        
+        .build());
+    }
+    return recipeRepository.save(Recipe.builder().note(note).recipeRow(recipeRows).build());
   }
 }

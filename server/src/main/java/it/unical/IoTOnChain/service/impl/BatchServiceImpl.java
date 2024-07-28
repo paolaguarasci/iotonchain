@@ -5,10 +5,7 @@ import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.BatchRepository;
 import it.unical.IoTOnChain.repository.CompanyRepository;
-import it.unical.IoTOnChain.service.BatchService;
-import it.unical.IoTOnChain.service.CompanyService;
-import it.unical.IoTOnChain.service.DocumentService;
-import it.unical.IoTOnChain.service.ProductTypeService;
+import it.unical.IoTOnChain.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +22,8 @@ public class BatchServiceImpl implements BatchService {
   private final CompanyService companyService;
   private final CompanyRepository companyRepository;
   private final DocumentService documentService;
+  private final RecipeService recipeService;
+  private final ProductionProcessService productionProcessService;
   
   @Override
   public List<Batch> getAllProductByCompanyLogged(String companyLogged) {
@@ -58,13 +57,15 @@ public class BatchServiceImpl implements BatchService {
   }
   
   @Override
-  public Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents) throws NoEnoughRawMaterialsException {
+  public Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException {
     boolean checkMaterial = true;
     Set<Batch> rawMaterials = new HashSet<>();
     log.debug("company {}", company);
     log.debug("ptype {}", type);
     log.debug("quantity {}", quantity);
     log.debug("batchid {}", batchId);
+    log.debug("ingredients {}", ingredients);
+    log.debug("steps {}", steps);
     
     if (type.getRecipe() != null) {
       for (RecipeRow recipeRow : type.getRecipe().getRecipeRow()) {
@@ -95,15 +96,26 @@ public class BatchServiceImpl implements BatchService {
         .companyProducer(company)
         .batchId(batchId)
         .productType(type)
-        .rawMaterialList(rawMaterials)
+        .rawMaterials(rawMaterials)
         .productionDate(LocalDateTime.now())
         .quantity(quantity)
         .build();
       
       if (documents != null && !documents.isEmpty()) {
         List<Document> docFromDB = documentService.getByIdList(documents);
-        newProd.setDocumentList(new HashSet<>(docFromDB));
+        newProd.setDocuments(new HashSet<>(docFromDB));
       }
+      
+      if (ingredients != null && !ingredients.isEmpty()) {
+        List<RecipeRow> rowFromDb = recipeService.getRecipeRowsByIdList(ingredients);
+        Recipe localRecipe = recipeService.createOneByCloneAndMaterialize("recipe_" + batchId, quantity, rowFromDb);
+        newProd.setLocalRecipe(localRecipe);
+      }
+
+//      if(steps != null && !steps.isEmpty()) {
+//        List<ProductionStep> stepFromDb = productionProcessService.getProcessStepsByIdList(steps);
+//        newProd.setSteps(new HashSet<>(stepFromDb));
+//      }
       
       
       return batchRepository.save(newProd);
@@ -157,7 +169,7 @@ public class BatchServiceImpl implements BatchService {
       .companyProducer(company)
       .batchId(s)
       .productType(productType)
-      .rawMaterialList(old.getRawMaterialList())
+      .rawMaterials(old.getRawMaterials())
       .productionDate(LocalDateTime.now())
       .quantity(quantity)
       .build());
@@ -183,7 +195,7 @@ public class BatchServiceImpl implements BatchService {
     // mi serve la data e va sortato per data
     // mi servono le transazioni per certificare il processo
     
-    batch.getRawMaterialList().forEach(material -> {
+    batch.getRawMaterials().forEach(material -> {
       
       productionProcessGlobal.getSteps().addAll(material.getProductType().getProductionProcess().getSteps());
       List i = new ArrayList();

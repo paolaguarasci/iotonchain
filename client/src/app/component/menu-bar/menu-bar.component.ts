@@ -120,10 +120,18 @@ export class MenuBarComponent implements OnInit {
           // },
         ],
       },
-      // {
-      //   label: 'Contact',
-      //   icon: 'pi pi-envelope',
-      // },
+
+      {
+        label: 'Notarization',
+        icon: 'pi pi-search',
+        items: [
+          {
+            label: 'All notarization',
+            icon: 'pi pi-server',
+            route: "/notarize-list",
+          }
+        ]
+      }
     ];
   }
 

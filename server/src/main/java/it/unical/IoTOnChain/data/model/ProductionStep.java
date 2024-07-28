@@ -1,9 +1,6 @@
 package it.unical.IoTOnChain.data.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
@@ -23,5 +20,7 @@ public class ProductionStep implements Serializable {
   private UUID id;
   private int position;
   private String name;
+  @OneToOne
+  private Notarize notarize;
   private String description;
 }

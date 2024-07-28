@@ -13,7 +13,7 @@ import java.util.Map;
 public interface BatchService {
   List<Batch> getAllProductByCompanyLogged(String companyLogged);
   
-  Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents) throws NoEnoughRawMaterialsException;
+  Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException;
   
   Batch move(Company owner, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
   

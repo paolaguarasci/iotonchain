@@ -24,7 +24,8 @@ public class BatchToOwner implements Serializable {
   private ProductTypeToOwner productType;
   private String processType;
   private LocationDTO productionLocation;
-  private Set<BatchToOwner> rawMaterialList;
-  private Set<DocumentToOwnerDTO> documentList;
-  
+  private Set<BatchToOwner> rawMaterials;
+  private Set<DocumentToOwnerDTO> documents;
+  private RecipeToOwner localRecipe;
+  private ProductionProcessToOwner localProcessProduction;
 }

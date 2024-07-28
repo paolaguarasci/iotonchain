@@ -12,7 +12,6 @@ import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +43,6 @@ public class BatchController {
   }
   
   
-  @SneakyThrows
   @PostMapping
   public ResponseEntity<BatchToOwner> createBatch(@AuthenticationPrincipal Jwt principal, @RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException {
     log.debug("Create one batch of product type for company logged {}", dto.toString());
@@ -57,7 +55,7 @@ public class BatchController {
     }
     
     try {
-      return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId(), dto.getDocuments())));
+      return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId(), dto.getDocuments(), dto.getIngredients(), dto.getProductionSteps())));
     } catch (NoSuchElementException e) {
       Map<String, String> errors = new HashMap<>();
       errors.put("message", "Not enough materials");
@@ -75,5 +73,4 @@ public class BatchController {
     }
     return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, batch_id)));
   }
-  // 814cf361-c3e4-4caa-a77e-9656f31664f9
 }

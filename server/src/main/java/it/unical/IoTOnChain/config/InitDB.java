@@ -102,7 +102,7 @@ public class InitDB implements CommandLineRunner {
   }
   
   private Batch produce(Company company, ProductType type, int quantity, String batchId) throws NoEnoughRawMaterialsException {
-    return batchService.produce(company, type, quantity, batchId, null);
+    return batchService.produce(company, type, quantity, batchId, List.of(), List.of(), List.of());
   }
   
   private ProductType makeProductTypeAndAssociateToCompany(Company company, String productTypeName, String unity, Recipe recipe, ProductionProcess productionProcess) {

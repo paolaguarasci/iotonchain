@@ -54,26 +54,21 @@ public class Batch implements Serializable {
   
   @ManyToMany
   @Builder.Default
-  private Set<Batch> rawMaterialList = new HashSet<>();
+  private Set<Batch> rawMaterials = new HashSet<>();
+  
+  @ManyToMany
+  @Builder.Default
+  private Set<Document> documents = new HashSet<>();
+  
+  @OneToOne
+  private Recipe localRecipe;
+  
+  @OneToOne
+  private ProductionProcess localProcessProduction;
 
-//  @OneToMany
-//  @Builder.Default
-//  private Set<AnalysisDocument> analysisList = new HashSet<>();
-@OneToMany
-@Builder.Default
-private Set<Document> documentList = new HashSet<>();
-//  @ManyToMany
-//  private Set<TransactionProductProcessing> productionSteps = new HashSet<>();
 //  @ManyToMany
 //  private Set<TransactionProductTrasfering> movementList = new HashSet<>();
-
-//  public String getCompanyBatchProductIdLeggibile() {
-//    return batchId + "__" + companyOwner.getName().replaceAll(" ", "");
-//  }
-//
-//  public String getCompanyBatchProductIdDellaChain_Leggibile() {
-//    return tokenBatchProductId + "->>" + batchId + "__" + companyProducer.getName().replaceAll(" ", "");
-//  }
+  
   
   public enum ProcessProductType {
     Automatic, Manual, SemiAutomatic
