@@ -33,7 +33,7 @@ export class MenuBarComponent implements OnInit {
   profile!: KeycloakProfile;
   items: MenuItem[] | undefined;
 
-  constructor(private readonly keycloakService: KeycloakService) {}
+  constructor(private readonly keycloakService: KeycloakService) { }
 
   async ngOnInit() {
     this.isLogged = await this.keycloakService.isLoggedIn();
@@ -61,26 +61,26 @@ export class MenuBarComponent implements OnInit {
             icon: 'pi pi-server',
             route: '/product-type',
           },
-          {
-            label: 'Production Step',
-            icon: 'pi pi-pencil',
-            route: '/production-step',
-          },
+          // {
+          //   label: 'Production Step',
+          //   icon: 'pi pi-pencil',
+          //   route: '/production-step',
+          // },
           {
             label: 'Document',
             icon: 'pi pi-palette',
             route: '/document',
             items: [
-              {
-                label: 'Analisys',
-                icon: 'pi pi-palette',
-                route: '/analisys',
-              },
-              {
-                label: 'Certificate',
-                icon: 'pi pi-palette',
-                route: '/certificate',
-              },
+              // {
+              //   label: 'Analisys',
+              //   icon: 'pi pi-palette',
+              //   route: '/analisys',
+              // },
+              // {
+              //   label: 'Certificate',
+              //   icon: 'pi pi-palette',
+              //   route: '/certificate',
+              // },
             ],
           },
         ],
@@ -90,31 +90,34 @@ export class MenuBarComponent implements OnInit {
         icon: 'pi pi-search',
         items: [
           {
-            label: 'Batch',
-            icon: 'pi pi-bolt',
-          },
-          {
-            label: 'Product type',
+            label: 'Tracks',
             icon: 'pi pi-server',
+            route: "/track-list",
           },
           {
-            label: 'Production Step',
-            icon: 'pi pi-pencil',
+            label: 'Transport',
+            icon: 'pi pi-bolt',
+            route: '/transport',
           },
-          {
-            label: 'Templates',
-            icon: 'pi pi-palette',
-            items: [
-              {
-                label: 'Apollo',
-                icon: 'pi pi-palette',
-              },
-              {
-                label: 'Ultima',
-                icon: 'pi pi-palette',
-              },
-            ],
-          },
+          // {
+          //   label: 'Production Step',
+          //   icon: 'pi pi-pencil',
+          //   route: '/document',
+          // },
+          // {
+          //   label: 'Templates',
+          //   icon: 'pi pi-palette',
+          //   items: [
+          //     {
+          //       label: 'Apollo',
+          //       icon: 'pi pi-palette',
+          //     },
+          //     {
+          //       label: 'Ultima',
+          //       icon: 'pi pi-palette',
+          //     },
+          //   ],
+          // },
         ],
       },
       // {

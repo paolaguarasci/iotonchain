@@ -7,6 +7,8 @@ import { DocumentsListComponent } from './page/documents-list/documents-list.com
 import { LandingChainComponent } from './page/landing-chain/landing-chain.component';
 import { TraceOneBatchComponent } from './page/trace-one-batch/trace-one-batch.component';
 import { CreateOneBatchComponent } from './page/create-one-batch/create-one-batch.component';
+import { TrackListComponent } from './page/track-list/track-list.component';
+import { TransportComponent } from './page/transport/transport.component';
 
 export const routes: Routes = [
   {
@@ -38,7 +40,15 @@ export const routes: Routes = [
     component: LandingChainComponent,
   },
   {
+    path: 'track-list',
+    component: TrackListComponent,
+  },
+  {
     path: 'track/:id',
     component: TraceOneBatchComponent,
   },
+  {
+    path: 'transport',
+    component: TransportComponent,
+  }
 ];
