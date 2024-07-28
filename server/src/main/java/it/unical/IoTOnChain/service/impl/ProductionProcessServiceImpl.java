@@ -8,23 +8,29 @@ import it.unical.IoTOnChain.service.ProductionProcessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ProductionProcessServiceImpl implements ProductionProcessService {
   private final ProductionProcessRepository productionProcessRepository;
   private final ProductionStepRepository productionStepRepository;
   @Override
   public ProductionProcess createOne(String name, List<ProductionStep> steps) {
+    List<ProductionStep> stepsOk = steps;
+    List<ProductionStep> formDB = productionStepRepository.findAllById(steps.stream().map(step -> step.getId()).toList());
+    if (formDB.isEmpty()) {
+      stepsOk = productionStepRepository.saveAll(steps);
+    }
+    Set<ProductionStep> processes = new HashSet<>();
+    processes.addAll(stepsOk);
     return productionProcessRepository.save(ProductionProcess.builder()
       .note(name)
-      .steps(steps)
+      .steps(processes)
       .build());
   }
   
@@ -37,5 +43,15 @@ public class ProductionProcessServiceImpl implements ProductionProcessService {
       processSteps.add(Integer.parseInt(spt.get("position")), fromDB);
     });
     return processSteps;
+  }
+  
+  @Override
+  public ProductionProcess createOneByClone(String note, List<ProductionStep> stepFromDb) {
+    Set<ProductionStep> processSteps = new HashSet<>();
+    processSteps.addAll(stepFromDb);
+    return productionProcessRepository.save(ProductionProcess.builder()
+      .steps(processSteps)
+      .note(note)
+      .build());
   }
 }

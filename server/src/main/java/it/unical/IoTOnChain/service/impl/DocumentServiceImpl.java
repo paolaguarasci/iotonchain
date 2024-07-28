@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.web3j.protocol.exceptions.TransactionException;
 
 import java.io.FileNotFoundException;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j

@@ -20,6 +20,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class RecipeServiceImpl implements RecipeService {
   private final RecipeRepository recipeRepository;
   private final RecipeRowRepository recipeRowRepository;
@@ -51,10 +52,9 @@ public class RecipeServiceImpl implements RecipeService {
     for (RecipeRow recipeRow : rowFromDb) {
       recipeRows.add(RecipeRow.builder()
         .unity(recipeRow.getUnity())
-        .quantity(recipeRow.getQuantity() / 100 * quantity)
+        .quantity(recipeRow.getQuantity() / 100 * quantity) // TODO esce sempre 0, sistemare!
         .product(recipeRow.getProduct())
         .unity(recipeRow.getProduct().getUnity())
-        
         .build());
     }
     return recipeRepository.save(Recipe.builder().note(note).recipeRow(recipeRows).build());

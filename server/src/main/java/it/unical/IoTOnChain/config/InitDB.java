@@ -29,8 +29,9 @@ public class InitDB implements CommandLineRunner {
   private final ChainService chainService;
   private final ProductionProcessService productionProcessService;
   
-  @SneakyThrows
   @Override
+  // @Transactional(propagation = Propagation.REQUIRED)
+  @SneakyThrows
   public void run(String... args) throws Exception {
     log.info("Init DB - Start");
     

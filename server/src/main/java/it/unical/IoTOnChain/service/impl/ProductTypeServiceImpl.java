@@ -12,6 +12,7 @@ import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,9 +29,8 @@ public class ProductTypeServiceImpl implements ProductTypeService {
   
   
   @Override
+  @Transactional
   public ProductType createProductTypeForCompany(Company company, String productTypeName, String unity, Recipe recipe, ProductionProcess pp) {
-    
-    
     Optional<Company> companyFromDb = companyRepository.findById(company.getId());
     if (companyFromDb.isPresent()) {
       Company companyToUpdate = companyFromDb.get();

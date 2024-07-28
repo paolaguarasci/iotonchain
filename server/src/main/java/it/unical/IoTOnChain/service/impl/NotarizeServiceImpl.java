@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.web3j.protocol.exceptions.TransactionException;
 
 import java.io.File;
@@ -49,6 +50,7 @@ public class NotarizeServiceImpl implements NotarizeService {
   
   @Override
   @Async
+  @Transactional
   public void notarize(Document doc) throws NoSuchAlgorithmException, IOException, TransactionException, ExecutionException, InterruptedException {
     File file = new File(doc.getPath());
     InputStream inputStream = new FileInputStream(file);

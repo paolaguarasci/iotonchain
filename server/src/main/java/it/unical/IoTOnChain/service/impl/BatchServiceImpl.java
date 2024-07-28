@@ -9,10 +9,12 @@ import it.unical.IoTOnChain.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -111,11 +113,12 @@ public class BatchServiceImpl implements BatchService {
         Recipe localRecipe = recipeService.createOneByCloneAndMaterialize("recipe_" + batchId, quantity, rowFromDb);
         newProd.setLocalRecipe(localRecipe);
       }
-
-//      if(steps != null && !steps.isEmpty()) {
-//        List<ProductionStep> stepFromDb = productionProcessService.getProcessStepsByIdList(steps);
-//        newProd.setSteps(new HashSet<>(stepFromDb));
-//      }
+      
+      if (steps != null && !steps.isEmpty()) {
+        List<ProductionStep> stepFromDb = productionProcessService.getProcessStepsByIdList(steps);
+        ProductionProcess localProductionProcess = productionProcessService.createOneByClone("process_" + batchId, stepFromDb);
+        newProd.setLocalProcessProduction(localProductionProcess);
+      }
       
       
       return batchRepository.save(newProd);

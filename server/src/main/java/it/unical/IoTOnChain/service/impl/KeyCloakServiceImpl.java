@@ -11,12 +11,13 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.userprofile.config.UPConfig;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
 @Slf4j
-
+@Transactional
 public class KeyCloakServiceImpl implements KeyCloakService {
   private final Keycloak keycloak;
   

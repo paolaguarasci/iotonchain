@@ -10,4 +10,6 @@ public interface ProductionProcessService {
   ProductionProcess createOne(String name, List<ProductionStep> steps);
   
   List<ProductionStep> getProcessStepsByIdList(List<Map<String, String>> steps);
+  
+  ProductionProcess createOneByClone(String note, List<ProductionStep> stepFromDb);
 }
