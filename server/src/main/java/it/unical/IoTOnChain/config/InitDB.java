@@ -1,5 +1,6 @@
 package it.unical.IoTOnChain.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
@@ -28,6 +29,8 @@ public class InitDB implements CommandLineRunner {
   private final UserInfoService userInfoService;
   private final ChainService chainService;
   private final ProductionProcessService productionProcessService;
+  private final NotarizeService notarizeService;
+  private final ObjectMapper objectMapper;
   
   @Override
   // @Transactional(propagation = Propagation.REQUIRED)
@@ -35,7 +38,6 @@ public class InitDB implements CommandLineRunner {
   public void run(String... args) throws Exception {
     log.info("Init DB - Start");
     
-    // A quanto ho capito se non fai la get del Future si nchiovetta
     
     chainService.testAsync();
     log.info("Init DB - Finished ssss");
@@ -43,6 +45,7 @@ public class InitDB implements CommandLineRunner {
     
     Company paolaSPA = makeCompany("paolaspa");
     ProductionStep raccoltaBasilico = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
+    notarizeProductionStep(raccoltaBasilico);
     ProductionProcess pBasilico = makeProcess("basilico", List.of(raccoltaBasilico));
     ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico ligure", "kg", null, pBasilico);
     Batch basilicoBatch = produce(paolaSPA, basilicoType, 10, "batchId_123_basilico");
@@ -124,6 +127,10 @@ public class InitDB implements CommandLineRunner {
   
   private ProductionProcess makeProcess(String name, List<ProductionStep> steps) {
     return productionProcessService.createOne(name, steps);
+  }
+  
+  private void notarizeProductionStep(ProductionStep step) throws Exception {
+    notarizeService.notarize(step);
   }
   
 }

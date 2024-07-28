@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Transactional
@@ -211,6 +212,8 @@ public class BatchServiceImpl implements BatchService {
           rawMaterial.put("name", step.getName());
           rawMaterial.put("description", step.getDescription());
           rawMaterial.put("company", material.getCompanyProducer().getName());
+          rawMaterial.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+          rawMaterial.put("notarize", step.getNotarize());
           if(material.getProductionLocation() != null) {
             rawMaterial.put("location", material.getProductionLocation().getAddress());
           }
@@ -231,6 +234,8 @@ public class BatchServiceImpl implements BatchService {
       ppParent.put("name", step.getName());
       ppParent.put("description", step.getDescription());
       ppParent.put("company", batch.getCompanyProducer().getName());
+      ppParent.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      ppParent.put("notarize", step.getNotarize());
       if(batch.getProductionLocation() != null) {
         ppParent.put("location", batch.getProductionLocation().getAddress());
       }

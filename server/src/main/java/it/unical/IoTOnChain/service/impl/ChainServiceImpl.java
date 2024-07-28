@@ -72,7 +72,8 @@ public class ChainServiceImpl implements ChainService {
     }
     func.apply(msg, error);
   }
-
+  
+  
   @Override
   @Async
   public void testAsync() {

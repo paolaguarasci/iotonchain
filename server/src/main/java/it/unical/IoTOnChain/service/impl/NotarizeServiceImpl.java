@@ -1,10 +1,14 @@
 package it.unical.IoTOnChain.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.model.ChainTransaction;
 import it.unical.IoTOnChain.data.model.Document;
 import it.unical.IoTOnChain.data.model.Notarize;
+import it.unical.IoTOnChain.data.model.ProductionStep;
 import it.unical.IoTOnChain.repository.DocumentRepository;
 import it.unical.IoTOnChain.repository.NotarizeRepository;
+import it.unical.IoTOnChain.repository.ProductionStepRepository;
 import it.unical.IoTOnChain.service.ChainService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
@@ -32,6 +37,8 @@ public class NotarizeServiceImpl implements NotarizeService {
   private final NotarizeRepository notarizeRepository;
   private final ChainService chainService;
   private final DocumentRepository documentRepository;
+  private final ProductionStepRepository productionStepRepository;
+  private final ObjectMapper objectMapper;
   private final String ALGORITHM = "SHA3-256";
   
 
@@ -60,14 +67,14 @@ public class NotarizeServiceImpl implements NotarizeService {
     log.debug("Notarizzazione di {} - hash: {}", doc.getPath(), sha3Hex);
     chainService.signString(encodedhash, (String txHash, String error) -> {
       if (error != null) {
-        log.debug("Hash tx {} {} {}", txHash, doc.getPath(), error);
+        log.debug("[notarize(Document doc)-int] Hash tx {} {} {}", txHash, doc.getPath(), error);
         return "Ciao";
       }
       Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).document(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
       doc.setNotarize(nx);
       documentRepository.save(doc);
-      log.debug("Hash tx {} - {}", txHash, doc.getPath());
+      log.debug("[notarize(Document doc)-ext] Hash tx {} - {}", txHash, doc.getPath());
       return "Ciao";
     });
   }
@@ -81,12 +88,46 @@ public class NotarizeServiceImpl implements NotarizeService {
     log.debug("Notarizzazione di {} - hash: {}", doc, sha3Hex);
     chainService.signString(encodedHash, (String txHash, String error) -> {
       if (error != null) {
-        log.debug("Hash tx {} {} {}", txHash, doc, error);
+        log.debug("[notarize(String doc)-int] Hash tx {} {} {}", txHash, doc, error);
         return "Ciao";
       }
       Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
-      log.debug("Hash tx {} - {}", txHash, doc);
+      log.debug("[notarize(String doc)-ext] Hash tx {} - {}", txHash, doc);
+      return "ciao";
+    });
+  }
+  
+  
+  private String toBase64(String s) {
+    return Base64.getEncoder().encodeToString(s.getBytes());
+  }
+  
+  private String fromBase64(String s) {
+    return new String(Base64.getDecoder().decode(s));
+  }
+  
+  
+  @Override
+  @Async
+  public void notarize(ProductionStep ps) throws NoSuchAlgorithmException, IOException, TransactionException {
+    ps.setDate(LocalDateTime.now());
+    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    String doc = toBase64(objectMapper.writeValueAsString(ps));
+    MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+    byte[] encodedHash = digest.digest(doc.getBytes(StandardCharsets.UTF_8));
+    String sha3Hex = bytesToHex(encodedHash);
+    log.debug("\nNotarizzazione di {}\nbyteArr {}\nhash {}", doc, encodedHash, sha3Hex);
+    chainService.signString(encodedHash, (String txHash, String error) -> {
+      if (error != null) {
+        log.debug("[notarize(ProductionStep ps)-int] Hash tx {} {} {}", txHash, doc, error);
+        return "Ciao";
+      }
+      Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
+      notarizeRepository.save(nx);
+      ps.setNotarize(nx);
+      productionStepRepository.save(ps);
+      log.debug("[notarize(ProductionStep ps)-ext]  Hash tx {} - {}", txHash, doc);
       return "ciao";
     });
   }
