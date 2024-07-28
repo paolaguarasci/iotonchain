@@ -24,6 +24,7 @@ import { ProductTypeService } from '../../services/product-type.service';
 import { CompanyBatchService } from '../../services/company-batch.service';
 import { DocumentService } from '../../services/document.service';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-product-type-list',
   standalone: true,
@@ -101,7 +102,8 @@ export class ProductTypeListComponent implements OnInit {
     private batchService: CompanyBatchService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -172,6 +174,10 @@ export class ProductTypeListComponent implements OnInit {
         });
       },
     });
+  }
+
+  goToCreatePage(product: any) {
+    this.router.navigate(['/product/new'], { queryParams: { ptypeid: product.id } });
   }
 
   showDialogCreateBatch(ptypeSelected: any) {

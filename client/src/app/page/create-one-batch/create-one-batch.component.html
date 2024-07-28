@@ -1,0 +1,193 @@
+<div class="flex flex-column gap-3">
+  <div class="flex align-items-center justify-content-center border-round m-2">
+    <div class="text-8xl my-2">Create batch product</div>
+  </div>
+  <div
+    class="flex align-items-center justify-content-center surface-50 border-round m-2 p-3"
+  >
+    <div class="formgrid grid">
+      <div class="field col-12 md:col-6">
+        <label for="batchid">Batch ID</label>
+        <input
+          id="batchid"
+          type="text"
+          [(ngModel)]="selectedBatchId"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+        />
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="producttype">Product Type</label>
+        <p-dropdown
+          id="producttype"
+          [options]="productType"
+          [(ngModel)]="selectedProductType"
+          (onChange)="updateSelectedPType()"
+          optionLabel="name"
+          placeholder="Select a product type"
+        />
+      </div>
+
+      <div class="field col-12">
+        <label for="address">Description</label>
+        <textarea
+          id="address"
+          type="text"
+          rows="4"
+          [(ngModel)]="selectedDescription"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+        ></textarea>
+      </div>
+
+      <!-- <div class="field col-12 md:col-6">
+        <label for="latitude">Production Latitude</label>
+        <input
+          id="latitude"
+          type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+        />
+      </div>
+      <div class="field col-12 md:col-6">
+        <label for="longitude">Production Longitude</label>
+        <input
+          id="longitude"
+          type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+        />
+      </div> -->
+
+      <div class="field col-12 md:col-6">
+        <label for="documents">Documents</label>
+        <p-multiSelect
+          [options]="documents"
+          [(ngModel)]="selectedDocuments"
+          placeholder="Select a Documents"
+          optionLabel="name"
+        >
+          <ng-template let-value pTemplate="selectedItems">
+            <div
+              class="inline-flex align-items-center gap-2 px-1"
+              *ngFor="let option of value"
+            >
+              <div>{{ option.name }},</div>
+            </div>
+            <div *ngIf="!value || value.length === 0">Select Documents</div>
+          </ng-template>
+
+          <ng-template let-doc pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ doc.name }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-doc pTemplate="footer">
+            <div class="py-2 px-3">
+              <b>
+                {{ selectedDocuments ? selectedDocuments.length : 0 }}
+              </b>
+              document{{
+                (selectedDocuments ? selectedDocuments.length : 0) > 1
+                  ? "s"
+                  : ""
+              }}
+              selected.
+            </div>
+          </ng-template>
+        </p-multiSelect>
+      </div>
+
+      <div class="field col-12 md:col-6" *ngIf="selectedProductTypeFull">
+        <label for="quantity"
+          >Quantity ({{ selectedProductTypeFull.unity }})</label
+        >
+        <input
+          id="quantity"
+          type="number"
+          [min]="1"
+          [(ngModel)]="selectedQuantity"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+        />
+      </div>
+
+      <div
+        class="field col-12"
+        *ngIf="selectedProductTypeFull && selectedProductTypeFull.recipe"
+      >
+        <label for="longitude">Production Recipe</label>
+        <p-pickList
+          [source]="selectedProductTypeFull.recipe.recipeRow"
+          [target]="selectedRecipe"
+          sourceHeader="Available"
+          targetHeader="Selected"
+          [dragdrop]="true"
+          [responsive]="true"
+          [sourceStyle]="{ height: '20rem' }"
+          [targetStyle]="{ height: '20rem' }"
+          breakpoint="1400px"
+        >
+          <ng-template let-reciperow pTemplate="item">
+            <div class="flex flex-wrap p-2 align-items-center gap-3">
+              <div class="flex-1 flex flex-column gap-2">
+                <span class="font-bold">
+                  {{ reciperow.product.name }}
+                </span>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-tag text-sm"></i>
+                  <span>
+                    {{ reciperow.product.unity }}
+                  </span>
+                </div>
+              </div>
+              <span class="font-bold text-900">
+                {{ reciperow.quantity + " " + reciperow.unity }}
+              </span>
+            </div>
+          </ng-template>
+        </p-pickList>
+      </div>
+
+      <div class="field col-12" *ngIf="selectedProductProcessFull">
+        <label for="longitude">Production Process</label>
+        <p-pickList
+          [source]="selectedProductProcessFull"
+          [target]="selectedSteps"
+          sourceHeader="Available"
+          targetHeader="Selected"
+          [dragdrop]="true"
+          [responsive]="true"
+          [sourceStyle]="{ height: '20rem' }"
+          [targetStyle]="{ height: '20rem' }"
+          breakpoint="1400px"
+        >
+          <ng-template let-step pTemplate="item">
+            <div class="flex flex-wrap p-2 align-items-center gap-3">
+              <div class="flex-1 flex flex-column gap-2">
+                <span class="font-bold">
+                  {{ step.stepName + " - " + step.stepDesc }}
+                </span>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-tag text-sm"></i>
+                  <span>
+                    {{ step.productTypeId }}
+                  </span>
+                </div>
+              </div>
+              <span class="font-bold text-900">
+                {{ step.productTypeName }}
+              </span>
+            </div>
+          </ng-template>
+        </p-pickList>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex align-items-center justify-content-center surface-50 border-round m-2"
+  >
+    <p-button
+      label="Save"
+      size="large"
+      [style]="{ width: '100%' }"
+      (onClick)="save()"
+    />
+  </div>
+</div>

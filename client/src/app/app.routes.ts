@@ -6,6 +6,7 @@ import { DashboardComponent } from './page/dashboard/dashboard.component';
 import { DocumentsListComponent } from './page/documents-list/documents-list.component';
 import { LandingChainComponent } from './page/landing-chain/landing-chain.component';
 import { TraceOneBatchComponent } from './page/trace-one-batch/trace-one-batch.component';
+import { CreateOneBatchComponent } from './page/create-one-batch/create-one-batch.component';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,10 @@ export const routes: Routes = [
     component: ComapnyBatchListComponent,
   },
   {
+    path: 'product/new',
+    component: CreateOneBatchComponent,
+  },
+  {
     path: 'document',
     component: DocumentsListComponent,
   },
@@ -24,16 +29,16 @@ export const routes: Routes = [
     path: 'product-type',
     component: ProductTypeListComponent,
   },
-    {
-      path: 'production-step',
-      component: CreateStepsComponent,
-    },
-    {
-      path: 'chain/:id',
-      component: LandingChainComponent,
-    },
-    {
-      path: 'track/:id',
-      component: TraceOneBatchComponent,
-    },
+  {
+    path: 'production-step',
+    component: CreateStepsComponent,
+  },
+  {
+    path: 'chain/:id',
+    component: LandingChainComponent,
+  },
+  {
+    path: 'track/:id',
+    component: TraceOneBatchComponent,
+  },
 ];
