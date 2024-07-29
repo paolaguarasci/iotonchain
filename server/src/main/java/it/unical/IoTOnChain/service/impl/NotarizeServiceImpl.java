@@ -2,6 +2,8 @@ package it.unical.IoTOnChain.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unical.IoTOnChain.data.dto.ProductionStepTOChainDTO;
+import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.ChainTransaction;
 import it.unical.IoTOnChain.data.model.Document;
 import it.unical.IoTOnChain.data.model.Notarize;
@@ -39,6 +41,8 @@ public class NotarizeServiceImpl implements NotarizeService {
   private final DocumentRepository documentRepository;
   private final ProductionStepRepository productionStepRepository;
   private final ObjectMapper objectMapper;
+  private final GenericMapper genericMapper;
+  
   private final String ALGORITHM = "SHA3-256";
   
 
@@ -112,8 +116,7 @@ public class NotarizeServiceImpl implements NotarizeService {
   @Async
   public void notarize(ProductionStep ps) throws NoSuchAlgorithmException, IOException, TransactionException {
     ps.setDate(LocalDateTime.now());
-    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    String doc = toBase64(objectMapper.writeValueAsString(ps));
+    String doc = objectMapper.writeValueAsString(genericMapper.map(ps));
     MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
     byte[] encodedHash = digest.digest(doc.getBytes(StandardCharsets.UTF_8));
     String sha3Hex = bytesToHex(encodedHash);

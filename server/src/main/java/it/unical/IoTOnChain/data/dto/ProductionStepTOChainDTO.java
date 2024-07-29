@@ -6,16 +6,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
 @ToString
-public class ProductionStepDTOToOwner implements Serializable {
+public class ProductionStepTOChainDTO implements Serializable {
   private String id;
-  private String date;
-  private int position;
   private String name;
+  private String date;
   private String description;
 }
