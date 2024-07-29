@@ -24,6 +24,10 @@ export const initializeKeycloak = (keycloak: KeycloakService) => {
         realm: environment.keycloakRealm,
         clientId: environment.keycloakClientId,
       },
+      shouldUpdateToken(request) {
+        return !request.headers.get('token-update') === false;
+      },
+      bearerExcludedUrls: ['https://pixabay.com'],
       initOptions: {
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri:

@@ -22,6 +22,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { TableModule } from 'primeng/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ImageService } from '../../services/image.service';
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -62,6 +63,9 @@ export class ComapnyBatchListComponent implements OnInit {
   visibleTrasferDialog: boolean = false;
   infobatch: any[] = [];
 
+  imageSrc !: any;
+
+
   @ViewChild('txdetails', { static: false }) txdetails!: OverlayPanel;
 
   constructor(
@@ -70,9 +74,11 @@ export class ComapnyBatchListComponent implements OnInit {
     private transferService: TransferService,
     private messageService: MessageService,
     private keycloakService: KeycloakService,
+    private imageService: ImageService,
     private router: Router
   ) { }
   async ngOnInit() {
+    this.imageSrc = {};
     this.updateList();
     this.updateClients();
 
@@ -84,6 +90,9 @@ export class ComapnyBatchListComponent implements OnInit {
     this.productService.getAll().subscribe({
       next: (res: any) => {
         this.products = res;
+        res.map((p: any) => {
+          this.getImagePlaceHolder(p.id, p.productType.name)
+        })
       },
       error: (err: any) => { },
     });
@@ -114,6 +123,7 @@ export class ComapnyBatchListComponent implements OnInit {
     this.transferService.getAllByBatchId(item.batchId).subscribe({
       next: (res: any) => {
         res.map((tx: any) => {
+
           this.infobatch.push({
             date: tx.transferDateStart,
             from: tx.companySenderUsername,
@@ -133,7 +143,17 @@ export class ComapnyBatchListComponent implements OnInit {
   handleCleanup() {
     this.visibleTrasferDialog = false;
   }
-
+  getImagePlaceHolder(id: any, name: any) {
+    this.imageService.getOne(name).subscribe({
+      next: (res: any) => {
+        this.imageSrc[id] = res.hits[0]?.webformatURL
+        if (res.hits.length === 0) {
+          this.imageSrc[id] = "https://placehold.co/600x400?text=" + name
+        }
+      },
+      error: (err: any) => { }
+    })
+  }
   save() {
     this.visibleTrasferDialog = false;
     let dataToTransfer = {
