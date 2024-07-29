@@ -10,6 +10,6 @@ export class ImageService {
   constructor(private http: HttpClient) { }
 
   getOne(key: any) {
-    return this.http.get(`https://pixabay.com/api/?key=${this.api_key}&q=${key}&lang=it&image_type=photo&safesearch=true&orientation=horizontal`);
+    return this.http.get(`https://pixabay.com/api/?key=${this.api_key}&q=${key}&lang=it&editors_choice=true&image_type=photo&safesearch=true&orientation=horizontal`);
   }
 }
