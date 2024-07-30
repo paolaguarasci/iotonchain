@@ -13,10 +13,11 @@ import { DocumentService } from '../../services/document.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
 import { CompanyBatchService } from '../../services/company-batch.service';
+import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-create-one-batch',
   standalone: true,
-  imports: [FormsModule, DropdownModule, PickListModule, CommonModule, MultiSelectModule, ButtonModule],
+  imports: [FormsModule, DropdownModule, PickListModule, CommonModule, MultiSelectModule, ButtonModule, ToastModule],
   providers: [MessageService],
   templateUrl: './create-one-batch.component.html',
   styleUrl: './create-one-batch.component.scss'
@@ -172,7 +173,7 @@ export class CreateOneBatchComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'OK', detail: "" })
       },
       error: (err: any) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message })
       },
     })
   }
