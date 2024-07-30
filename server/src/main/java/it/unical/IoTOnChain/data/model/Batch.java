@@ -52,19 +52,19 @@ public class Batch implements Serializable {
   @ManyToOne
   private Location productionLocation;
   
-  @ManyToMany
-  @Builder.Default
-  private Set<Batch> rawMaterials = new HashSet<>();
+//  @ManyToMany
+//  @Builder.Default
+//  private Set<Batch> rawMaterials = new HashSet<>();
   
   @ManyToMany
   @Builder.Default
   private Set<Document> documents = new HashSet<>();
   
   @OneToOne
-  private Recipe localRecipe;
+  private RecipeBatch localRecipe;
   
   @OneToOne
-  private ProductionProcess localProcessProduction;
+  private ProductionProcessBatch localProcessProduction;
 
 //  @ManyToMany
 //  private Set<TransactionProductTrasfering> movementList = new HashSet<>();

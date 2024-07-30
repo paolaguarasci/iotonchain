@@ -44,7 +44,7 @@ public class BatchController {
   
   
   @PostMapping
-  public ResponseEntity<BatchToOwner> createBatch(@AuthenticationPrincipal Jwt principal, @RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException {
+  public ResponseEntity<?> createBatch(@AuthenticationPrincipal Jwt principal, @RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException, JsonProcessingException {
     log.debug("Create one batch of product type for company logged {}", dto.toString());
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
@@ -59,7 +59,7 @@ public class BatchController {
     } catch (NoSuchElementException e) {
       Map<String, String> errors = new HashMap<>();
       errors.put("message", "Not enough materials");
-      return ResponseEntity.badRequest().body(null);
+      return ResponseEntity.badRequest().body(objectMapper.writeValueAsString(errors));
     }
   }
   

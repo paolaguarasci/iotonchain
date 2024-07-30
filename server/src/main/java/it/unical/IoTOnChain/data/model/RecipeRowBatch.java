@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -15,12 +14,14 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class ProductionStep implements Serializable {
+public class RecipeRowBatch implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-  private LocalDateTime date;
-  private int position;
-  private String name;
-  private String description;
+  private String unity;
+  private Long quantity;
+  private String note;
+  
+  @ManyToOne
+  private Batch product;
 }

@@ -48,4 +48,6 @@ public interface GenericMapper {
   ProductionStep map(CreateProcessStepDTOFromOwner process);
   
   ProductionStepTOChainDTO map(ProductionStep ps);
+  
+  ProductionStepBatchTOChainDTO map(ProductionStepBatch ps);
 }

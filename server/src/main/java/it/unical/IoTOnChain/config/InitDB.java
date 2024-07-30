@@ -44,11 +44,12 @@ public class InitDB implements CommandLineRunner {
     
     
     Company paolaSPA = makeCompany("paolaspa");
-    ProductionStep raccoltaBasilico = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
-    notarizeProductionStep(raccoltaBasilico);
-    ProductionProcess pBasilico = makeProcess("basilico", List.of(raccoltaBasilico));
+    ProductionStep raccoltaBasilicoProcessType = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
+    ProductionStepBatch raccoltaBasilicoProcessTypeReal = ProductionStepBatch.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
+    ProductionProcess pBasilico = makeProcess("basilico", List.of(raccoltaBasilicoProcessType));
     ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico ligure", "kg", null, pBasilico);
     Batch basilicoBatch = produce(paolaSPA, basilicoType, 10, "batchId_123_basilico");
+    notarizeProductionStep(basilicoBatch, raccoltaBasilicoProcessTypeReal);
     
     Company nicolaSPA = makeCompany("nicolaspa");
     ProductionStep raccoltaAglio = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta dell'aglio").build();
@@ -129,8 +130,8 @@ public class InitDB implements CommandLineRunner {
     return productionProcessService.createOne(name, steps);
   }
   
-  private void notarizeProductionStep(ProductionStep step) throws Exception {
-    notarizeService.notarize(step);
+  private void notarizeProductionStep(Batch batch, ProductionStepBatch step) throws Exception {
+    notarizeService.notarize(batch, step);
   }
   
 }

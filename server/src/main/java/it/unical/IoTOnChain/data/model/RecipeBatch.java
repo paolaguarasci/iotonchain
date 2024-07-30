@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,12 +16,15 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class ProductionStep implements Serializable {
+public class RecipeBatch implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-  private LocalDateTime date;
-  private int position;
-  private String name;
-  private String description;
+  private String note;
+  
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @Builder.Default
+  private List<RecipeRowBatch> recipeRow = new ArrayList<>();
+  
+  
 }

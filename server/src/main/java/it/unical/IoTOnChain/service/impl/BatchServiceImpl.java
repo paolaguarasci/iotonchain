@@ -26,7 +26,9 @@ public class BatchServiceImpl implements BatchService {
   private final CompanyRepository companyRepository;
   private final DocumentService documentService;
   private final RecipeService recipeService;
+  private final RecipeBatchService recipeBatchService;
   private final ProductionProcessService productionProcessService;
+  private final ProductionProcessBatchService productionProcessBatchService;
   
   @Override
   public List<Batch> getAllProductByCompanyLogged(String companyLogged) {
@@ -99,7 +101,7 @@ public class BatchServiceImpl implements BatchService {
         .companyProducer(company)
         .batchId(batchId)
         .productType(type)
-        .rawMaterials(rawMaterials)
+        // .rawMaterials(rawMaterials)
         .productionDate(LocalDateTime.now())
         .quantity(quantity)
         .build();
@@ -110,18 +112,18 @@ public class BatchServiceImpl implements BatchService {
       }
       
       if (ingredients != null && !ingredients.isEmpty()) {
-        List<RecipeRow> rowFromDb = recipeService.getRecipeRowsByIdList(ingredients);
-        Recipe localRecipe = recipeService.createOneByCloneAndMaterialize("recipe_" + batchId, quantity, rowFromDb);
+        List<RecipeRowBatch> rowFromDb = recipeBatchService.getRecipeRowsByIdList(ingredients);
+        RecipeBatch localRecipe = recipeBatchService.createOneByCloneAndMaterialize("recipe_" + batchId, quantity, rowFromDb);
         newProd.setLocalRecipe(localRecipe);
       }
       
       if (steps != null && !steps.isEmpty()) {
-        List<ProductionStep> stepFromDb = productionProcessService.getProcessStepsByIdList(steps);
-        ProductionProcess localProductionProcess = productionProcessService.createOneByClone("process_" + batchId, stepFromDb);
+        List<ProductionStepBatch> stepFromDb = productionProcessBatchService.getProcessStepsByIdList(steps);
+        ProductionProcessBatch localProductionProcess = productionProcessBatchService.createOneByClone("process_" + batchId, stepFromDb);
         newProd.setLocalProcessProduction(localProductionProcess);
       }
       
-      
+      log.debug("Nuovo batch creato {}", newProd);
       return batchRepository.save(newProd);
     }
     
@@ -216,7 +218,7 @@ public class BatchServiceImpl implements BatchService {
           if(step.getDate() != null) {
             rawMaterial.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
           }
-          rawMaterial.put("notarize", step.getNotarize());
+          // rawMaterial.put("notarize", step.getNotarize());
           if(material.getProductionLocation() != null) {
             rawMaterial.put("location", material.getProductionLocation().getAddress());
           }
@@ -238,7 +240,7 @@ public class BatchServiceImpl implements BatchService {
       ppParent.put("description", step.getDescription());
       ppParent.put("company", batch.getCompanyProducer().getName());
 
-      ppParent.put("notarize", step.getNotarize());
+      // ppParent.put("notarize", step.getNotarize());
       if(batch.getProductionLocation() != null) {
         ppParent.put("location", batch.getProductionLocation().getAddress());
       }

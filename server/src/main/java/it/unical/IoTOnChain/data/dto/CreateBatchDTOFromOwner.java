@@ -21,6 +21,7 @@ public class CreateBatchDTOFromOwner implements Serializable {
   private String unity;
   private List<String> documents;
   private List<String> ingredients;
+  // private List<Map<String, String>> ingredients;
   private List<Map<String, String>> productionSteps;
   private String productTypeID;
   

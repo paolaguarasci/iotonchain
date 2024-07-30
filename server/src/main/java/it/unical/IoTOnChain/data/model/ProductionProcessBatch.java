@@ -1,10 +1,12 @@
 package it.unical.IoTOnChain.data.model;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -15,12 +17,13 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class ProductionStep implements Serializable {
+public class ProductionProcessBatch implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-  private LocalDateTime date;
-  private int position;
-  private String name;
-  private String description;
+  private String note;
+  
+  @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+  @Builder.Default
+  private Set<ProductionStepBatch> steps = new HashSet<>();
 }

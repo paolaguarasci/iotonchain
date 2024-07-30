@@ -15,12 +15,14 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class ProductionStep implements Serializable {
+public class ProductionStepBatch implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   private LocalDateTime date;
   private int position;
   private String name;
+  @OneToOne
+  private Notarize notarize;
   private String description;
 }

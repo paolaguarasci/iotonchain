@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.dto.ProductionStepTOChainDTO;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
-import it.unical.IoTOnChain.data.model.ChainTransaction;
-import it.unical.IoTOnChain.data.model.Document;
-import it.unical.IoTOnChain.data.model.Notarize;
-import it.unical.IoTOnChain.data.model.ProductionStep;
+import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.repository.DocumentRepository;
 import it.unical.IoTOnChain.repository.NotarizeRepository;
+import it.unical.IoTOnChain.repository.ProductionStepBatchRepository;
 import it.unical.IoTOnChain.repository.ProductionStepRepository;
 import it.unical.IoTOnChain.service.ChainService;
 import it.unical.IoTOnChain.service.NotarizeService;
@@ -31,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,7 +38,7 @@ public class NotarizeServiceImpl implements NotarizeService {
   private final NotarizeRepository notarizeRepository;
   private final ChainService chainService;
   private final DocumentRepository documentRepository;
-  private final ProductionStepRepository productionStepRepository;
+  private final ProductionStepBatchRepository productionStepBatchRepository;
   private final ObjectMapper objectMapper;
   private final GenericMapper genericMapper;
   
@@ -114,9 +113,12 @@ public class NotarizeServiceImpl implements NotarizeService {
   
   @Override
   @Async
-  public void notarize(ProductionStep ps) throws NoSuchAlgorithmException, IOException, TransactionException {
-    ps.setDate(LocalDateTime.now());
-    String doc = objectMapper.writeValueAsString(genericMapper.map(ps));
+  public void notarize(Batch batch, ProductionStepBatch ps) throws NoSuchAlgorithmException, IOException, TransactionException {
+    
+    ProductionStepBatch pp = batch.getLocalProcessProduction().getSteps().stream().filter(productionStep -> productionStep.getId().equals(ps.getId())).collect(Collectors.toList()).getFirst();
+    
+    pp.setDate(LocalDateTime.now());
+    String doc = objectMapper.writeValueAsString(genericMapper.map(pp));
     MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
     byte[] encodedHash = digest.digest(doc.getBytes(StandardCharsets.UTF_8));
     String sha3Hex = bytesToHex(encodedHash);
@@ -128,8 +130,8 @@ public class NotarizeServiceImpl implements NotarizeService {
       }
       Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
-      ps.setNotarize(nx);
-      productionStepRepository.save(ps);
+      pp.setNotarize(nx);
+      productionStepBatchRepository.save(pp);
       log.debug("[notarize(ProductionStep ps)-ext]  Hash tx {} - {}", txHash, doc);
       return "ciao";
     });
