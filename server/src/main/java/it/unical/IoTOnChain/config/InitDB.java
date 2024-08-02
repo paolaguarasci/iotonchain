@@ -31,6 +31,8 @@ public class InitDB implements CommandLineRunner {
   private final ProductionProcessService productionProcessService;
   private final NotarizeService notarizeService;
   private final ObjectMapper objectMapper;
+  private final TransportService transportService;
+  private final TruckService truckService;
   
   @Override
   // @Transactional(propagation = Propagation.REQUIRED)
@@ -76,7 +78,15 @@ public class InitDB implements CommandLineRunner {
     ProductionProcess pPesto = makeProcess("processo produttivo dell'olio", List.of(produzionePesto));
     ProductType pestoType = makeProductTypeAndAssociateToCompany(barillaSPA, "pesto", "kg", pestoRecipe, pPesto);
     
+    Truck truck1 = truckService.createOne(basilicoBatch.getCompanyOwner().getName());
+    Truck truck2 = truckService.createOne(basilicoBatch.getCompanyOwner().getName());
+    Truck truck3 = truckService.createOne(basilicoBatch.getCompanyOwner().getName());
+    Transport transport1 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());
+    Transport transport2 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());
+    Transport transport3 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());
+    log.debug("Trasporto creato {}", transport1.getId());
     Batch pestoBatch = null;
+    
     
     try {
       pestoBatch = produce(barillaSPA, pestoType, 1, "batchId_123_pesto");
@@ -84,8 +94,11 @@ public class InitDB implements CommandLineRunner {
     } catch (NoEnoughRawMaterialsException e) {
       log.error("Non hai abbastanza materie prime!");
       transferBatch(paolaSPA, basilicoBatch, barillaSPA, 5);
+      //Transport transport2 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());
       transferBatch(nicolaSPA, aglioBatch, barillaSPA, 5);
+      // Transport transport2 = transportService.createOne(aglioBatch, );
       transferBatch(filippoSPA, olioBatch, barillaSPA, 5);
+      // Transport transport3 = transportService.createOne(olioBatch, );
       pestoBatch = produce(barillaSPA, pestoType, 1, "batchId_123_pesto");
     }
     

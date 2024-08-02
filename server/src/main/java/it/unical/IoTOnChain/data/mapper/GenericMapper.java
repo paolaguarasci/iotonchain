@@ -50,4 +50,8 @@ public interface GenericMapper {
   ProductionStepTOChainDTO map(ProductionStep ps);
   
   ProductionStepBatchTOChainDTO map(ProductionStepBatch ps);
+  
+  List<TransportToOwnerDTO> map(List<Transport> allByCompany);
+  
+  TransportToOwnerDTO map(Transport entity);
 }

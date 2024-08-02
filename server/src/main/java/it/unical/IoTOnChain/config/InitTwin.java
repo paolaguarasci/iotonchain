@@ -73,6 +73,7 @@ public class InitTwin implements CommandLineRunner {
     
     log.debug("La temperatura del sensore {} e' {} gradi", dt.get("$dtId"), dt.get("Temperature"));
     
+    
     log.info("Init Twin - End");
   }
 }
