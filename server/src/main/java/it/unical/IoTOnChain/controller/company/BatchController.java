@@ -73,4 +73,6 @@ public class BatchController {
     }
     return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, batch_id)));
   }
+  
+  
 }

@@ -175,7 +175,7 @@ public class BatchServiceImpl implements BatchService {
       .companyProducer(company)
       .batchId(s)
       .productType(productType)
-      .rawMaterials(old.getRawMaterials())
+      // .rawMaterials(old.getRawMaterials())
       .productionDate(LocalDateTime.now())
       .quantity(quantity)
       .build());
@@ -200,33 +200,33 @@ public class BatchServiceImpl implements BatchService {
     
     // mi serve la data e va sortato per data
     // mi servono le transazioni per certificare il processo
-    
-    batch.getRawMaterials().forEach(material -> {
-      
-      productionProcessGlobal.getSteps().addAll(material.getProductType().getProductionProcess().getSteps());
-      List i = new ArrayList();
-      material.getProductType().getProductionProcess().getSteps().stream()
-        .sorted((a, b) -> a.getPosition() > b.getPosition() ? -1 : 1)
-        .forEach((step) -> {
-          Map<String, Object> rawMaterial = new HashMap<>();
-          rawMaterial.put("batch_id", material.getBatchId());
-          rawMaterial.put("step_id", step.getId());
-          rawMaterial.put("name", step.getName());
-          rawMaterial.put("description", step.getDescription());
-          rawMaterial.put("company", material.getCompanyProducer().getName());
-          
-          if(step.getDate() != null) {
-            rawMaterial.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-          }
-          // rawMaterial.put("notarize", step.getNotarize());
-          if(material.getProductionLocation() != null) {
-            rawMaterial.put("location", material.getProductionLocation().getAddress());
-          }
-          i.add(rawMaterial);
-        });
-      
-      info.put(material.getBatchId(), i);
-    });
+
+//    batch.getRawMaterials().forEach(material -> {
+//
+//      productionProcessGlobal.getSteps().addAll(material.getProductType().getProductionProcess().getSteps());
+//      List i = new ArrayList();
+//      material.getProductType().getProductionProcess().getSteps().stream()
+//        .sorted((a, b) -> a.getPosition() > b.getPosition() ? -1 : 1)
+//        .forEach((step) -> {
+//          Map<String, Object> rawMaterial = new HashMap<>();
+//          rawMaterial.put("batch_id", material.getBatchId());
+//          rawMaterial.put("step_id", step.getId());
+//          rawMaterial.put("name", step.getName());
+//          rawMaterial.put("description", step.getDescription());
+//          rawMaterial.put("company", material.getCompanyProducer().getName());
+//
+//          if(step.getDate() != null) {
+//            rawMaterial.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+//          }
+//          // rawMaterial.put("notarize", step.getNotarize());
+//          if(material.getProductionLocation() != null) {
+//            rawMaterial.put("location", material.getProductionLocation().getAddress());
+//          }
+//          i.add(rawMaterial);
+//        });
+//
+//      info.put(material.getBatchId(), i);
+//    });
     
     productionProcessGlobal.getSteps().addAll(productionProcessParent.getSteps());
     
