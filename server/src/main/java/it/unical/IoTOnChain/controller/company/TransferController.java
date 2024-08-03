@@ -6,7 +6,6 @@ import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.Batch;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
-import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.TransferService;
@@ -49,7 +48,7 @@ public class TransferController {
   }
   
   @PostMapping()
-  private ResponseEntity<TransferToOwnerDTO> createOne(@AuthenticationPrincipal Jwt principal, @RequestBody TransferRequestDTO dto) throws NoEnoughRawMaterialsException, MoveIsNotPossibleException {
+  private ResponseEntity<TransferToOwnerDTO> createOne(@AuthenticationPrincipal Jwt principal, @RequestBody TransferRequestDTO dto) throws Exception, MoveIsNotPossibleException {
     String companyLogged = principal.getClaimAsString("company");
     log.debug("Transfer batch {} ", dto.toString());
     Company companyOwner = companyService.getOneByName(companyLogged);

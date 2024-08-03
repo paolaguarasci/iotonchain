@@ -1,7 +1,6 @@
 package it.unical.IoTOnChain.service.impl;
 
 import it.unical.IoTOnChain.data.model.Batch;
-import it.unical.IoTOnChain.data.model.ChainTransaction;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Transfer;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
@@ -11,9 +10,11 @@ import it.unical.IoTOnChain.repository.TransportRepository;
 import it.unical.IoTOnChain.repository.TruckRepository;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
+import it.unical.IoTOnChain.service.NotarizeService;
 import it.unical.IoTOnChain.service.TransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +31,13 @@ public class TransferServiceImpl implements TransferService {
   private final CompanyService companyService;
   private final TruckRepository truckRepository;
   private final TransportRepository transportRepository;
+  private final NotarizeService notarizeService;
   
   @Override
-  public Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
+  public Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, Exception {
     Batch newsBAtch = batchService.move(companyLogged, batch, company, quantity);
-    ChainTransaction tx = saveOnChain();
-    // assert tx != null;
-    return transferRepository.save(Transfer.builder()
+    
+    Transfer trs = Transfer.builder()
       .oldBatchID(batch.getBatchId())
       .newBatchID(newsBAtch.getBatchId())
       .unity(batch.getProductType().getUnity())
@@ -49,8 +50,12 @@ public class TransferServiceImpl implements TransferService {
       .transferDateStart(LocalDateTime.now())
       .status(Transfer.TransferStatus.COMPLETED)
       .lastUpdate(LocalDateTime.now())
-      .txTransactionList(List.of(tx))
-      .build());
+      .build();
+    
+    
+    transferRepository.save(trs);
+    saveOnChain(companyLogged, trs);
+    return trs;
   }
   
   @Override
@@ -77,8 +82,8 @@ public class TransferServiceImpl implements TransferService {
   }
   
   
-  private ChainTransaction saveOnChain() {
-    // TODO
-    return ChainTransaction.builder().txId("txid").build();
+  @Async
+  public void saveOnChain(Company company, Transfer transfer) throws Exception {
+    notarizeService.notarize(company, transfer);
   }
 }

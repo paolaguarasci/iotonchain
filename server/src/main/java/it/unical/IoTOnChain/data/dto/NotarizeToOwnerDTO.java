@@ -17,6 +17,6 @@ public class NotarizeToOwnerDTO implements Serializable {
   private String hash;
   private String notarizedAt;
   private String data;
-  private DocumentToOwnerDTO document;
+  private String documentId;
   private List<ChainTransactionToOwnerDTO> txTransactionList;
 }

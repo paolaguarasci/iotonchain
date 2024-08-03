@@ -132,7 +132,7 @@ public class InitDB implements CommandLineRunner {
     return str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
   }
   
-  private void transferBatch(Company companyLogged, Batch basilicoBatch, Company barillaSPA, int i) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
+  private void transferBatch(Company companyLogged, Batch basilicoBatch, Company barillaSPA, int i) throws MoveIsNotPossibleException, Exception {
     transferService.makeTransactionOneShot(companyLogged, basilicoBatch, barillaSPA, i);
   }
   

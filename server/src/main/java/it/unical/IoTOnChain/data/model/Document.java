@@ -20,6 +20,7 @@ public class Document implements Serializable {
   private UUID id;
   
   @OneToOne
+  @ToString.Exclude
   private Notarize notarize;
   
   private String title;

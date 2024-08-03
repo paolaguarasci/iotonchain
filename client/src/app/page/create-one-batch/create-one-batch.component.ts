@@ -156,7 +156,7 @@ export class CreateOneBatchComponent implements OnInit {
     let toSave = {
       batchId: this.selectedBatchId,
       description: this.selectedDescription,
-      documents: this.selectedDocuments.map((doc: any) => doc.id),
+      documents: this.selectedDocuments.map((doc: any) => doc.code),
       productionSteps: this.selectedSteps.map((step: any, index: any) => {
         return { id: step.stepId, position: index }
       }),
@@ -166,7 +166,7 @@ export class CreateOneBatchComponent implements OnInit {
       productTypeID: this.selectedProductTypeFull.id
     }
     // console.log(" --- ", toSave)
-
+    console.log(this.selectedDocuments)
     this.companyBatchService.produceBatch(toSave).subscribe({
       next: (res: any) => {
         console.log("Creazione!", res)

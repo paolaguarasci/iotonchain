@@ -1,9 +1,6 @@
 package it.unical.IoTOnChain.service;
 
-import it.unical.IoTOnChain.data.model.Company;
-import it.unical.IoTOnChain.data.model.Document;
-import it.unical.IoTOnChain.data.model.Notarize;
-import it.unical.IoTOnChain.data.model.ProductionStepBatch;
+import it.unical.IoTOnChain.data.model.*;
 import org.web3j.protocol.exceptions.TransactionException;
 
 import java.io.IOException;
@@ -19,4 +16,6 @@ public interface NotarizeService {
   void notarize(Company company, ProductionStepBatch ps) throws NoSuchAlgorithmException, IOException, TransactionException;
  
   List<Notarize> getAll(Company company);
+  
+  void notarize(Company company, Transfer transfer) throws NoSuchAlgorithmException, IOException, TransactionException;
 }

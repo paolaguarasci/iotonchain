@@ -98,7 +98,7 @@ public class DocumentServiceImpl implements DocumentService {
   
   @Override
   public List<Document> getByIdList(List<String> documents) {
-    return documentRepository.findAllById(documents.stream().map(UUID::fromString).toList());
+    return documentRepository.findAllById(documents.stream().map(doc -> UUID.fromString(doc)).toList());
   }
   
 }

@@ -59,7 +59,9 @@ public interface GenericMapper {
   
   TruckToOwnerDTO map(Truck entity);
   
+  
   List<NotarizeToOwnerDTO> mapNotarizeListToOwner(List<Notarize> all);
   
+  @Mapping(source = "document.id", target = "documentId")
   NotarizeToOwnerDTO map(Notarize entity);
 }
