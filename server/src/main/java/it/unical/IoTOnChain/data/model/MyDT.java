@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -22,7 +23,14 @@ public class MyDT implements Serializable {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   private String dtid;
+  
   private String prop1;
   private String prop2;
   private String prop3;
+  
+  private String val1;
+  private String val2;
+  private String val3;
+  
+  private LocalDateTime lastUpdated;
 }

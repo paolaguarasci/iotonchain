@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -21,4 +22,6 @@ public class Truck implements Serializable {
   
   @OneToOne(cascade = CascadeType.ALL)
   private MyDT sensor;
+  
+  private LocalDateTime lastSensorsUpdate;
 }

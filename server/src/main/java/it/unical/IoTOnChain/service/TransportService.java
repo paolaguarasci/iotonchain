@@ -16,4 +16,6 @@ public interface TransportService {
   Transport createOne(String batchId, String location, String companyFrom, String companyTo);
   
   List<Transport> getAllByCompany(Company company);
+  
+  void updateAllTransportDataFromDTHUb() throws InterruptedException;
 }
