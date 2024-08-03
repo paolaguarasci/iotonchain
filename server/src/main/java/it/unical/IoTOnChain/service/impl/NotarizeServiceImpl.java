@@ -27,7 +27,6 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -59,7 +58,7 @@ public class NotarizeServiceImpl implements NotarizeService {
   @Override
   @Async
   @Transactional
-  public void notarize(Document doc) throws NoSuchAlgorithmException, IOException, TransactionException, ExecutionException, InterruptedException {
+  public void notarize(Company company, Document doc) throws NoSuchAlgorithmException, IOException, TransactionException, ExecutionException, InterruptedException {
     File file = new File(doc.getPath());
     InputStream inputStream = new FileInputStream(file);
     MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
@@ -71,7 +70,7 @@ public class NotarizeServiceImpl implements NotarizeService {
         log.debug("[notarize(Document doc)-int] Hash tx {} {} {}", txHash, doc.getPath(), error);
         return "Ciao";
       }
-      Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).document(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
+      Notarize nx = Notarize.builder().company(company).notarizedAt(LocalDateTime.now()).document(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
       doc.setNotarize(nx);
       documentRepository.save(doc);
@@ -82,7 +81,7 @@ public class NotarizeServiceImpl implements NotarizeService {
   
   @Override
   @Async
-  public void notarize(String doc) throws Exception {
+  public void notarize(Company company, String doc) throws Exception {
     MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
     byte[] encodedHash = digest.digest(doc.getBytes(StandardCharsets.UTF_8));
     String sha3Hex = bytesToHex(encodedHash);
@@ -92,7 +91,7 @@ public class NotarizeServiceImpl implements NotarizeService {
         log.debug("[notarize(String doc)-int] Hash tx {} {} {}", txHash, doc, error);
         return "Ciao";
       }
-      Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
+      Notarize nx = Notarize.builder().company(company).notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
       log.debug("[notarize(String doc)-ext] Hash tx {} - {}", txHash, doc);
       return "ciao";
@@ -111,12 +110,10 @@ public class NotarizeServiceImpl implements NotarizeService {
   
   @Override
   @Async
-  public void notarize(Batch batch, ProductionStepBatch ps) throws NoSuchAlgorithmException, IOException, TransactionException {
-    
-    ProductionStepBatch pp = batch.getLocalProcessProduction().getSteps().stream().filter(productionStep -> productionStep.getId().equals(ps.getId())).collect(Collectors.toList()).getFirst();
-    
-    pp.setDate(LocalDateTime.now());
-    String doc = objectMapper.writeValueAsString(genericMapper.map(pp));
+  public void notarize(Company company, ProductionStepBatch ps) throws NoSuchAlgorithmException, IOException, TransactionException {
+    // ProductionStepBatch pp = batch.getLocalProcessProduction().getSteps().stream().filter(productionStep -> productionStep.getId().equals(ps.getId())).collect(Collectors.toList()).getFirst();
+    // pp.setDate(LocalDateTime.now());
+    String doc = objectMapper.writeValueAsString(genericMapper.map(ps));
     MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
     byte[] encodedHash = digest.digest(doc.getBytes(StandardCharsets.UTF_8));
     String sha3Hex = bytesToHex(encodedHash);
@@ -126,10 +123,10 @@ public class NotarizeServiceImpl implements NotarizeService {
         log.debug("[notarize(ProductionStep ps)-int] Hash tx {} {} {}", txHash, doc, error);
         return "Ciao";
       }
-      Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
+      Notarize nx = Notarize.builder().company(company).notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
       notarizeRepository.save(nx);
-      pp.setNotarize(nx);
-      productionStepBatchRepository.save(pp);
+      ps.setNotarize(nx);
+      productionStepBatchRepository.save(ps);
       log.debug("[notarize(ProductionStep ps)-ext]  Hash tx {} - {}", txHash, doc);
       return "ciao";
     });

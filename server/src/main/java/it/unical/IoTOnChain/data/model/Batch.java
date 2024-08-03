@@ -60,10 +60,10 @@ public class Batch implements Serializable {
   @Builder.Default
   private Set<Document> documents = new HashSet<>();
   
-  @OneToOne
+  @ManyToOne
   private RecipeBatch localRecipe;
   
-  @OneToOne
+  @ManyToOne
   private ProductionProcessBatch localProcessProduction;
 
 //  @ManyToMany

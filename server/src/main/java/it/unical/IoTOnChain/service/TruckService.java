@@ -10,7 +10,7 @@ public interface TruckService {
   
   Truck getFirstAvailableTruck();
   
-  Truck createOne(String batchId);
+  Truck createOne(Company company);
   
   List<Truck> getAllByCompany(Company company);
 }

@@ -10,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class ProductionProcessServiceImpl implements ProductionProcessService {
     if (formDB.isEmpty()) {
       stepsOk = productionStepRepository.saveAll(steps);
     }
-    Set<ProductionStep> processes = new HashSet<>();
+    List<ProductionStep> processes = new ArrayList<>();
     processes.addAll(stepsOk);
     return productionProcessRepository.save(ProductionProcess.builder()
       .note(name)
@@ -47,7 +50,7 @@ public class ProductionProcessServiceImpl implements ProductionProcessService {
   
   @Override
   public ProductionProcess createOneByClone(String note, List<ProductionStep> stepFromDb) {
-    Set<ProductionStep> processSteps = new HashSet<>();
+    List<ProductionStep> processSteps = new ArrayList<>();
     processSteps.addAll(stepFromDb);
     return productionProcessRepository.save(ProductionProcess.builder()
       .steps(processSteps)

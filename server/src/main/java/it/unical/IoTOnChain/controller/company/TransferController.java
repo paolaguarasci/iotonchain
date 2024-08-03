@@ -62,6 +62,4 @@ public class TransferController {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(transferService.makeTransactionWithAcceptance(companyOwner, batch, companyReceiver, dto.getQuantity())));
     }
   }
-  
-  
 }

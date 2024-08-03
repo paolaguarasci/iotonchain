@@ -10,6 +10,7 @@ import { CreateOneBatchComponent } from './page/create-one-batch/create-one-batc
 import { TransportComponent } from './page/transport/transport.component';
 import { TruckListComponent } from './page/truck-list/truck-list.component';
 import { NotarizeListComponent } from './page/notarize-list/notarize-list.component';
+import { TransfertListComponent } from './page/transfert-list/transfert-list.component';
 
 export const routes: Routes = [
   {
@@ -55,6 +56,10 @@ export const routes: Routes = [
   {
     path: 'notarize-list',
     component: NotarizeListComponent
+  },
+  {
+    path: 'transfert-list',
+    component: TransfertListComponent
   }
 
 ];

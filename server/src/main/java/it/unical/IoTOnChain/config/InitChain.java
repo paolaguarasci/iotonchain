@@ -1,5 +1,7 @@
 package it.unical.IoTOnChain.config;
 
+import it.unical.IoTOnChain.data.model.Company;
+import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -16,13 +18,13 @@ import java.time.LocalDateTime;
 @ConditionalOnProperty(name = "app.init.chain", havingValue = "true")
 public class InitChain implements CommandLineRunner {
   private final NotarizeService notarizeService;
-  
-  
+  private final CompanyService companyService;
   @SneakyThrows
   @Override
   public void run(String... args) throws Exception {
     log.info("Init Chain - Start");
-    notarizeService.notarize("Ciao Chain!" + LocalDateTime.now());
+    Company company = companyService.getOneByName("paolaspa");
+    notarizeService.notarize(company, "Ciao Chain!" + LocalDateTime.now());
     log.info("Init Chain - End");
   }
 }

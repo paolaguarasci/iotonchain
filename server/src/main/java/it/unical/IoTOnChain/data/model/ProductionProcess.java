@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,7 +23,7 @@ public class ProductionProcess implements Serializable {
   private UUID id;
   private String note;
   
-  @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+  @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
   @Builder.Default
-  private Set<ProductionStep> steps = new HashSet<>();
+  private List<ProductionStep> steps = new ArrayList<>();
 }

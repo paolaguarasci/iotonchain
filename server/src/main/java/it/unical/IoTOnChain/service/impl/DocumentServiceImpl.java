@@ -44,7 +44,7 @@ public class DocumentServiceImpl implements DocumentService {
   @Override
   public Document createOne(Company company, String name, String description, LocalDateTime localDateTime1, LocalDateTime localDateTime2, Path resolve) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Document doc =  documentRepository.save(Document.builder().title(name).description(description).owner(company).path(String.valueOf(resolve)).build());
-    notarizeService.notarize(doc);
+    notarizeService.notarize(company, doc);
     return doc;
   }
   
@@ -59,7 +59,7 @@ public class DocumentServiceImpl implements DocumentService {
   public void notarize(Company company, String docId) throws TransactionException, NoSuchAlgorithmException, IOException, ExecutionException, InterruptedException {
     Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(docId));
     if(documentOptional.isPresent() && documentOptional.get().getNotarize() == null) {
-      notarizeService.notarize(documentOptional.get());
+      notarizeService.notarize(company, documentOptional.get());
     }
   }
   

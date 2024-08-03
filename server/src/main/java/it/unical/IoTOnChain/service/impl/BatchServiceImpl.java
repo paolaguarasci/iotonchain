@@ -72,6 +72,7 @@ public class BatchServiceImpl implements BatchService {
     log.debug("ingredients {}", ingredients);
     log.debug("steps {}", steps);
     
+    
     if (type.getRecipe() != null) {
       for (RecipeRow recipeRow : type.getRecipe().getRecipeRow()) {
         // FIXME potenziali side effect quando si mischiano diverse unita' di misura!
@@ -112,14 +113,16 @@ public class BatchServiceImpl implements BatchService {
       }
       
       if (ingredients != null && !ingredients.isEmpty()) {
-        List<RecipeRowBatch> rowFromDb = recipeBatchService.getRecipeRowsByIdList(ingredients);
-        RecipeBatch localRecipe = recipeBatchService.createOneByCloneAndMaterialize("recipe_" + batchId, quantity, rowFromDb);
+        List<RecipeRow> rowFromDb = recipeService.getRecipeRowsByIdList(ingredients);
+        RecipeBatch localRecipe = recipeBatchService.createOneByCloneAndMaterialize(company, "recipe_" + batchId, quantity, rowFromDb);
         newProd.setLocalRecipe(localRecipe);
       }
       
       if (steps != null && !steps.isEmpty()) {
-        List<ProductionStepBatch> stepFromDb = productionProcessBatchService.getProcessStepsByIdList(steps);
+        List<ProductionStep> stepFromDb = productionProcessService.getProcessStepsByIdList(steps);
+        log.debug("Ci sono {} step da salvare", stepFromDb.size());
         ProductionProcessBatch localProductionProcess = productionProcessBatchService.createOneByClone("process_" + batchId, stepFromDb);
+        log.debug("Ho salvato il processo {}", localProductionProcess);
         newProd.setLocalProcessProduction(localProductionProcess);
       }
       
@@ -172,11 +175,14 @@ public class BatchServiceImpl implements BatchService {
     // salva sulla chain!
     return batchRepository.save(Batch.builder()
       .companyOwner(company)
-      .companyProducer(company)
+      .companyProducer(old.getCompanyProducer())
       .batchId(s)
       .productType(productType)
       // .rawMaterials(old.getRawMaterials())
+      .localProcessProduction(old.getLocalProcessProduction())
+      .localRecipe(old.getLocalRecipe())
       .productionDate(LocalDateTime.now())
+      .documents(old.getDocuments())
       .quantity(quantity)
       .build());
   }
@@ -195,64 +201,89 @@ public class BatchServiceImpl implements BatchService {
       return null;
     }
     
-    ProductionProcess productionProcessGlobal = ProductionProcess.builder().build();
-    ProductionProcess productionProcessParent = batch.getProductType().getProductionProcess();
+    
+    ProductionProcessBatch productionProcessGlobal = ProductionProcessBatch.builder().steps(new ArrayList<>()).build();
+    ProductionProcessBatch productionProcessParent = batch.getLocalProcessProduction();
     
     // mi serve la data e va sortato per data
     // mi servono le transazioni per certificare il processo
-
-//    batch.getRawMaterials().forEach(material -> {
-//
-//      productionProcessGlobal.getSteps().addAll(material.getProductType().getProductionProcess().getSteps());
-//      List i = new ArrayList();
-//      material.getProductType().getProductionProcess().getSteps().stream()
-//        .sorted((a, b) -> a.getPosition() > b.getPosition() ? -1 : 1)
-//        .forEach((step) -> {
-//          Map<String, Object> rawMaterial = new HashMap<>();
-//          rawMaterial.put("batch_id", material.getBatchId());
-//          rawMaterial.put("step_id", step.getId());
-//          rawMaterial.put("name", step.getName());
-//          rawMaterial.put("description", step.getDescription());
-//          rawMaterial.put("company", material.getCompanyProducer().getName());
-//
-//          if(step.getDate() != null) {
-//            rawMaterial.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-//          }
-//          // rawMaterial.put("notarize", step.getNotarize());
-//          if(material.getProductionLocation() != null) {
-//            rawMaterial.put("location", material.getProductionLocation().getAddress());
-//          }
-//          i.add(rawMaterial);
-//        });
-//
-//      info.put(material.getBatchId(), i);
-//    });
     
-    productionProcessGlobal.getSteps().addAll(productionProcessParent.getSteps());
-    
+    if (batch.getLocalRecipe() != null) {
+      batch.getLocalRecipe().getRecipeRow().forEach(recipeRow -> {
+        if (recipeRow.getProduct() != null) {
+          if (recipeRow.getProduct().getLocalProcessProduction() != null) {
+            
+            recipeRow.getProduct().getLocalProcessProduction().getSteps().forEach(step -> {
+              productionProcessGlobal.getSteps().add(step);
+            });
+            
+          } else {
+            log.debug("Il prodotto {} ha processo locale null", recipeRow.getProduct().getBatchId());
+          }
+        }
+        List i = new ArrayList();
+        
+        if (recipeRow.getProduct() != null && recipeRow.getProduct().getLocalProcessProduction() != null) {
+          recipeRow.getProduct().getLocalProcessProduction().getSteps().stream()
+            .sorted((a, b) -> a.getPosition() > b.getPosition() ? -1 : 1)
+            .forEach((step) -> {
+              Map<String, Object> rawMaterial = new HashMap<>();
+              rawMaterial.put("batch_id", recipeRow.getProduct().getBatchId());
+              rawMaterial.put("step_id", step.getId());
+              rawMaterial.put("name", step.getName());
+              rawMaterial.put("description", step.getDescription());
+              rawMaterial.put("company", recipeRow.getProduct().getCompanyProducer().getName());
+              
+              log.debug("COMPANY ------------------- {}", batch.getCompanyProducer().getName());
+              if (step.getNotarize() != null) {
+                rawMaterial.put("notarize", step.getNotarize());
+              }
+              
+              if (step.getDate() != null) {
+                rawMaterial.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+              }
+              // rawMaterial.put("notarize", step.getNotarize());
+              if (recipeRow.getProduct().getProductionLocation() != null) {
+                rawMaterial.put("location", recipeRow.getProduct().getProductionLocation().getAddress());
+              }
+              i.add(rawMaterial);
+            });
+          info.put(recipeRow.getProduct().getBatchId(), i);
+        }
+        
+      });
+    }
+    if (productionProcessParent != null) {
+      productionProcessParent.getSteps().forEach(step -> {
+        productionProcessGlobal.getSteps().add(step);
+      });
+    }
     // info.put(batch.getBatchId(), productionProcessParent);
     List y = new ArrayList();
-    batch.getProductType().getProductionProcess().getSteps().stream().forEach((step) -> {
-      Map<String, Object> ppParent = new HashMap<>();
-      ppParent.put("batch_id", batch.getBatchId());
-      ppParent.put("step_id", step.getId());
-      ppParent.put("name", step.getName());
-      ppParent.put("description", step.getDescription());
-      ppParent.put("company", batch.getCompanyProducer().getName());
-
-      // ppParent.put("notarize", step.getNotarize());
-      if(batch.getProductionLocation() != null) {
-        ppParent.put("location", batch.getProductionLocation().getAddress());
-      }
-      if(step.getDate() != null) {
-        ppParent.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-      }
-      y.add(ppParent);
-    });
+    if (batch.getLocalProcessProduction() != null) {
+      batch.getLocalProcessProduction().getSteps().stream().forEach((step) -> {
+        Map<String, Object> ppParent = new HashMap<>();
+        ppParent.put("batch_id", batch.getBatchId());
+        ppParent.put("step_id", step.getId());
+        ppParent.put("name", step.getName());
+        ppParent.put("description", step.getDescription());
+        ppParent.put("company", batch.getCompanyProducer().getName());
+        log.debug("COMPANY ------------------- {}", batch.getCompanyProducer().getName());
+        if (step.getNotarize() != null) {
+          ppParent.put("notarize", step.getNotarize());
+        }
+        
+        if (batch.getProductionLocation() != null) {
+          ppParent.put("location", batch.getProductionLocation().getAddress());
+        }
+        if (step.getDate() != null) {
+          ppParent.put("date", step.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        }
+        y.add(ppParent);
+      });
+    }
     info.put(batch.getBatchId(), y);
     info.put("global", productionProcessGlobal);
-    
-    
     return info;
   }
 }

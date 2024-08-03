@@ -26,95 +26,71 @@
     <tr>
       <th></th>
       <th>id</th>
-      <th>truckId</th>
-      <th>batchId</th>
-      <th>dateStart</th>
-      <th>dateEnd</th>
-      <th>location</th>
-      <th>companyFrom</th>
-      <th>companyTo</th>
+      <th>hash</th>
+      <th>notarizedAt</th>
+      <th>data</th>
+      <th>document</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-transport let-expanded="expanded">
+  <ng-template pTemplate="body" let-notarization let-expanded="expanded">
     <tr>
       <td>
         <p-button
           type="button"
           pRipple
-          [pRowToggler]="transport"
+          [pRowToggler]="notarization"
           [text]="true"
           [rounded]="true"
           [plain]="true"
           [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
         />
       </td>
-      <td>{{ transport.id }}</td>
-      <td>{{ transport.truckId }}</td>
-      <td>{{ transport.batchId }}</td>
-      <td>{{ transport.dateStart }}</td>
-      <td>{{ transport.dateEnd }}</td>
-      <td>{{ transport.location }}</td>
-      <td>{{ transport.companyFrom }}</td>
-      <td>{{ transport.companyTo }}</td>
+      <td>{{ notarization.id }}</td>
+      <td>{{ notarization.hash }}</td>
+      <td>{{ notarization.notarizedAt }}</td>
+      <td>{{ notarization.data }}</td>
+      <td>{{ notarization.document }}</td>
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="rowexpansion" let-transport>
+  <ng-template pTemplate="rowexpansion" let-notarization>
     <tr>
-      <td colspan="9">
+      <td colspan="6">
         <div class="p-3">
-
-
-          <p-table  [lazy]="true"   *ngIf="transport.truckDetails" [value]="transport.truckDetails" dataKey="id">
+          <p-table
+            [lazy]="true"
+            *ngIf="notarization.txTransactionList"
+            [value]="notarization.txTransactionList"
+            dataKey="id"
+          >
             <ng-template pTemplate="header">
               <tr>
                 <th>id</th>
-                <th>sensor.id</th>
-                <th>sensor.dtid</th>
-                <th>sensor.prop1</th>
-                <th>sensor.prop2</th>
-                <th>sensor.prop3</th>
-                <th>sensor.val1</th>
-                <th>sensor.val2</th>
-                <th>sensor.val3</th>
-                <th>sensor.lastUpdated</th>
-                <th>lastSensorsUpdate</th>
+                <th>Transaction id</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-detail>
               <tr>
-                <td>{{ detail | json }}</td>
-                <td>{{ detail.sensor.id }}</td>
-                <td>{{ detail.sensor.dtid }}</td>
-                <td>{{ detail.sensor.prop1 }}</td>
-                <td>{{ detail.sensor.prop2 }}</td>
-                <td>{{ detail.sensor.prop3 }}</td>
-                <td>{{ detail.sensor.val1 }}</td>
-                <td>{{ detail.sensor.val2 }}</td>
-                <td>{{ detail.sensor.val3 }}</td>
-                <td>{{ detail.sensor.lastUpdated }}</td>
-                <td>{{ detail.lastSensorsUpdate }}</td>
+                <td>{{ detail.id }}</td>
+                <td>{{ detail.txId }}</td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="6">There are no order for this product yet.</td>
+                <td colspan="6">
+                  There are no transaction for this notarization yet.
+                </td>
               </tr>
             </ng-template>
           </p-table>
-
-
-          {{ transport.truckDetails | json }}
         </div>
       </td>
     </tr>
   </ng-template>
 
-
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td colspan="11">There are no transports for this company yet.</td>
+      <td colspan="11">There are no notarizations for this company yet.</td>
     </tr>
   </ng-template>
-
 </p-table>

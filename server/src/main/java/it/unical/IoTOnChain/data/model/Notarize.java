@@ -30,6 +30,7 @@ public class Notarize implements Serializable {
   private String data;
   
   @ManyToOne
+  @ToString.Exclude
   private Company company;
   
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

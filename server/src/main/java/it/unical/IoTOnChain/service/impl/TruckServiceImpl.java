@@ -39,14 +39,14 @@ public class TruckServiceImpl implements TruckService {
   }
   
   @Override
-  public Truck createOne(String companyName) {
+  public Truck createOne(Company company) {
     MyDT dt = new MyDT();
     int indice = random.nextInt((10) + 1);
-    String sensorsId = dtService.createOneSensor("truck", "truck_" + companyName + "_" + indice);
+    String sensorsId = dtService.createOneSensor("truck", "truck_" + company.getName() + "_" + indice);
     dt.setDtid(sensorsId);
     dt.setProp1("Position");
     dt.setProp2("Temperature");
-    return truckRepository.save(Truck.builder().sensor(dt).build());
+    return truckRepository.save(Truck.builder().company(company).sensor(dt).build());
   }
   
   @Override
