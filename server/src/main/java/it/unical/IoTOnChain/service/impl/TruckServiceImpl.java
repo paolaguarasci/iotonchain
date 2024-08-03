@@ -51,7 +51,7 @@ public class TruckServiceImpl implements TruckService {
   
   @Override
   public List<Truck> getAllByCompany(Company company) {
-    return truckRepository.findAllByCompany(company);
+    return truckRepository.findAllByCompanyId(company.getId());
   }
   
 }

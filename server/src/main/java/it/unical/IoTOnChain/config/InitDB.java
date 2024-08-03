@@ -81,6 +81,9 @@ public class InitDB implements CommandLineRunner {
     Truck truck1 = truckService.createOne(basilicoBatch.getCompanyOwner().getName());
     Truck truck2 = truckService.createOne(basilicoBatch.getCompanyOwner().getName());
     Truck truck3 = truckService.createOne(basilicoBatch.getCompanyOwner().getName());
+    Truck truck4 = truckService.createOne(barillaSPA.getName());
+    Truck truck5 = truckService.createOne(barillaSPA.getName());
+    Truck truck6 = truckService.createOne(barillaSPA.getName());
     Transport transport1 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());
     Transport transport2 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());
     Transport transport3 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());

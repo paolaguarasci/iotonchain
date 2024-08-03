@@ -90,9 +90,9 @@ export class MenuBarComponent implements OnInit {
         icon: 'pi pi-search',
         items: [
           {
-            label: 'Tracks',
+            label: 'Trucks',
             icon: 'pi pi-server',
-            route: "/track-list",
+            route: "/truck-list",
           },
           {
             label: 'Transport',

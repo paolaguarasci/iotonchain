@@ -58,4 +58,6 @@ public class TransportController {
     }
     return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(transport_id)));
   }
+  
+  
 }

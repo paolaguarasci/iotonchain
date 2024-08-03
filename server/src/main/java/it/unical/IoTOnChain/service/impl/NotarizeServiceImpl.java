@@ -1,14 +1,11 @@
 package it.unical.IoTOnChain.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.unical.IoTOnChain.data.dto.ProductionStepTOChainDTO;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.repository.DocumentRepository;
 import it.unical.IoTOnChain.repository.NotarizeRepository;
 import it.unical.IoTOnChain.repository.ProductionStepBatchRepository;
-import it.unical.IoTOnChain.repository.ProductionStepRepository;
 import it.unical.IoTOnChain.service.ChainService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -135,5 +133,10 @@ public class NotarizeServiceImpl implements NotarizeService {
       log.debug("[notarize(ProductionStep ps)-ext]  Hash tx {} - {}", txHash, doc);
       return "ciao";
     });
+  }
+  
+  @Override
+  public List<Notarize> getAll(Company company) {
+    return notarizeRepository.findAllByCompanyOrderByNotarizedAtDesc(company);
   }
 }

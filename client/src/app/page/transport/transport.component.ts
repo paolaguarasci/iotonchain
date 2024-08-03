@@ -39,11 +39,11 @@ export class TransportComponent implements OnInit {
   }
 
   onRowExpand(event: TableRowExpandEvent) {
-    let truckDetails = event.data.truckDetails;
-    if (!truckDetails) {
+    if (!event.data.truckDetails) {
       this.truckService.getTruckByTransportId(event.data.id).subscribe({
         next: (res: any) => {
-          event.data.truckDetails = res;
+          event.data.truckDetails = []
+          event.data.truckDetails.push(res);
         },
         error: (err: any) => {
 

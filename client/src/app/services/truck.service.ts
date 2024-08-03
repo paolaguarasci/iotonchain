@@ -14,4 +14,8 @@ export class TruckService {
   createOne(data: any) {
     return this.http.post('/api/v1/company/truck', data);
   }
+
+  getAll() {
+    return this.http.get(`/api/v1/company/truck`);
+  }
 }

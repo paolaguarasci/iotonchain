@@ -1,6 +1,5 @@
 package it.unical.IoTOnChain.repository;
 
-import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Truck;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,5 +14,5 @@ public interface TruckRepository extends JpaRepository<Truck, UUID>, JpaSpecific
   @Query(value = "select t from Truck t where t.id not in (select distinct tr.truckId from Transport tr where tr.truckId is not null)")
   List<Truck> findAllAvailable();
   
-  List<Truck> findAllByCompany(Company company);
+  List<Truck> findAllByCompanyId(UUID company_id);
 }

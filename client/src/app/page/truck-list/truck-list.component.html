@@ -1,0 +1,36 @@
+<p-table [value]="trucks" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>id</th>
+      <th>sensor.id</th>
+      <th>sensor.dtid</th>
+      <th>sensor.prop1</th>
+      <th>sensor.prop2</th>
+      <th>sensor.prop3</th>
+      <th>sensor.val1</th>
+      <th>sensor.val2</th>
+      <th>sensor.val3</th>
+      <th>sensor.lastUpdated</th>
+      <th>lastSensorsUpdate</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-detail>
+    <tr>
+      <td>{{ detail.sensor.id }}</td>
+      <td>{{ detail.sensor.dtid }}</td>
+      <td>{{ detail.sensor.prop1 }}</td>
+      <td>{{ detail.sensor.prop2 }}</td>
+      <td>{{ detail.sensor.prop3 }}</td>
+      <td>{{ detail.sensor.val1 }}</td>
+      <td>{{ detail.sensor.val2 }}</td>
+      <td>{{ detail.sensor.val3 }}</td>
+      <td>{{ detail.sensor.lastUpdated }}</td>
+      <td>{{ detail.lastSensorsUpdate }}</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="11">There are no trucks for this company yet.</td>
+    </tr>
+  </ng-template>
+</p-table>
