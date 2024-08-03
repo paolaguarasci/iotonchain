@@ -20,6 +20,9 @@ public class Truck implements Serializable {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   
+  @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+  private Company company;
+  
   @OneToOne(cascade = CascadeType.ALL)
   private MyDT sensor;
   

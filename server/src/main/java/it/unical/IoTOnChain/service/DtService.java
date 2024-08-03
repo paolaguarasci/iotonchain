@@ -9,7 +9,7 @@ public interface DtService {
   
   Map<String, Object> getSensorData(String sensorId, List<String> props);
   
-  String createOneSensor(String sensorId, List<String> props);
+  String createOneSensor(String sensorName, String dtName);
   
   String destroyOneSensor(String sensorId);
   

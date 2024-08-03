@@ -1,16 +1,112 @@
-<p>transport works!</p>
+<p-table
+  [value]="transports"
+  dataKey="id"
+  [tableStyle]="{ 'min-width': '60rem' }"
+  [expandedRowKeys]="expandedRows"
+  (onRowExpand)="onRowExpand($event)"
+  (onRowCollapse)="onRowCollapse($event)"
+>
+  <ng-template pTemplate="caption">
+    <div class="flex flex-wrap justify-content-end gap-2">
+      <p-button
+        label="Expand All"
+        icon="pi pi-plus"
+        text
+        (onClick)="expandAll()"
+      />
+      <p-button
+        label="Collapse All"
+        icon="pi pi-minus"
+        text
+        (onClick)="collapseAll()"
+      />
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>truckId</th>
+      <th>batchId</th>
+      <th>dateStart</th>
+      <th>dateEnd</th>
+      <th>location</th>
+      <th>companyFrom</th>
+      <th>companyTo</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-transport let-expanded="expanded">
+    <tr>
+      <td>
+        <p-button
+          type="button"
+          pRipple
+          [pRowToggler]="transport"
+          [text]="true"
+          [rounded]="true"
+          [plain]="true"
+          [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+        />
+      </td>
+      <td>{{ transport.id }}</td>
+      <td>{{ transport.truckId }}</td>
+      <td>{{ transport.batchId }}</td>
+      <td>{{ transport.dateStart }}</td>
+      <td>{{ transport.dateEnd }}</td>
+      <td>{{ transport.location }}</td>
+      <td>{{ transport.companyFrom }}</td>
+      <td>{{ transport.companyTo }}</td>
+    </tr>
+  </ng-template>
 
-<p>
-  in questa pagina lego i sensori che ho a disposizione (magari chiamati camion
-  1, camion 2, camion 3) - al batch id di una transazione tra compagnie
-</p>
+  <ng-template pTemplate="rowexpansion" let-transport>
+    <tr>
+      <td colspan="9">
+        <div class="p-3">
 
-<p>
-  parto dalla lista di transazioni, lo stesso come spedito, e seleziono il
-  camion sulla quale viaggia il lotto da quel momento il sensore virtuale del
-  camion n comincia ad inviare dati farlocchi e li salvo nella chain, legati al
-  lotto
-</p>
 
-RES
-{{  res | json }}
+          <p-table  [lazy]="true"   *ngIf="transport.truckDetails" [value]="transport.truckDetails" dataKey="id">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>id</th>
+                <th>sensor.id</th>
+                <th>sensor.dtid</th>
+                <th>sensor.prop1</th>
+                <th>sensor.prop2</th>
+                <th>sensor.prop3</th>
+                <th>sensor.val1</th>
+                <th>sensor.val2</th>
+                <th>sensor.val3</th>
+                <th>sensor.lastUpdated</th>
+                <th>lastSensorsUpdate</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detail>
+              <tr>
+                <td>{{ detail | json }}</td>
+                <td>{{ detail.sensor.id }}</td>
+                <td>{{ detail.sensor.dtid }}</td>
+                <td>{{ detail.sensor.prop1 }}</td>
+                <td>{{ detail.sensor.prop2 }}</td>
+                <td>{{ detail.sensor.prop3 }}</td>
+                <td>{{ detail.sensor.val1 }}</td>
+                <td>{{ detail.sensor.val2 }}</td>
+                <td>{{ detail.sensor.val3 }}</td>
+                <td>{{ detail.sensor.lastUpdated }}</td>
+                <td>{{ detail.lastSensorsUpdate }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="6">There are no order for this product yet.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+
+          {{ transport.truckDetails | json }}
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

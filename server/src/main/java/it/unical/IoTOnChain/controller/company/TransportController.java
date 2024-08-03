@@ -1,6 +1,7 @@
 package it.unical.IoTOnChain.controller.company;
 
 import it.unical.IoTOnChain.data.dto.TransportToOwnerDTO;
+import it.unical.IoTOnChain.data.dto.TruckToOwnerDTO;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.service.CompanyService;
@@ -48,4 +49,13 @@ public class TransportController {
     return ResponseEntity.ok().body(genericMapper.map(transportService.getOneByBatchID(batch_id)));
   }
   
+  @GetMapping("/{transport_id}/truck")
+  public ResponseEntity<TruckToOwnerDTO> getTruckByTransportId(@AuthenticationPrincipal Jwt principal, @PathVariable String transport_id) {
+    String companyLogged = principal.getClaimAsString("company");
+    Company company = companyService.getOneByName(companyLogged);
+    if (company == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(transport_id)));
+  }
 }

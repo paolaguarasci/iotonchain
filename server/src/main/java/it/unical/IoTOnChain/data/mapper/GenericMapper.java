@@ -54,4 +54,8 @@ public interface GenericMapper {
   List<TransportToOwnerDTO> map(List<Transport> allByCompany);
   
   TransportToOwnerDTO map(Transport entity);
+  
+  List<TruckToOwnerDTO> mapTruckListToDTOOwner(List<Truck> allByCompany);
+  
+  TruckToOwnerDTO map(Truck entity);
 }

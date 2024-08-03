@@ -2,6 +2,7 @@ package it.unical.IoTOnChain.service;
 
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Transport;
+import it.unical.IoTOnChain.data.model.Truck;
 
 import java.util.List;
 import java.util.Map;
@@ -18,4 +19,6 @@ public interface TransportService {
   List<Transport> getAllByCompany(Company company);
   
   void updateAllTransportDataFromDTHUb() throws InterruptedException;
+  
+  Truck getTruckByTransportId(String transportId);
 }

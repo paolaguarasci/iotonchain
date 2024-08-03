@@ -1,0 +1,23 @@
+{
+  "@id": "dtmi:com:samples:Truck;1",
+  "@type": "Interface",
+  "@context": "dtmi:dtdl:context;2",
+  "displayName": "Truck",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "Temperature",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "Latitude",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "Longitude",
+      "schema": "boolean"
+    }
+  ]
+}

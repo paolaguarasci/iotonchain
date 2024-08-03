@@ -1,5 +1,6 @@
 package it.unical.IoTOnChain.service.impl;
 
+import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.MyDT;
 import it.unical.IoTOnChain.data.model.Truck;
 import it.unical.IoTOnChain.repository.TruckRepository;
@@ -17,6 +18,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class TruckServiceImpl implements TruckService {
+  
+  
   private final TruckRepository truckRepository;
   private final DtService dtService;
   private final Random random = new Random();
@@ -39,11 +42,16 @@ public class TruckServiceImpl implements TruckService {
   public Truck createOne(String companyName) {
     MyDT dt = new MyDT();
     int indice = random.nextInt((10) + 1);
-    String sensorsId = dtService.createOneSensor("truck_" + companyName + "_" + indice, List.of("Position", "Temperature"));
+    String sensorsId = dtService.createOneSensor("truck", "truck_" + companyName + "_" + indice);
     dt.setDtid(sensorsId);
     dt.setProp1("Position");
     dt.setProp2("Temperature");
     return truckRepository.save(Truck.builder().sensor(dt).build());
+  }
+  
+  @Override
+  public List<Truck> getAllByCompany(Company company) {
+    return truckRepository.findAllByCompany(company);
   }
   
 }

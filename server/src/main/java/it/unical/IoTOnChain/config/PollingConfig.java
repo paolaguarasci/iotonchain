@@ -13,10 +13,10 @@ import java.io.Serializable;
 @Slf4j
 @RequiredArgsConstructor
 public class PollingConfig implements Serializable {
-  private final TransportService transportService;
   
+  private final TransportService transportService;
   @Async
-  @Scheduled(fixedRate = 5000)
+  @Scheduled(fixedRate = 1000 * 60) // millisecondi
   public void poll() throws InterruptedException {
     log.info("Polling from DT Hub...");
     

@@ -4,6 +4,7 @@ import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.MyDT;
 import it.unical.IoTOnChain.data.model.Transport;
 import it.unical.IoTOnChain.data.model.Truck;
+import it.unical.IoTOnChain.repository.MyDTRepository;
 import it.unical.IoTOnChain.repository.TransportRepository;
 import it.unical.IoTOnChain.repository.TruckRepository;
 import it.unical.IoTOnChain.service.DtService;
@@ -25,6 +26,7 @@ public class TransportServiceImpl implements TransportService {
   private final TruckService truckService;
   private final DtService dtService;
   private final TruckRepository truckRepository;
+  private final MyDTRepository myDTRepository;
   
   @Override
   public Transport getOne(String id) {
@@ -91,9 +93,28 @@ public class TransportServiceImpl implements TransportService {
     
     log.debug("Sto aggiornando {} sensori ", sensors);
     dtService.updateSensors(sensors);
+    sensors.forEach(el -> el.setLastUpdated(LocalDateTime.now()));
+    myDTRepository.saveAll(sensors);
     log.debug("Ho aggiornato {} sensori ", sensors.size());
+    
+    notarizeData(sensors);
+    checkASP(sensors);
     
     truckRepository.saveAll(trucks);
     log.debug("Fine updateAllTransportDataFromDTHUb");
+  }
+  
+  private void checkASP(List<MyDT> sensors) {
+    // TODO
+  }
+  
+  private void notarizeData(List<MyDT> sensors) {
+    // TODO
+  }
+  
+  @Override
+  public Truck getTruckByTransportId(String transportId) {
+    Optional<Transport> transOptional = transportRepository.findById(UUID.fromString(transportId));
+    return transOptional.flatMap(transport -> truckRepository.findById(UUID.fromString(transport.getTruckId()))).orElse(null);
   }
 }

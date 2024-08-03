@@ -1,11 +1,15 @@
 package it.unical.IoTOnChain.service.impl;
 
 import com.azure.core.credential.TokenCredential;
+import com.azure.digitaltwins.core.BasicDigitalTwin;
+import com.azure.digitaltwins.core.BasicDigitalTwinMetadata;
 import com.azure.digitaltwins.core.DigitalTwinsClient;
 import com.azure.digitaltwins.core.DigitalTwinsClientBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import it.unical.IoTOnChain.data.model.DTModel;
 import it.unical.IoTOnChain.data.model.MyDT;
 import it.unical.IoTOnChain.data.model.SensorsLog;
+import it.unical.IoTOnChain.repository.DTModelRepository;
 import it.unical.IoTOnChain.repository.SensorsLogRepository;
 import it.unical.IoTOnChain.service.DtService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,16 +17,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 @Service
 @Slf4j
 @Transactional
 public class DtServiceImpl implements DtService {
+  
+  
+  private final DTModelRepository dTModelRepository;
   private final CountDownLatch listModelsLatch = new CountDownLatch(1);
   private final DigitalTwinsClient digitalTwinsClientSync;
   //private final DigitalTwinsAsyncClient digitalTwinsClientAsync;
@@ -30,7 +34,8 @@ public class DtServiceImpl implements DtService {
   private final String digitalTwinDefaultId;
   private final SensorsLogRepository sensorsLogRepository;
   
-  public DtServiceImpl(@Value("${app.dt.dturl}") String dturl, @Value("${app.dt.dtiddefault}") String digitalTwinDefaultId, @Value("${app.dt.dtpropertydefault}") String digitalTwinDefaultProperty, SensorsLogRepository sensorsLogRepository) {
+  public DtServiceImpl(@Value("${app.dt.dturl}") String dturl, @Value("${app.dt.dtiddefault}") String digitalTwinDefaultId, @Value("${app.dt.dtpropertydefault}") String digitalTwinDefaultProperty, SensorsLogRepository sensorsLogRepository,
+                       DTModelRepository dTModelRepository) {
     this.digitalTwinDefaultId = digitalTwinDefaultId;
     this.digitalTwinDefaultProperty = digitalTwinDefaultProperty;
     this.sensorsLogRepository = sensorsLogRepository;
@@ -43,6 +48,7 @@ public class DtServiceImpl implements DtService {
 //      .credential(tokenCredential)
 //      .endpoint(dturl)
 //      .buildAsyncClient();
+    this.dTModelRepository = dTModelRepository;
   }
   
   @Override
@@ -56,13 +62,20 @@ public class DtServiceImpl implements DtService {
       }
     });
     
+    
     return sensorData;
   }
   
   
   @Override
-  public String createOneSensor(String sensorId, List<String> props) {
-    return "thermostat67";
+  public String createOneSensor(String sensorName, String dtName) {
+    Optional<DTModel> model = dTModelRepository.findByName(sensorName);
+    if (model.isPresent()) {
+      BasicDigitalTwin basicTwin = new BasicDigitalTwin(dtName).setMetadata(new BasicDigitalTwinMetadata().setModelId(model.get().getModelId()));
+      BasicDigitalTwin basicTwinResponse = digitalTwinsClientSync.createOrReplaceDigitalTwin(dtName, basicTwin, BasicDigitalTwin.class);
+      return basicTwinResponse.getId();
+    }
+    return null;
   }
   
   @Override
@@ -117,6 +130,8 @@ public class DtServiceImpl implements DtService {
           .build());
       }
       
+      
+      // TODO Notarize Sensor Data!
       
     });
   }

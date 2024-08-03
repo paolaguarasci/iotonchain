@@ -7,6 +7,8 @@ import it.unical.IoTOnChain.data.model.Transfer;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.TransferRepository;
+import it.unical.IoTOnChain.repository.TransportRepository;
+import it.unical.IoTOnChain.repository.TruckRepository;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.TransferService;
@@ -26,6 +28,8 @@ public class TransferServiceImpl implements TransferService {
   private final TransferRepository transferRepository;
   private final BatchService batchService;
   private final CompanyService companyService;
+  private final TruckRepository truckRepository;
+  private final TransportRepository transportRepository;
   
   @Override
   public Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
