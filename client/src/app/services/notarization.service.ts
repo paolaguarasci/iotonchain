@@ -10,4 +10,8 @@ export class NotarizationService {
   getAll() {
     return this.http.get(`/api/v1/company/notarization`);
   }
+
+  notarizeOneStep(id: any) {
+    return this.http.post(`/api/v1/company/notarization/step/${id}`, { id: id })
+  }
 }

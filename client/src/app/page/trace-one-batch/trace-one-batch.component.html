@@ -2,7 +2,6 @@
   <div class="block bg-primary font-bold text-center p-4 border-round mb-3">
     LOTTO: {{ id }}
   </div>
-  {{ productionSteps }}
   <div class="block bg-primary font-bold text-center p-4 border-round mb-3">
     <div class="card">
       <p-timeline
@@ -15,32 +14,24 @@
             class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
             [style]="{ 'background-color': step.color }"
           >
-
             <fa-icon [icon]="step.icon"></fa-icon>
           </span>
         </ng-template>
         <ng-template pTemplate="content" let-step>
           <p-card
             [header]="step.name"
-            [subheader]="step.date + ' - ' + step.company"
+            [subheader]="'#' + step.position + ' - ' + step.company"
           >
-            <!-- <img
-              *ngIf="step.image"
-              [src]="
-                'https://primefaces.org/cdn/primeng/images/demo/product/' +
-                step.image
-              "
-              [alt]="step.name"
-              width="200"
-              class="shadow-2"
-            /> -->
-            <!-- <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Inventore sed consequuntur error repudiandae numquam deserunt
-              quisquam repellat libero asperiores earum nam nobis, culpa ratione
-              quam perferendis esse, cupiditate neque quas!
-            </p> -->
-            <p-button label="Trackit" [text]="true" />
+            <div *ngIf="step.notarization">
+              Notarized {{ step.notarization.id }}
+            </div>
+
+            <p-button
+              *ngIf="!step.notarization && step.company == companyLogged"
+              label="Notarize"
+              (onClick)="notarize(step)"
+              [text]="true"
+            />
           </p-card>
         </ng-template>
       </p-timeline>

@@ -6,23 +6,29 @@ import { ButtonModule } from 'primeng/button';
 import { CompanyBatchService } from '../../services/company-batch.service';
 import { faWheatAwn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NotarizationService } from '../../services/notarization.service';
+import { CommonModule } from '@angular/common';
+import { sortBy } from 'lodash';
+import { KeycloakService } from 'keycloak-angular';
 @Component({
   selector: 'app-trace-one-batch',
   standalone: true,
-  imports: [TimelineModule, CardModule, ButtonModule, FontAwesomeModule],
+  imports: [TimelineModule, CardModule, ButtonModule, FontAwesomeModule, CommonModule],
   templateUrl: './trace-one-batch.component.html',
   styleUrl: './trace-one-batch.component.scss'
 })
 export class TraceOneBatchComponent implements OnInit {
   id !: any;
   productionSteps: any[] = []
-
+  companyLogged !: any;
   faWheatAwn = faWheatAwn
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private companyBatchService: CompanyBatchService
+    private companyBatchService: CompanyBatchService,
+    private notarizeService: NotarizationService,
+    private keyclokService: KeycloakService
   ) { }
 
   private findStep(arr: any, step_id: any) {
@@ -41,35 +47,50 @@ export class TraceOneBatchComponent implements OnInit {
     })
 
     console.log(arr[res])
-    return arr[res][0];
+    if (arr[res] && arr[res].length > 0) {
+      return arr[res][0];
+    }
+    return null;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+
+    if (this.keyclokService.isLoggedIn()) {
+      let userProfile: any = await this.keyclokService.loadUserProfile();
+      this.companyLogged = userProfile['attributes']['company'][0];
+      console.log("Company logged ", this.companyLogged);
+    }
+
     this.route.paramMap.subscribe((param: any) => {
       this.id = param.get("id");
       // this.makeTemplate();
       this.companyBatchService.getTrack(this.id).subscribe({
         next: (res: any) => {
+          console.log("RES ", res)
           this.productionSteps = []
           res.global.steps.map((step: any) => {
             let batch = this.findStep(res, step.id);
             let x = {
+              id: step.id,
               name: step.name,
               description: step.description,
               batch_id: "",
               company: "",
-              notarization: "",
-              icon: faWheatAwn
+              notarization: step.notarize ?? null,
+              icon: faWheatAwn,
+              position: step.position
             }
 
             if (batch) {
               x.batch_id = batch.id
               x.company = batch.company
-              x.notarization = batch.notarizatio
+              // x.notarization = batch.notarize
             }
 
             this.productionSteps.push(x)
           });
+
+          this.productionSteps = sortBy(this.productionSteps, "position")
           console.log("Production steps ", res)
         },
         error: (err: any) => {
@@ -122,5 +143,15 @@ export class TraceOneBatchComponent implements OnInit {
     })
   }
 
+  notarize(step: any) {
+    this.notarizeService.notarizeOneStep(step.id).subscribe({
+      next: (res: any) => {
+        console.log("Notarize ", res)
+      },
+      error: (err: any) => {
+
+      }
+    })
+  }
 
 }
