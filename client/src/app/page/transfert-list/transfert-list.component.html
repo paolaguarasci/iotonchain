@@ -28,6 +28,7 @@
       <th *ngFor="let col of columns">
         {{ col.header }}
       </th>
+      <th></th>
     </tr>
   </ng-template>
   <ng-template
@@ -51,6 +52,32 @@
 
       <td *ngFor="let col of columns">
         {{ rowData[col.field] }}
+      </td>
+
+      <td >
+        <p-button *ngIf="rowData.type != 'ONESHOT' && rowData.status == 'INIT'  && rowData.companyRecipientUsername == companyLogged"
+          icon="pi pi-pencil"
+          class="mr-2"
+          [rounded]="true"
+          [outlined]="true"
+          severity="success"
+          (onClick)="accept(rowData)"
+        />
+        <p-button *ngIf="rowData.type != 'ONESHOT' && rowData.status == 'INIT' && rowData.companyRecipientUsername == companyLogged"
+          icon="pi pi-trash"
+          severity="danger"
+          [rounded]="true"
+          [outlined]="true"
+          (onClick)="reject(rowData)"
+        />
+
+        <p-button *ngIf="rowData.type != 'ONESHOT' && rowData.status == 'INIT' && rowData.companySenderUsername == companyLogged"
+        icon="pi pi-trash"
+        severity="danger"
+        [rounded]="true"
+        [outlined]="true"
+        (onClick)="abort(rowData)"
+      />
       </td>
     </tr>
   </ng-template>

@@ -3,6 +3,7 @@ import { TransferService } from '../../services/transfer.service';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { KeycloakService } from 'keycloak-angular';
 
 interface Column {
   field: string;
@@ -22,8 +23,20 @@ export class TransfertListComponent implements OnInit {
   cols: Column[] = [];
   colsTx: Column[] = [];
   expandedRows = {};
-  constructor(private transfertService: TransferService) { }
-  ngOnInit(): void {
+  companyLogged !: any;
+  constructor(private transfertService: TransferService, private keyclokService: KeycloakService) { }
+  async ngOnInit() {
+
+    if (this.keyclokService.isLoggedIn()) {
+      let userProfile: any = await this.keyclokService.loadUserProfile();
+      this.companyLogged = userProfile['attributes']['company'][0];
+      console.log("Company logged ", this.companyLogged);
+    }
+
+    this.update()
+  }
+
+  update() {
     this.transfertService.getAll().subscribe({
       next: (res: any) => {
         this.transferts = res;
@@ -66,6 +79,31 @@ export class TransfertListComponent implements OnInit {
 
   collapseAll() {
     this.expandedRows = {};
+  }
+
+  accept(tx: any) {
+    this.transfertService.acceptOne(tx.id).subscribe({
+      next: (res: any) => {
+        this.update();
+      }, error: (err: any) => { }
+    })
+  }
+
+  reject(tx: any) {
+    this.transfertService.rejectOne(tx.id).subscribe({
+      next: (res: any) => {
+        this.update();
+      }, error: (err: any) => { }
+    })
+  }
+
+
+  abort(tx: any) {
+    this.transfertService.abortOne(tx.id).subscribe({
+      next: (res: any) => {
+        this.update();
+      }, error: (err: any) => { }
+    })
   }
 
 }

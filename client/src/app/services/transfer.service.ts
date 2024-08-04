@@ -15,7 +15,20 @@ export class TransferService {
     return this.http.get(`/api/v1/company/transfer/${batchid}`);
   }
 
+
+  acceptOne(txid: any) {
+    return this.http.get(`/api/v1/company/transfer/${txid}/accept`);
+  }
+
+  abortOne(txid: any) {
+    return this.http.get(`/api/v1/company/transfer/${txid}/abort`);
+  }
+
+  rejectOne(txid: any) {
+    return this.http.get(`/api/v1/company/transfer/${txid}/reject`);
+  }
+
   createOne(data: any) {
     return this.http.post('/api/v1/company/transfer', data);
-  } 
+  }
 }
