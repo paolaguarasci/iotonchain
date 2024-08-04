@@ -144,3 +144,14 @@ export class TransfertListComponent implements OnInit {
     });
   }
 }
+
+
+control.add("batch(b1, b, 10).");
+control.add("batch(b2, b, 10).");
+control.add("batch(b3, b, 10).");
+control.add("batch(a1, a, 10).");
+control.add("batch(a1, a, 10).");
+control.add("batch(c1, c, 10).");
+
+
+batch(b1, b, 10). batch(b2, b, 10). batch(b3, b, 10). batch(a1, a, 10). batch(a1, a, 10). batch(c1, c, 10).
