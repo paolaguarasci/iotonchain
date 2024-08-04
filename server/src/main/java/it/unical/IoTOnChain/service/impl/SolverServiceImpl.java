@@ -114,12 +114,12 @@ public class SolverServiceImpl implements SolverService {
     List<Pair> result = new ArrayList<>();
     Arrays.stream(output.split(" "))
       .filter(a -> a.startsWith(atom))
-      .map(a -> {
+      .forEach(a -> {
         var x = a.replace(atom, "").replace("(", "").replace(")", "");
+        System.out.println(x);
         String[] split = x.split(",");
-        return Pair.with(split[0], split[1]);
-      })
-      .toList();
+        result.add(Pair.with(split[0], split[1]));
+      });
     return result;
   }
   
@@ -128,12 +128,11 @@ public class SolverServiceImpl implements SolverService {
     List<Triplet> result = new ArrayList<>();
     Arrays.stream(output.split(" "))
       .filter(a -> a.startsWith(atom))
-      .map(a -> {
+      .forEach(a -> {
         var x = a.replace(atom, "").replace("(", "").replace(")", "");
         String[] split = x.split(",");
-        return Triplet.with(split[0], split[1], split[2]);
-      })
-      .toList();
+        result.add(Triplet.with(split[0], split[1], split[2]));
+      });
     return result;
   }
 }

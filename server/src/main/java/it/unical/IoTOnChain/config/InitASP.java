@@ -23,12 +23,19 @@ public class InitASP implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     log.info("Init ASP - Start");
-    List<String> models = solverService.solveFile("test.lp");
+    List<String> models = solverService.solveFile("FindBatch.lp");
     for (String model : models) {
       log.info(model);
     }
-    var result = solverService.atomArita1ToList(models.getFirst(), "peso_totale").getFirst();
-    log.debug("Result: {}", result);
+    log.debug("Ci sono {} modelli", models.size());
+    models.forEach(model -> {
+      log.debug(model);
+      var results = solverService.atomArita2ToList(model, "scelto");
+      log.debug("Ci sono {} soluzioni", results.size());
+      results.forEach(result -> {
+        log.debug("lotto {} quantity {}", result.getValue0(), result.getValue1());
+      });
+    });
     log.info("Init ASP - End");
   }
   
