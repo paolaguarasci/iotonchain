@@ -1,5 +1,6 @@
 package it.unical.IoTOnChain.controller.company;
 
+import it.unical.IoTOnChain.data.dto.CreateTransportDTO;
 import it.unical.IoTOnChain.data.dto.TransportToOwnerDTO;
 import it.unical.IoTOnChain.data.dto.TruckToOwnerDTO;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
@@ -11,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,6 +34,18 @@ public class TransportController {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok().body(genericMapper.map(transportService.getAllByCompany(company)));
+  }
+  
+  @PostMapping
+  public ResponseEntity<TransportToOwnerDTO> getAllTransports(@AuthenticationPrincipal Jwt principal, @RequestBody CreateTransportDTO dto) {
+    log.debug("Make one transport batch {} location {} from {} to {}", dto.getBatchId(), dto.getLocation(), dto.getCompanyFrom(), dto.getCompanyTo());
+    String companyLogged = principal.getClaimAsString("company");
+    Company companyFrom = companyService.getOneByName(companyLogged);
+    Company companyTo = companyService.getOneByName(dto.getCompanyTo());
+    if (companyFrom == null || companyTo == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok().body(genericMapper.map(transportService.createOne(dto.getBatchId(), dto.getLocation(), dto.getCompanyFrom(), dto.getCompanyTo())));
   }
   
   @GetMapping("/{batch_id}")

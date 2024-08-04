@@ -4,7 +4,10 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { KeycloakService } from 'keycloak-angular';
-
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ToastModule } from 'primeng/toast';
+import { TransportService } from '../../services/transport.service';
 interface Column {
   field: string;
   header: string;
@@ -13,9 +16,10 @@ interface Column {
 @Component({
   selector: 'app-transfert-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule],
+  imports: [CommonModule, TableModule, ButtonModule, ConfirmPopupModule, ToastModule],
   templateUrl: './transfert-list.component.html',
-  styleUrl: './transfert-list.component.scss'
+  styleUrl: './transfert-list.component.scss',
+  providers: [ConfirmationService, MessageService]
 })
 export class TransfertListComponent implements OnInit {
 
@@ -24,7 +28,7 @@ export class TransfertListComponent implements OnInit {
   colsTx: Column[] = [];
   expandedRows = {};
   companyLogged !: any;
-  constructor(private transfertService: TransferService, private keyclokService: KeycloakService) { }
+  constructor(private transfertService: TransferService, private transportService: TransportService,  private keyclokService: KeycloakService, private confirmationService: ConfirmationService, private messageService: MessageService) { }
   async ngOnInit() {
 
     if (this.keyclokService.isLoggedIn()) {
@@ -108,4 +112,35 @@ export class TransfertListComponent implements OnInit {
     })
   }
 
+  sendTruck(transfert: any) {
+    this.transportService.createOne({
+      batchId: transfert.oldBatchID,
+      location: "",
+      companyFrom: transfert.companySenderUsername,
+      companyTo: transfert.companyRecipientUsername,
+    }).subscribe({
+      next: (res: any) => {
+        console.log("Res ", res)
+        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+      },
+      error: (err: any) => {
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+      },
+    })
+
+  }
+
+  sendTruckConfirm(event: any, tx: any) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Are you sure you want to proceed?',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.sendTruck(tx);
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+      }
+    });
+  }
 }

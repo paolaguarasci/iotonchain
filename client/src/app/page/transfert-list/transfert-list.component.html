@@ -1,3 +1,5 @@
+<p-toast />
+<p-confirmPopup />
 <p-table
   [columns]="cols"
   [value]="transferts"
@@ -78,6 +80,14 @@
         [outlined]="true"
         (onClick)="abort(rowData)"
       />
+      <p-button *ngIf="rowData.status == 'COMPLETED' && rowData.companySenderUsername == companyLogged"
+      icon="pi pi-truck"
+      severity="danger"
+      [rounded]="true"
+      [outlined]="true"
+      (onClick)="sendTruckConfirm($event, rowData)"
+    />
+
       </td>
     </tr>
   </ng-template>
