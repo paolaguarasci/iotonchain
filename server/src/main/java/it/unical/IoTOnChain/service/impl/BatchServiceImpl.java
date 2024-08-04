@@ -136,14 +136,16 @@ public class BatchServiceImpl implements BatchService {
   }
   
   @Override
-  public Batch move(Company owner, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
+  public Batch move(Company owner, Batch batch, Company company, int quantity, boolean is2step) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
     if (companyService.companyExist(owner)
       && companyService.companyExist(company)
       && batch.getCompanyOwner().equals(owner)
-      && batch.getQuantity() >= quantity) {
+      && (is2step || batch.getQuantity() >= quantity)) {
       // Il trasferimento è fattibile.
-      batch.setQuantity(batch.getQuantity() - quantity);
-      batchRepository.save(batch);
+      if (!is2step) {
+        batch.setQuantity(batch.getQuantity() - quantity);
+        batchRepository.save(batch);
+      }
       // TODO trovare una soluzione per l'assegnazione dei lotti di produzione, fare inserire manualmente?
       log.debug("Move {} {}", batch.getBatchId(), batch.getQuantity());
       log.debug("Batch to move {}", batch);

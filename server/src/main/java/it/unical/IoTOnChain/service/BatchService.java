@@ -15,7 +15,7 @@ public interface BatchService {
   
   Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException;
   
-  Batch move(Company owner, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
+  Batch move(Company owner, Batch batch, Company company, int quantity, boolean is2step) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException;
   
   Batch getOneByBatchIdAndCompany(Company companyOwner, String batchID);
   

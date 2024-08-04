@@ -61,13 +61,15 @@ export class TransfertListComponent implements OnInit {
             header: key
           })
         } else {
-          let keysInner = Object.keys(this.transferts[0][key][0])
-          keysInner.map((keyi: any) => {
-            this.colsTx.push({
-              field: keyi,
-              header: keyi
+          if (this.transferts[0][key][0]) {
+            let keysInner = Object.keys(this.transferts[0][key][0])
+            keysInner.map((keyi: any) => {
+              this.colsTx.push({
+                field: keyi,
+                header: keyi
+              })
             })
-          })
+          }
         }
       })
     }

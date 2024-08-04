@@ -37,7 +37,7 @@ public class TransferServiceImpl implements TransferService {
   
   @Override
   public Transfer makeTransactionOneShot(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, Exception {
-    Batch newsBAtch = batchService.move(companyLogged, batch, company, quantity);
+    Batch newsBAtch = batchService.move(companyLogged, batch, company, quantity, false);
     
     Transfer trs = Transfer.builder()
       .oldBatchID(batch.getBatchId())
@@ -96,7 +96,7 @@ public class TransferServiceImpl implements TransferService {
   @Override
   public List<Transfer> getAllForCompanyLoggedAndBatchId(Company companyOwner, String batchId) {
     List<Transfer> q1 = transferRepository.findAllByCompanySenderIDOrCompanyRecipientID(companyOwner.getId().toString(), companyOwner.getId().toString());
-    List<Transfer> q2 = new java.util.ArrayList<>(q1.stream().filter(transfer -> transfer.getNewBatchID().equals(batchId)).toList());
+    List<Transfer> q2 = new java.util.ArrayList<>(q1.stream().filter(transfer -> transfer.getNewBatchID() != null && transfer.getNewBatchID().equals(batchId)).toList());
     if (q2.size() == 1) {
       Company company1 = companyService.getOneById(q2.getFirst().getCompanySenderID());
       List<Transfer> x = getAllForCompanyLoggedAndBatchId(company1, q2.getFirst().getOldBatchID());
@@ -115,7 +115,7 @@ public class TransferServiceImpl implements TransferService {
       Company company = companyService.getOneById(transfer.getCompanySenderID());
       int quantity = transfer.getQuantity();
       Batch oldBatch = batchService.getOneByBatchIdAndCompany(company, transfer.getOldBatchID());
-      Batch newsBAtch = batchService.move(company, oldBatch, companyLogged, quantity);
+      Batch newsBAtch = batchService.move(company, oldBatch, companyLogged, quantity, true);
       transfer.setNewBatchID(newsBAtch.getBatchId());
       saveOnChain(companyLogged, transfer);
       return transferRepository.save(transfer);
