@@ -11,6 +11,8 @@ import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.TransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,4 +63,20 @@ public class TransferController {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(transferService.makeTransactionWithAcceptance(companyOwner, batch, companyReceiver, dto.getQuantity())));
     }
   }
+  
+  
+  @GetMapping("/{trans_id}/accept")
+  private ResponseEntity<TransferToOwnerDTO> accept(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
+    String companyName = principal.getClaimAsString("company");
+    Company companyLogged = companyService.getOneByName(companyName);
+    return ResponseEntity.ok(mapper.map(transferService.accept(companyLogged, Jsoup.clean(trans_id, Safelist.none()))));
+  }
+  
+  @GetMapping("/{trans_id}/reject")
+  private ResponseEntity<TransferToOwnerDTO> reject(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
+    String companyName = principal.getClaimAsString("company");
+    Company companyLogged = companyService.getOneByName(companyName);
+    return ResponseEntity.ok(mapper.map(transferService.reject(companyLogged, Jsoup.clean(trans_id, Safelist.none()))));
+  }
+  
 }

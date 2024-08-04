@@ -4,7 +4,6 @@ import it.unical.IoTOnChain.data.model.Batch;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Transfer;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
-import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.TransferRepository;
 import it.unical.IoTOnChain.repository.TransportRepository;
 import it.unical.IoTOnChain.repository.TruckRepository;
@@ -20,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -59,8 +60,26 @@ public class TransferServiceImpl implements TransferService {
   }
   
   @Override
-  public Transfer makeTransactionWithAcceptance(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, NoEnoughRawMaterialsException {
-    return null;
+  public Transfer makeTransactionWithAcceptance(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, Exception {
+    Transfer trs = Transfer.builder()
+      .oldBatchID(batch.getBatchId())
+      .unity(batch.getProductType().getUnity())
+      .companySenderID(companyLogged.getId().toString())
+      .companySenderUsername(companyLogged.getName())
+      .companyRecipientID(company.getId().toString())
+      .companyRecipientUsername(company.getName())
+      .type(Transfer.TransferType.WITHACCEPTANCE)
+      .quantity(quantity)
+      .transferDateStart(LocalDateTime.now())
+      .status(Transfer.TransferStatus.INIT)
+      .lastUpdate(LocalDateTime.now())
+      .build();
+    transferRepository.save(trs);
+    
+    // TODO RIMUOVERE QUANTITA' AL SENDER
+    
+    saveOnChain(companyLogged, trs);
+    return trs;
   }
   
   @Override
@@ -79,6 +98,38 @@ public class TransferServiceImpl implements TransferService {
     }
     log.debug("La query Q2 ha restituito {} risultati", q2.size());
     return q2;
+  }
+  
+  @Override
+  public Transfer accept(Company companyLogged, String trans_id) throws Exception, MoveIsNotPossibleException {
+    Optional<Transfer> tx = transferRepository.findById(UUID.fromString(trans_id));
+    if (tx.isPresent()) {
+      Transfer transfer = tx.get();
+      transfer.setStatus(Transfer.TransferStatus.COMPLETED);
+      Company company = companyService.getOneById(transfer.getCompanySenderID());
+      int quantity = transfer.getQuantity();
+      Batch oldBatch = batchService.getOneByBatchIdAndCompany(company, transfer.getOldBatchID());
+      Batch newsBAtch = batchService.move(company, oldBatch, companyLogged, quantity);
+      transfer.setNewBatchID(newsBAtch.getBatchId());
+      saveOnChain(companyLogged, transfer);
+      return transferRepository.save(transfer);
+    }
+    return null;
+  }
+  
+  @Override
+  public Transfer reject(Company companyLogged, String trans_id) throws Exception, MoveIsNotPossibleException {
+    Optional<Transfer> tx = transferRepository.findById(UUID.fromString(trans_id));
+    if (tx.isPresent()) {
+      Transfer transfer = tx.get();
+      transfer.setStatus(Transfer.TransferStatus.REJECTED);
+      int quantity = transfer.getQuantity();
+      Company company = companyService.getOneById(transfer.getCompanySenderID());
+      batchService.refound(company, transfer.getOldBatchID(), quantity);
+      saveOnChain(companyLogged, transfer);
+      return transferRepository.save(transfer);
+    }
+    return null;
   }
   
   

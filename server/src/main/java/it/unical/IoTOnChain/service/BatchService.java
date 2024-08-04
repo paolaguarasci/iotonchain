@@ -22,4 +22,6 @@ public interface BatchService {
   Batch produceByMovement(Company company, ProductType productType, int quantity, String batchId, Batch old);
   
   Map<String, Object> trackInfo(Company companyLogged, String batchId);
+  
+  void refound(Company company, String batchID, int quantity);
 }

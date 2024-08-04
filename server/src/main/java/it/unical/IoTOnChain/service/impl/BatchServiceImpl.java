@@ -286,4 +286,14 @@ public class BatchServiceImpl implements BatchService {
     info.put("global", productionProcessGlobal);
     return info;
   }
+  
+  @Override
+  public void refound(Company company, String batchID, int quantity) {
+    List<Batch> batchOptional = batchRepository.findAllByBatchIdAndCompanyOwner(batchID, company);
+    if (!batchOptional.isEmpty()) {
+      Batch batch = batchOptional.getFirst();
+      batch.setQuantity(quantity);
+      batchRepository.save(batch);
+    }
+  }
 }
