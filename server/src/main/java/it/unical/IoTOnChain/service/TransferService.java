@@ -19,4 +19,6 @@ public interface TransferService {
   Transfer accept(Company companyLogged, String trans_id) throws Exception, MoveIsNotPossibleException;
   
   Transfer reject(Company companyLogged, String trans_id) throws Exception, MoveIsNotPossibleException;
+  
+  Transfer abort(Company companyLogged, String trans_id) throws Exception;
 }

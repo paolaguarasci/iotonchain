@@ -4,6 +4,7 @@ import it.unical.IoTOnChain.data.model.Batch;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.data.model.Transfer;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
+import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.repository.TransferRepository;
 import it.unical.IoTOnChain.repository.TransportRepository;
 import it.unical.IoTOnChain.repository.TruckRepository;
@@ -61,6 +62,13 @@ public class TransferServiceImpl implements TransferService {
   
   @Override
   public Transfer makeTransactionWithAcceptance(Company companyLogged, Batch batch, Company company, int quantity) throws MoveIsNotPossibleException, Exception {
+    
+    if (batch.getQuantity() >= quantity) {
+      batchService.block(companyLogged, batch.getBatchId(), quantity);
+    } else {
+      throw new NoEnoughRawMaterialsException("No more enough materials");
+    }
+    
     Transfer trs = Transfer.builder()
       .oldBatchID(batch.getBatchId())
       .unity(batch.getProductType().getUnity())
@@ -75,8 +83,6 @@ public class TransferServiceImpl implements TransferService {
       .lastUpdate(LocalDateTime.now())
       .build();
     transferRepository.save(trs);
-    
-    // TODO RIMUOVERE QUANTITA' AL SENDER
     
     saveOnChain(companyLogged, trs);
     return trs;
@@ -123,6 +129,21 @@ public class TransferServiceImpl implements TransferService {
     if (tx.isPresent()) {
       Transfer transfer = tx.get();
       transfer.setStatus(Transfer.TransferStatus.REJECTED);
+      int quantity = transfer.getQuantity();
+      Company company = companyService.getOneById(transfer.getCompanySenderID());
+      batchService.refound(company, transfer.getOldBatchID(), quantity);
+      saveOnChain(companyLogged, transfer);
+      return transferRepository.save(transfer);
+    }
+    return null;
+  }
+  
+  @Override
+  public Transfer abort(Company companyLogged, String trans_id) throws Exception {
+    Optional<Transfer> tx = transferRepository.findById(UUID.fromString(trans_id));
+    if (tx.isPresent() && companyLogged.getId().toString().equals(tx.get().getCompanySenderID()) && tx.get().getStatus().equals(Transfer.TransferStatus.INIT)) {
+      Transfer transfer = tx.get();
+      transfer.setStatus(Transfer.TransferStatus.ABORTED);
       int quantity = transfer.getQuantity();
       Company company = companyService.getOneById(transfer.getCompanySenderID());
       batchService.refound(company, transfer.getOldBatchID(), quantity);

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Component
 @Slf4j
@@ -34,6 +35,56 @@ public class InitDB implements CommandLineRunner {
   private final TransportService transportService;
   private final TruckService truckService;
   
+  // From https://www.baeldung.com/java-random-string
+  public static String randomString(String prefix, int length, String suffix) {
+    int leftLimit = 48; // numeral '0'
+    int rightLimit = 122; // letter 'z'
+    Random random = new Random();
+    
+    return prefix + random.ints(leftLimit, rightLimit + 1)
+      .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+      .limit(length)
+      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+      .toString() + suffix;
+  }
+  
+  private String normalizeString(String str) {
+    return str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+  }
+  
+  private void transferBatch(Company companyLogged, Batch basilicoBatch, Company barillaSPA, int i) throws MoveIsNotPossibleException, Exception {
+    transferService.makeTransactionOneShot(companyLogged, basilicoBatch, barillaSPA, i);
+  }
+  
+  private Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException {
+    return batchService.produce(company, type, quantity, batchId, documents, ingredients, steps);
+  }
+  
+  private ProductType makeProductTypeAndAssociateToCompany(Company company, String productTypeName, String unity, Recipe recipe, ProductionProcess productionProcess) {
+    return productTypeService.createProductTypeForCompany(company, normalizeString(productTypeName), unity, recipe, productionProcess);
+  }
+  
+  private Company makeCompany(String name) {
+    Company c = companyService.makeOne(normalizeString(name));
+    if (c == null) {
+      c = companyService.getOneByName(name);
+    }
+    return c;
+  }
+  
+  private Recipe makeRecipe(String name, Map<ProductType, List<String>> ingredients) {
+    return recipeService.createOne(name, ingredients);
+  }
+  
+  private ProductionProcess makeProcess(String name, List<ProductionStep> steps) {
+    return productionProcessService.createOne(name, steps);
+  }
+  
+  private void notarizeProductionStep(Company company, Batch batch, ProductionStepBatch step) throws Exception {
+    
+    notarizeService.notarize(company, step);
+  }
+  
   @Override
   // @Transactional(propagation = Propagation.REQUIRED)
   @SneakyThrows
@@ -44,6 +95,7 @@ public class InitDB implements CommandLineRunner {
     chainService.testAsync();
     log.info("Init DB - Finished ssss");
     
+    log.debug("Stringa random di 5 caratteri - {}", randomString("a_", 10, "_b"));
     
     Company paolaSPA = makeCompany("paolaspa");
     ProductionStep raccoltaBasilicoProcessType = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
@@ -126,43 +178,6 @@ public class InitDB implements CommandLineRunner {
     userInfoService.newUser(filippoSPA, "op_filippo");
     
     log.info("Init DB - End");
-  }
-  
-  private String normalizeString(String str) {
-    return str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-  }
-  
-  private void transferBatch(Company companyLogged, Batch basilicoBatch, Company barillaSPA, int i) throws MoveIsNotPossibleException, Exception {
-    transferService.makeTransactionOneShot(companyLogged, basilicoBatch, barillaSPA, i);
-  }
-  
-  private Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException {
-    return batchService.produce(company, type, quantity, batchId, documents, ingredients, steps);
-  }
-  
-  private ProductType makeProductTypeAndAssociateToCompany(Company company, String productTypeName, String unity, Recipe recipe, ProductionProcess productionProcess) {
-    return productTypeService.createProductTypeForCompany(company, normalizeString(productTypeName), unity, recipe, productionProcess);
-  }
-  
-  private Company makeCompany(String name) {
-    Company c = companyService.makeOne(normalizeString(name));
-    if (c == null) {
-      c = companyService.getOneByName(name);
-    }
-    return c;
-  }
-  
-  private Recipe makeRecipe(String name, Map<ProductType, List<String>> ingredients) {
-    return recipeService.createOne(name, ingredients);
-  }
-  
-  private ProductionProcess makeProcess(String name, List<ProductionStep> steps) {
-    return productionProcessService.createOne(name, steps);
-  }
-  
-  private void notarizeProductionStep(Company company, Batch batch, ProductionStepBatch step) throws Exception {
-    
-    notarizeService.notarize(company, step);
   }
   
 }

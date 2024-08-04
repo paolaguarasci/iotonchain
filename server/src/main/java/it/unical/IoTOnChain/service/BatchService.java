@@ -23,5 +23,7 @@ public interface BatchService {
   
   Map<String, Object> trackInfo(Company companyLogged, String batchId);
   
+  void block(Company company, String batchID, int quantity);
+  
   void refound(Company company, String batchID, int quantity);
 }

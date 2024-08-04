@@ -47,6 +47,6 @@ public class Transfer implements Serializable {
   }
   
   public enum TransferStatus implements Serializable {
-    COMPLETED, INIT, PENDING, REJECTED
+    COMPLETED, INIT, PENDING, REJECTED, ABORTED
   }
 }

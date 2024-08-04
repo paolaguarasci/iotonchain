@@ -79,4 +79,10 @@ public class TransferController {
     return ResponseEntity.ok(mapper.map(transferService.reject(companyLogged, Jsoup.clean(trans_id, Safelist.none()))));
   }
   
+  @GetMapping("/{trans_id}/abort")
+  private ResponseEntity<TransferToOwnerDTO> block(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
+    String companyName = principal.getClaimAsString("company");
+    Company companyLogged = companyService.getOneByName(companyName);
+    return ResponseEntity.ok(mapper.map(transferService.abort(companyLogged, Jsoup.clean(trans_id, Safelist.none()))));
+  }
 }

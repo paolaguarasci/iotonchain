@@ -1,5 +1,6 @@
 package it.unical.IoTOnChain.service.impl;
 
+import it.unical.IoTOnChain.config.InitDB;
 import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
@@ -147,7 +148,8 @@ public class BatchServiceImpl implements BatchService {
       log.debug("Move {} {}", batch.getBatchId(), batch.getQuantity());
       log.debug("Batch to move {}", batch);
       productTypeService.createProductTypeForCompany(company, batch.getProductType().getName(), batch.getProductType().getUnity(), batch.getProductType().getRecipe(), batch.getProductType().getProductionProcess());
-      Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, batch.getBatchId() + "_X", batch);
+//      Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, batch.getBatchId() + "_X", batch);
+      Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, InitDB.randomString("", 10, ""), batch);
       newBatch.setCompanyProducer(owner);
       batchRepository.save(newBatch);
       return newBatch;
@@ -182,11 +184,10 @@ public class BatchServiceImpl implements BatchService {
       .localProcessProduction(old.getLocalProcessProduction())
       .localRecipe(old.getLocalRecipe())
       .productionDate(LocalDateTime.now())
-      .documents(old.getDocuments())
+      // .documents(old.getDocuments())
       .quantity(quantity)
       .build());
   }
-  
   @Override
   public Map<String, Object> trackInfo(Company companyLogged, String batchId) {
     
@@ -288,11 +289,21 @@ public class BatchServiceImpl implements BatchService {
   }
   
   @Override
+  public void block(Company company, String batchID, int quantity) {
+    List<Batch> batchOptional = batchRepository.findAllByBatchIdAndCompanyOwner(batchID, company);
+    if (!batchOptional.isEmpty()) {
+      Batch batch = batchOptional.getFirst();
+      batch.setQuantity(batch.getQuantity() - quantity);
+      batchRepository.save(batch);
+    }
+  }
+  
+  @Override
   public void refound(Company company, String batchID, int quantity) {
     List<Batch> batchOptional = batchRepository.findAllByBatchIdAndCompanyOwner(batchID, company);
     if (!batchOptional.isEmpty()) {
       Batch batch = batchOptional.getFirst();
-      batch.setQuantity(quantity);
+      batch.setQuantity(batch.getQuantity() + quantity);
       batchRepository.save(batch);
     }
   }
