@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.model.*;
 import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
+import it.unical.IoTOnChain.repository.BatchRepository;
 import it.unical.IoTOnChain.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,6 +13,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ public class InitDB implements CommandLineRunner {
   private final ObjectMapper objectMapper;
   private final TransportService transportService;
   private final TruckService truckService;
+  private final BatchRepository batchRepository;
   
   // From https://www.baeldung.com/java-random-string
   public static String randomString(String prefix, int length, String suffix) {
@@ -41,11 +45,13 @@ public class InitDB implements CommandLineRunner {
     int rightLimit = 122; // letter 'z'
     Random random = new Random();
     
-    return prefix + random.ints(leftLimit, rightLimit + 1)
+    String x = prefix + random.ints(leftLimit, rightLimit + 1)
       .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
       .limit(length)
       .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
       .toString() + suffix;
+    
+    return x.toLowerCase();
   }
   
   private String normalizeString(String str) {
@@ -56,7 +62,7 @@ public class InitDB implements CommandLineRunner {
     transferService.makeTransactionOneShot(companyLogged, basilicoBatch, barillaSPA, i);
   }
   
-  private Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException {
+  private Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException, IOException, URISyntaxException {
     return batchService.produce(company, type, quantity, batchId, documents, ingredients, steps);
   }
   

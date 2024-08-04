@@ -9,9 +9,13 @@ import it.unical.IoTOnChain.repository.CompanyRepository;
 import it.unical.IoTOnChain.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.javatuples.Pair;
+import org.javatuples.Triplet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -30,6 +34,9 @@ public class BatchServiceImpl implements BatchService {
   private final RecipeBatchService recipeBatchService;
   private final ProductionProcessService productionProcessService;
   private final ProductionProcessBatchService productionProcessBatchService;
+  private final SolverService solverService;
+  private final boolean USEASP = true;
+//  private final boolean USEASP = false;
   
   @Override
   public List<Batch> getAllProductByCompanyLogged(String companyLogged) {
@@ -63,7 +70,7 @@ public class BatchServiceImpl implements BatchService {
   }
   
   @Override
-  public Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException {
+  public Batch produce(Company company, ProductType type, int quantity, String batchId, List<String> documents, List<String> ingredients, List<Map<String, String>> steps) throws NoEnoughRawMaterialsException, IOException, URISyntaxException {
     boolean checkMaterial = true;
     Set<Batch> rawMaterials = new HashSet<>();
     log.debug("company {}", company);
@@ -77,15 +84,30 @@ public class BatchServiceImpl implements BatchService {
     if (type.getRecipe() != null) {
       for (RecipeRow recipeRow : type.getRecipe().getRecipeRow()) {
         // FIXME potenziali side effect quando si mischiano diverse unita' di misura!
-        Map<String, Object> checkQuantityOfType1 = new HashMap<>();
-        checkQuantityOfType1 = checkQuantityOfType(company, recipeRow.getProduct(), recipeRow.getQuantity());
-        
-        log.debug("Controllo {}", recipeRow.getProduct().getName());
-        if (Long.parseLong(String.valueOf(checkQuantityOfType1.get("k"))) < ((quantity / 100.00) * recipeRow.getQuantity())) {
-          checkMaterial = false;
-          break;
+        if (!USEASP) {
+          Map<String, Object> checkQuantityOfType1 = new HashMap<>();
+          checkQuantityOfType1 = checkQuantityOfType(company, recipeRow.getProduct(), recipeRow.getQuantity());
+          log.debug("Controllo {}", recipeRow.getProduct().getName());
+          int q = (int) Math.ceil((quantity / 100.00) * recipeRow.getQuantity());
+          if (Long.parseLong(String.valueOf(checkQuantityOfType1.get("k"))) < q) {
+            checkMaterial = false;
+            break;
+          }
+          rawMaterials.addAll((Set<Batch>) checkQuantityOfType1.get("batch"));
+        } else {
+          List<String> checkQuantityOfType1 = new ArrayList<>();
+          int q = (int) Math.ceil((quantity / 100.00) * recipeRow.getQuantity());
+          checkQuantityOfType1 = findBatchesByQuantityAndType(company.getName(), recipeRow.getProduct().getName(), q);
+          Set<Batch> batches = batchRepository.findAllByBatchIdIsIn(checkQuantityOfType1);
+          log.debug("FUCK {}, {} ", checkQuantityOfType1.size(), checkQuantityOfType1);
+          log.debug("Parametri {}, {}, {}, risultato BATCH TROVATI {} ", company.getName(), recipeRow.getProduct().getName(), q, batches.size());
+          if (batches.isEmpty()) {
+            checkMaterial = false;
+            break;
+          }
+          rawMaterials.addAll(batches);
         }
-        rawMaterials.addAll((Set<Batch>) checkQuantityOfType1.get("batch"));
+        
       }
     }
     
@@ -151,7 +173,7 @@ public class BatchServiceImpl implements BatchService {
       log.debug("Batch to move {}", batch);
       productTypeService.createProductTypeForCompany(company, batch.getProductType().getName(), batch.getProductType().getUnity(), batch.getProductType().getRecipe(), batch.getProductType().getProductionProcess());
 //      Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, batch.getBatchId() + "_X", batch);
-      Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, InitDB.randomString("", 10, ""), batch);
+      Batch newBatch = this.produceByMovement(company, batch.getProductType(), quantity, InitDB.randomString("lotto", 10, ""), batch);
       newBatch.setCompanyProducer(owner);
       batchRepository.save(newBatch);
       return newBatch;
@@ -190,6 +212,7 @@ public class BatchServiceImpl implements BatchService {
       .quantity(quantity)
       .build());
   }
+  
   @Override
   public Map<String, Object> trackInfo(Company companyLogged, String batchId) {
     
@@ -309,4 +332,40 @@ public class BatchServiceImpl implements BatchService {
       batchRepository.save(batch);
     }
   }
+  
+  @Override
+  public List<String> findBatchesByQuantityAndType(String companyName, String productType, int quantity) throws IOException, URISyntaxException {
+    StringBuilder fatti = new StringBuilder();
+    List<Triplet> batchTriplets = new ArrayList<>();
+    List<Batch> batches = getAllProductByCompanyLogged(companyName);
+    log.debug("La compagnia {} ha {} lotti in totale", companyName, batches.size());
+    
+    if (batches.isEmpty()) {
+      return new ArrayList<>();
+    }
+    
+    for (Batch batch : batches) {
+      batchTriplets.add(new Triplet<>(batch.getBatchId(), batch.getProductType().getName(), batch.getQuantity()));
+    }
+    
+    fatti
+      .append(solverService.listToAtomArita3("batch", batchTriplets)).append(" ")
+      .append(solverService.listToAtomArita1("amount", List.of(String.valueOf(quantity)))).append(" ")
+      .append(solverService.listToAtomArita1("type", List.of(productType)));
+    
+    log.info(fatti.toString());
+    
+    log.debug("ciao ciao sono io");
+    
+    List<String> models = solverService.solveFileAndString("FindBatch.lp", fatti.toString());
+    log.debug("ciao ciao sono i2");
+    if (!models.isEmpty()) {
+      List<String> newBatches = new ArrayList<>();
+      List<Pair> results = solverService.atomArita2ToList(models.getFirst(), "scelto");
+      results.forEach(r -> newBatches.add(r.getValue0().toString()));
+      return newBatches;
+    }
+    return new ArrayList<>();
+  }
+  
 }

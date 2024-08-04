@@ -24,15 +24,16 @@ import java.util.stream.Stream;
 @Service
 @Slf4j
 public class SolverServiceImpl implements SolverService {
-  private final Control control;
+  private Control control;
   
   SolverServiceImpl() {
-    this.control = new Control("0");
+//    this.control = new Control("0");
   }
   
   @Override
   public List<String> solveString(String prog) {
     List<String> results = new ArrayList<>();
+    control = new Control("0");
     control.add(prog);
     control.ground();
     
@@ -49,6 +50,7 @@ public class SolverServiceImpl implements SolverService {
   @Override
   public List<String> solveFile(String filename) throws IOException, URISyntaxException {
     List<String> results = new ArrayList<>();
+    control = new Control("0");
     control.add(readFileAdString("asp/" + filename));
     control.ground();
     
@@ -56,6 +58,30 @@ public class SolverServiceImpl implements SolverService {
     while (handle.hasNext()) {
       Model model = handle.next();
       results.add(model.toString());
+    }
+    
+    control.close();
+    return results;
+  }
+  
+  @Override
+  public List<String> solveFileAndString(String filename, String customString) throws IOException, URISyntaxException {
+    List<String> results = new ArrayList<>();
+    control = new Control("0");
+    String prog = readFileAdString("asp/" + filename);
+    log.info(prog);
+    control.add(prog);
+    control.add(customString);
+    
+    log.debug("Ciao, sono qui1!\n {}\n {}", prog, customString);
+    
+    control.ground();
+    log.debug("Ciao, sono qui2!\n {}\n {}", prog, customString);
+    try (SolveHandle handle = control.solve(SolveMode.YIELD)) {
+      while (handle.hasNext()) {
+        Model model = handle.next();
+        results.add(model.toString());
+      }
     }
     
     control.close();
@@ -98,7 +124,7 @@ public class SolverServiceImpl implements SolverService {
     for (int i = 0; i < value.size(); i++) {
       sb.append(name).append("(").append(value.get(i).getValue0()).append(",").append(value.get(i).getValue1()).append(",").append(value.get(i).getValue2()).append("). ");
     }
-    return sb.toString().trim();
+    return sb.toString();
   }
   
   @Override

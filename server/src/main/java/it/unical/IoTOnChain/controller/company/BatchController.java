@@ -19,6 +19,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,10 @@ public class BatchController {
       Map<String, String> errors = new HashMap<>();
       errors.put("message", "Not enough materials");
       return ResponseEntity.badRequest().body(objectMapper.writeValueAsString(errors));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } catch (URISyntaxException e) {
+      throw new RuntimeException(e);
     }
   }
   

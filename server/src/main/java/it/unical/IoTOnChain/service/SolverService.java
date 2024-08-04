@@ -13,6 +13,8 @@ public interface SolverService {
   
   List<String> solveFile(String filename) throws IOException, URISyntaxException;
   
+  List<String> solveFileAndString(String filename, String customString) throws IOException, URISyntaxException;
+  
   String readFileAdString(String p) throws IOException, URISyntaxException;
   
   String listToAtomArita1(String name, List value1);

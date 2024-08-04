@@ -1,6 +1,9 @@
 package it.unical.IoTOnChain.service.impl;
 
-import it.unical.IoTOnChain.data.model.*;
+import it.unical.IoTOnChain.data.model.Company;
+import it.unical.IoTOnChain.data.model.RecipeBatch;
+import it.unical.IoTOnChain.data.model.RecipeRow;
+import it.unical.IoTOnChain.data.model.RecipeRowBatch;
 import it.unical.IoTOnChain.repository.BatchRepository;
 import it.unical.IoTOnChain.repository.RecipeBatchRepository;
 import it.unical.IoTOnChain.repository.RecipeRowBatchRepository;
@@ -40,10 +43,5 @@ public class RecipeBatchServiceImpl implements RecipeBatchService {
         .build());
     }
     return recipeBatchRepository.saveAndFlush(RecipeBatch.builder().note(s).recipeRow(recipeRows).build());
-  }
-  
-  private Batch selectBatch(ProductType product, Long quantity) {
-    // TODO ASP Per la selezione del lotto da utilizzare
-    return null;
   }
 }
