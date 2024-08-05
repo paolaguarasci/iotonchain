@@ -1,6 +1,8 @@
 package it.unical.IoTOnChain.config;
 
 import com.azure.core.credential.TokenCredential;
+import com.azure.core.http.rest.PagedIterable;
+import com.azure.digitaltwins.core.BasicDigitalTwin;
 import com.azure.digitaltwins.core.DigitalTwinsAsyncClient;
 import com.azure.digitaltwins.core.DigitalTwinsClient;
 import com.azure.digitaltwins.core.DigitalTwinsClientBuilder;
@@ -78,6 +80,13 @@ public class InitTwin implements CommandLineRunner {
     Map<String, String> models = filesAsAStrings("/home/paola/workspace/iotOnChain/server/src/main/resources/dt_model");
     
     log.debug("Ci sono {} modelli", models.keySet().size());
+    String query = "SELECT * FROM DIGITALTWINS T WHERE CONTAINS(T.$dtId, 'truck')";
+    PagedIterable<BasicDigitalTwin> deserializedResponse = digitalTwinsClientSync.query(query, BasicDigitalTwin.class);
+    log.debug("Ci sono {} truck twin", deserializedResponse.stream().count());
+    for (BasicDigitalTwin digitalTwin : deserializedResponse) {
+      System.out.println("Delete digital twin with Id: " + digitalTwin.getId());
+      digitalTwinsClientSync.deleteDigitalTwin(digitalTwin.getId());
+    }
     
     models.keySet().forEach(key -> {
       Optional<DTModel> model = dtModelRepository.findByName(key.replace(".json", "").toLowerCase(Locale.ROOT));
