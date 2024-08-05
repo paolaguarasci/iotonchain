@@ -3,11 +3,12 @@ import time
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.digitaltwins.core import DigitalTwinsClient
-load_dotenv() 
+load_dotenv()
 url = os.getenv("DTURL")
 credential = DefaultAzureCredential()
 service_client = DigitalTwinsClient(url, credential)
 digitalTwinId = 'thermostat67'
+digitalTwinId = 'truck_barillaspa_5'
 propertye = 'Temperature'
 newValue = dict();
 newValue["path"] =  '/' + propertye
