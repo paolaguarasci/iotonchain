@@ -13,4 +13,6 @@ public interface TruckService {
   Truck createOne(Company company);
   
   List<Truck> getAllByCompany(Company company);
+  
+  void updateAllByCompany(Company company);
 }

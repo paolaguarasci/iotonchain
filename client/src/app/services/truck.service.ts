@@ -18,4 +18,8 @@ export class TruckService {
   getAll() {
     return this.http.get(`/api/v1/company/truck`);
   }
+
+  updateAll() {
+    return this.http.get(`/api/v1/company/truck/update`);
+  }
 }

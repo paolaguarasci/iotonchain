@@ -13,16 +13,11 @@ import java.io.Serializable;
 @Slf4j
 @RequiredArgsConstructor
 public class PollingConfig implements Serializable {
-  
   private final TransportService transportService;
-  
   @Async
-  @Scheduled(fixedDelay = 1000 * 60 * 3, initialDelay = 1000) // ogni 3 minuti
+  @Scheduled(fixedDelayString = "${app.dt.interval-update-ms}", initialDelayString = "${app.dt.initial-update-ms}")
   public void poll() throws InterruptedException {
     log.info("Polling from DT Hub...");
-    
     transportService.updateAllTransportDataFromDTHUb();
-    
-    log.info("... ending");
   }
 }

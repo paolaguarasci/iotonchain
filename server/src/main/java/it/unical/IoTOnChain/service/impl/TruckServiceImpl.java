@@ -8,8 +8,10 @@ import it.unical.IoTOnChain.service.DtService;
 import it.unical.IoTOnChain.service.TruckService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -53,6 +55,17 @@ public class TruckServiceImpl implements TruckService {
   @Override
   public List<Truck> getAllByCompany(Company company) {
     return truckRepository.findAllByCompanyId(company.getId());
+  }
+  
+  @Override
+  @Async
+  public void updateAllByCompany(Company company) {
+    List<Truck> trucks = truckRepository.findAllByCompanyId(company.getId());
+    List<MyDT> sensors = new ArrayList<>();
+    for (Truck truck : trucks) {
+      sensors.add(truck.getSensor());
+    }
+    dtService.updateSensors(sensors);
   }
   
 }

@@ -34,4 +34,15 @@ public class TruckController {
     }
     return ResponseEntity.ok().body(genericMapper.mapTruckListToDTOOwner(truckService.getAllByCompany(company)));
   }
+  
+  @GetMapping("/update")
+  public ResponseEntity<?> updateSensorsData(@AuthenticationPrincipal Jwt principal) {
+    String companyLogged = principal.getClaimAsString("company");
+    Company company = companyService.getOneByName(companyLogged);
+    if (company == null) {
+      return ResponseEntity.notFound().build();
+    }
+    truckService.updateAllByCompany(company);
+    return ResponseEntity.ok().build();
+  }
 }

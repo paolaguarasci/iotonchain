@@ -11,6 +11,7 @@ import it.unical.IoTOnChain.data.model.DTModel;
 import it.unical.IoTOnChain.data.model.MyDT;
 import it.unical.IoTOnChain.data.model.SensorsLog;
 import it.unical.IoTOnChain.repository.DTModelRepository;
+import it.unical.IoTOnChain.repository.MyDTRepository;
 import it.unical.IoTOnChain.repository.SensorsLogRepository;
 import it.unical.IoTOnChain.service.DtService;
 import it.unical.IoTOnChain.service.NotarizeService;
@@ -44,9 +45,10 @@ public class DtServiceImpl implements DtService {
   private final SensorsLogRepository sensorsLogRepository;
   private final NotarizeService notarizeService;
   private final ObjectMapper objectMapper;
+  private final MyDTRepository myDTRepository;
   
   public DtServiceImpl(@Value("${app.dt.dturl}") String dturl, @Value("${app.dt.dtiddefault}") String digitalTwinDefaultId, @Value("${app.dt.dtpropertydefault}") String digitalTwinDefaultProperty, SensorsLogRepository sensorsLogRepository,
-                       DTModelRepository dTModelRepository, NotarizeService notarizeService, ObjectMapper objectMapper) {
+                       DTModelRepository dTModelRepository, NotarizeService notarizeService, ObjectMapper objectMapper, MyDTRepository myDTRepository) {
     this.digitalTwinDefaultId = digitalTwinDefaultId;
     this.digitalTwinDefaultProperty = digitalTwinDefaultProperty;
     this.sensorsLogRepository = sensorsLogRepository;
@@ -62,6 +64,7 @@ public class DtServiceImpl implements DtService {
 //      .endpoint(dturl)
 //      .buildAsyncClient();
     this.dTModelRepository = dTModelRepository;
+    this.myDTRepository = myDTRepository;
   }
   
   @Override
@@ -148,7 +151,7 @@ public class DtServiceImpl implements DtService {
           .value(sensor.getVal3())
           .build());
       }
-      
+      List<MyDT> sensorSaved = myDTRepository.saveAll(sensors);
       List<SensorsLog> saved = sensorsLogRepository.saveAll(sensorsLogs);
       try {
         if (!saved.isEmpty()) {
