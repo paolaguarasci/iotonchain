@@ -1,10 +1,7 @@
 package it.unical.IoTOnChain.config;
 
 
-import it.unical.IoTOnChain.chain.Box;
 import it.unical.IoTOnChain.chain.Hash;
-import it.unical.IoTOnChain.chain.Token;
-import it.unical.IoTOnChain.chain.TokenV2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

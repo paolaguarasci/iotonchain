@@ -23,7 +23,10 @@ import org.web3j.protocol.exceptions.TransactionException;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 @Service
@@ -64,7 +67,9 @@ public class DtServiceImpl implements DtService {
   @Override
   public Map<String, Object> getSensorData(String sensorId, List<String> props) {
     Map<String, Object> sensorData = new HashMap<>();
-    var dt = digitalTwinsClientSync.getDigitalTwin(digitalTwinDefaultId, Map.class);
+    var dt = digitalTwinsClientSync.getDigitalTwin(sensorId, Map.class);
+    
+    log.debug("Row DATA SENSOR {} - {}", sensorId, dt.toString());
     
     dt.forEach((key, value) -> {
       if (props.contains(key)) {
@@ -79,13 +84,15 @@ public class DtServiceImpl implements DtService {
   
   @Override
   public String createOneSensor(String sensorName, String dtName) {
-    Optional<DTModel> model = dTModelRepository.findByName(sensorName);
-    if (model.isPresent()) {
-      BasicDigitalTwin basicTwin = new BasicDigitalTwin(dtName).setMetadata(new BasicDigitalTwinMetadata().setModelId(model.get().getModelId()));
-      BasicDigitalTwin basicTwinResponse = digitalTwinsClientSync.createOrReplaceDigitalTwin(dtName, basicTwin, BasicDigitalTwin.class);
-      return basicTwinResponse.getId();
-    }
-    return null;
+    DTModel model = dTModelRepository.findByName(sensorName).orElseThrow();
+    BasicDigitalTwin basicTwin = new BasicDigitalTwin(dtName)
+      .setMetadata(new BasicDigitalTwinMetadata()
+        .setModelId(model.getModelId()))
+      .addToContents("Temperature", 0)
+      .addToContents("Location", "none");
+    BasicDigitalTwin basicTwinResponse = digitalTwinsClientSync.createOrReplaceDigitalTwin(dtName, basicTwin, BasicDigitalTwin.class);
+    log.debug("Ho creato il sensore {} ", basicTwinResponse.getId());
+    return basicTwinResponse.getId() != null && !basicTwinResponse.getId().isEmpty() ? basicTwinResponse.getId() : dtName;
   }
   
   @Override
@@ -144,7 +151,9 @@ public class DtServiceImpl implements DtService {
       
       List<SensorsLog> saved = sensorsLogRepository.saveAll(sensorsLogs);
       try {
-        notarizeService.notarize(saved);
+        if (!saved.isEmpty()) {
+          notarizeService.notarize(saved);
+        }
       } catch (NoSuchAlgorithmException e) {
         throw new RuntimeException(e);
       } catch (IOException e) {

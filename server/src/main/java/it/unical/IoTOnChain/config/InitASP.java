@@ -28,6 +28,7 @@ public class InitASP implements CommandLineRunner {
   private final SolverService solverService;
   private final CompanyService companyService;
   private final BatchService batchService;
+  
   @SneakyThrows
   @Override
   public void run(String... args) throws Exception {

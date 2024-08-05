@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.Random;
 @Slf4j
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "app.init.db", havingValue = "true")
+@Order(2)
 public class InitDB implements CommandLineRunner {
   private final CompanyService companyService;
   private final ProductTypeService productTypeService;

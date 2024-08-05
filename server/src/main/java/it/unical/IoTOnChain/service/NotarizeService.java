@@ -14,7 +14,7 @@ public interface NotarizeService {
   void notarize(Company company, String doc) throws Exception;
   
   void notarize(Company company, ProductionStepBatch ps) throws NoSuchAlgorithmException, IOException, TransactionException;
- 
+  
   List<Notarize> getAll(Company company);
   
   void notarize(Company company, Transfer transfer) throws NoSuchAlgorithmException, IOException, TransactionException;

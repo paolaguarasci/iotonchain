@@ -4,6 +4,7 @@ import com.azure.core.credential.TokenCredential;
 import com.azure.digitaltwins.core.DigitalTwinsAsyncClient;
 import com.azure.digitaltwins.core.DigitalTwinsClient;
 import com.azure.digitaltwins.core.DigitalTwinsClientBuilder;
+import com.azure.digitaltwins.core.models.DigitalTwinsModelData;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import it.unical.IoTOnChain.data.model.DTModel;
 import it.unical.IoTOnChain.repository.DTModelRepository;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -28,6 +30,7 @@ import java.util.stream.Stream;
 @Component
 @Slf4j
 @ConditionalOnProperty(name = "app.init.dt", havingValue = "true")
+@Order(1)
 public class InitTwin implements CommandLineRunner {
   private final CountDownLatch listModelsLatch = new CountDownLatch(1);
   private final DigitalTwinsClient digitalTwinsClientSync;
@@ -64,14 +67,13 @@ public class InitTwin implements CommandLineRunner {
     });
     
     digitalTwinsClientAsync.listModels()
-      .doOnNext(modelData -> log.debug("MODEL DATA {}", modelData))
+      .doOnNext(modelData -> log.debug("MODEL DATA {} {}", modelData.getDtdlModel(), modelData.getModelId()))
       .doOnError(throwable -> log.debug("Error {}", throwable))
       .doOnTerminate(listModelsLatch::countDown)
       .subscribe();
     
     var dt = digitalTwinsClientSync.getDigitalTwin(digitalTwinDefaultId, Map.class);
     
-    digitalTwinsClientSync.deleteModel("dtmi:com:samples:Truck;1");
     
     Map<String, String> models = filesAsAStrings("/home/paola/workspace/iotOnChain/server/src/main/resources/dt_model");
     
@@ -80,20 +82,25 @@ public class InitTwin implements CommandLineRunner {
     models.keySet().forEach(key -> {
       Optional<DTModel> model = dtModelRepository.findByName(key.replace(".json", "").toLowerCase(Locale.ROOT));
       if (model.isEmpty()) {
-        var modelList = digitalTwinsClientSync.createModels(List.of(models.get(key)));
-        for (var m : modelList) {
-          dtModelRepository.save(DTModel.builder()
-            .name(key.replace(".json", "").toLowerCase(Locale.ROOT))
-            .fileName(key)
-            .lastUpdateOnDTHUB(LocalDateTime.now().toString())
-            .modelId(m.getModelId())
-            // .model(models.get(key))
-            .build());
+        digitalTwinsClientSync.deleteModel("dtmi:iotchain:DigitalTwins:Truck;1");
+        Iterable<DigitalTwinsModelData> modelList = digitalTwinsClientSync.createModels(List.of(models.get(key)));
+        DigitalTwinsModelData modelData = modelList.iterator().next();
+        if (modelData == null) {
+          modelData = digitalTwinsClientSync.getModel(models.get(key));
+          log.debug("DATAAAAAAAAAAA Model {}", modelData);
         }
+        log.debug("Ho creato il modello {}", modelData.getModelId());
+        dtModelRepository.save(DTModel.builder()
+          .name(key.replace(".json", "").toLowerCase(Locale.ROOT))
+          .fileName(key)
+          .lastUpdateOnDTHUB(LocalDateTime.now().toString())
+          .modelId(modelData.getModelId())
+          // .model(models.get(key))
+          .build());
       }
     });
-
-
+    
+    
     dt.forEach((key, value) -> {
       if (key.equals("$metadata")) {
         Map<String, Object> metadata = (Map<String, Object>) value;
@@ -106,8 +113,8 @@ public class InitTwin implements CommandLineRunner {
     });
 
 //    log.debug("La temperatura del sensore {} e' {} gradi", dt.get("$dtId"), dt.get("Temperature"));
-
-
+    
+    
     log.info("Init Twin - End");
   }
   

@@ -23,7 +23,7 @@ public class Truck implements Serializable {
   @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
   private Company company;
   
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private MyDT sensor;
   
   private LocalDateTime lastSensorsUpdate;

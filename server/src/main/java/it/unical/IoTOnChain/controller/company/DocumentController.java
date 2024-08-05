@@ -9,8 +9,6 @@ import it.unical.IoTOnChain.service.DocumentService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.entity.ContentType;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,10 +18,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +27,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -44,6 +38,7 @@ public class DocumentController {
   private final NotarizeService notarizeService;
   private final GenericMapper genericMapper;
   private final Path root = Paths.get("/tmp");
+  
   @GetMapping
   public ResponseEntity<List<DocumentToOwnerDTO>> getDocuments(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all document for company logged");
@@ -57,7 +52,7 @@ public class DocumentController {
   
   
   @PostMapping("/upload")
-  public ResponseEntity<Object> uploadDocument(@AuthenticationPrincipal Jwt principal, @RequestPart String name, @RequestPart String description, @RequestPart String dateStart, @RequestPart String dateEnd,  MultipartFile file) throws IOException {
+  public ResponseEntity<Object> uploadDocument(@AuthenticationPrincipal Jwt principal, @RequestPart String name, @RequestPart String description, @RequestPart String dateStart, @RequestPart String dateEnd, MultipartFile file) throws IOException {
     
     String companyName = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyName);
@@ -65,7 +60,7 @@ public class DocumentController {
       return ResponseEntity.badRequest().build();
     }
     log.debug("Upload document for company logged 0 {} ", company.getName());
-
+    
     Instant instant1 = Instant.ofEpochMilli(Long.parseLong(dateStart));
     Instant instant2 = Instant.ofEpochMilli(Long.parseLong(dateEnd));
     LocalDateTime localDateTime1 = LocalDateTime.ofInstant(instant1, ZoneId.of("Europe/Rome"));
@@ -102,7 +97,7 @@ public class DocumentController {
     }
   }
   
-  @GetMapping( "/{doc_id}")
+  @GetMapping("/{doc_id}")
   public ResponseEntity<DocumentToOwnerDTO> getDocument(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
     String companyName = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyName);
@@ -115,7 +110,8 @@ public class DocumentController {
     }
     return ResponseEntity.ok().body(genericMapper.map(document));
   }
-  @GetMapping( "/{doc_id}/resource")
+  
+  @GetMapping("/{doc_id}/resource")
   public ResponseEntity<?> getDocumentResource(@AuthenticationPrincipal Jwt principal, @PathVariable String doc_id) throws IOException {
     String companyName = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyName);

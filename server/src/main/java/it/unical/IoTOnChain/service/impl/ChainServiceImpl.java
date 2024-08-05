@@ -37,19 +37,14 @@ public class ChainServiceImpl implements ChainService {
   private Web3j web3j;
   private Map<String, Object> registrationContract = new HashMap<>();
   
-
   
-  public ChainServiceImpl(NotarizeRepository notarizeRepository, Web3j web3j,  ApplicationContext applicationContext) {
+  public ChainServiceImpl(NotarizeRepository notarizeRepository, Web3j web3j, ApplicationContext applicationContext) {
     this.web3j = web3j;
     this.applicationContext = applicationContext;
     this.web3j = applicationContext.getBean(Web3j.class);
     this.registrationContract = (Map<String, Object>) applicationContext.getBean("registrationContracts");
     this.transactionManager = (TransactionManager) applicationContext.getBean("getTransactionManager");
   }
-  
-  
-  
-
   
   
   @Async

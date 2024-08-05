@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 public class InitChain implements CommandLineRunner {
   private final NotarizeService notarizeService;
   private final CompanyService companyService;
+  
   @SneakyThrows
   @Override
   public void run(String... args) throws Exception {

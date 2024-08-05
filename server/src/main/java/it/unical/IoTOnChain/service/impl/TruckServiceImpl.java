@@ -43,8 +43,9 @@ public class TruckServiceImpl implements TruckService {
     MyDT dt = new MyDT();
     int indice = random.nextInt((10) + 1);
     String sensorsId = dtService.createOneSensor("truck", "truck_" + company.getName() + "_" + indice);
+    log.debug("Created truck with sensor id " + sensorsId);
     dt.setDtid(sensorsId);
-    dt.setProp1("Position");
+    dt.setProp1("Location");
     dt.setProp2("Temperature");
     return truckRepository.save(Truck.builder().company(company).sensor(dt).build());
   }

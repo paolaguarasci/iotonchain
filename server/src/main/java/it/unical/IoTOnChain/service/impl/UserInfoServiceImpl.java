@@ -23,7 +23,7 @@ public class UserInfoServiceImpl implements UserInfoService {
   @Override
   public UserInfo newUser(Company company, String username) {
     Optional<UserInfo> user = userInfoRepository.findByUsername(username);
-    if(user.isPresent()) {
+    if (user.isPresent()) {
       return user.get();
     }
     keyCloakService.addCompanyNameToOptions(company);

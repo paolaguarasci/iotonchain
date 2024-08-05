@@ -1,23 +1,18 @@
 {
-  "@id": "dtmi:com:samples:Truck;1",
+  "@id": "dtmi:iotchain:DigitalTwins:Truck;1",
   "@type": "Interface",
+  "displayName": "Truck interface model",
   "@context": "dtmi:dtdl:context;2",
-  "displayName": "Truck",
   "contents": [
+    {
+      "@type": "Property",
+      "name": "Location",
+      "schema": "string"
+    },
     {
       "@type": "Property",
       "name": "Temperature",
       "schema": "double"
-    },
-    {
-      "@type": "Property",
-      "name": "Latitude",
-      "schema": "double"
-    },
-    {
-      "@type": "Property",
-      "name": "Longitude",
-      "schema": "boolean"
     }
   ]
 }
