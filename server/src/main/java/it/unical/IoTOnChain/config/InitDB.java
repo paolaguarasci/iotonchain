@@ -109,7 +109,7 @@ public class InitDB implements CommandLineRunner {
     ProductionStep raccoltaBasilicoProcessType = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
     //ProductionStepBatch raccoltaBasilicoProcessTypeReal = ProductionStepBatch.builder().position(0).name("Raccolta").description("Raccolta del basilico").build();
     ProductionProcess pBasilico = makeProcess("basilico", List.of(raccoltaBasilicoProcessType));
-    ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico ligure", "kg", null, pBasilico);
+    ProductType basilicoType = makeProductTypeAndAssociateToCompany(paolaSPA, "basilico", "kg", null, pBasilico);
     Map<String, String> x1 = new HashMap<>();
     x1.put("id", pBasilico.getSteps().getFirst().getId().toString());
     x1.put("position", "0");
@@ -142,7 +142,7 @@ public class InitDB implements CommandLineRunner {
     ingredientsOfPestoLigure.put(basilicoType, List.of("80", "%"));
     ingredientsOfPestoLigure.put(aglioType, List.of("5", "%"));
     ingredientsOfPestoLigure.put(olioType, List.of("15", "%"));
-    Recipe pestoRecipe = makeRecipe("pesto ligure", ingredientsOfPestoLigure);
+    Recipe pestoRecipe = makeRecipe("pesto", ingredientsOfPestoLigure);
     
     
     ProductionStep produzionePesto = ProductionStep.builder().position(0).name("Cucino").description("Produco il pesto").build();

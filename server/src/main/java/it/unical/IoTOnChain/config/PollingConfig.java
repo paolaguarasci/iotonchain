@@ -17,7 +17,7 @@ public class PollingConfig implements Serializable {
   private final TransportService transportService;
   
   @Async
-  @Scheduled(fixedRate = 1000 * 60) // ogni 10 minuti
+  @Scheduled(fixedDelay = 1000 * 60 * 3, initialDelay = 1000) // ogni 3 minuti
   public void poll() throws InterruptedException {
     log.info("Polling from DT Hub...");
     
