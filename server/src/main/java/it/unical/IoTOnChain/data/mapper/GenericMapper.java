@@ -64,4 +64,8 @@ public interface GenericMapper {
   
   @Mapping(source = "document.id", target = "documentId")
   NotarizeToOwnerDTO map(Notarize entity);
+  
+  List<SensorsLogOwnerDTO> mapSensorsToOwner(List<SensorsLog> saved);
+  
+  SensorsLogOwnerDTO map(SensorsLog entity);
 }

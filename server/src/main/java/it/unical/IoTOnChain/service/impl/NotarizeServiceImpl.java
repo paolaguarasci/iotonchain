@@ -3,10 +3,7 @@ package it.unical.IoTOnChain.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.*;
-import it.unical.IoTOnChain.repository.DocumentRepository;
-import it.unical.IoTOnChain.repository.NotarizeRepository;
-import it.unical.IoTOnChain.repository.ProductionStepBatchRepository;
-import it.unical.IoTOnChain.repository.TransferRepository;
+import it.unical.IoTOnChain.repository.*;
 import it.unical.IoTOnChain.service.ChainService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +36,7 @@ public class NotarizeServiceImpl implements NotarizeService {
   private final ProductionStepBatchRepository productionStepBatchRepository;
   private final ObjectMapper objectMapper;
   private final GenericMapper genericMapper;
+  private final SensorsLogRepository sensorsLogRepository;
   private final TransferRepository transferRepository;
   
   private final String ALGORITHM = "SHA3-256";
@@ -100,7 +98,6 @@ public class NotarizeServiceImpl implements NotarizeService {
     });
   }
   
-  
   private String toBase64(String s) {
     return Base64.getEncoder().encodeToString(s.getBytes());
   }
@@ -158,6 +155,27 @@ public class NotarizeServiceImpl implements NotarizeService {
       }
       transferRepository.save(transfer);
       log.debug("[notarize(Transfer transfer)-ext]  Hash tx {} - {}", txHash, doc);
+      return "ciao";
+    });
+  }
+  
+  @Override
+  public void notarize(List<SensorsLog> saved) throws NoSuchAlgorithmException, IOException, TransactionException {
+    String doc = objectMapper.writeValueAsString(genericMapper.mapSensorsToOwner(saved));
+    MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+    byte[] encodedHash = digest.digest(doc.getBytes(StandardCharsets.UTF_8));
+    String sha3Hex = bytesToHex(encodedHash);
+    log.debug("\nNotarizzazione di {}\nbyteArr {}\nhash {}", doc, encodedHash, sha3Hex);
+    chainService.signString(encodedHash, (String txHash, String error) -> {
+      if (error != null) {
+        log.debug("[notarize(List<SensorsLog> saved)-int] Hash tx {} {} {}", txHash, doc, error);
+        return "Ciao";
+      }
+      Notarize nx = Notarize.builder().notarizedAt(LocalDateTime.now()).data(doc).hash(sha3Hex).txTransactionList(Collections.singletonList(ChainTransaction.builder().txId(txHash).build())).build();
+      Notarize nxs = notarizeRepository.save(nx);
+      saved.forEach(s -> s.setNotarize(nxs));
+      sensorsLogRepository.saveAll(saved);
+      log.debug("[notarize(List<SensorsLog> saved)-ext]  Hash tx {} - {}", txHash, doc);
       return "ciao";
     });
   }

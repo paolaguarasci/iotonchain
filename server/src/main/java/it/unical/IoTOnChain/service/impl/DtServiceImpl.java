@@ -6,17 +6,23 @@ import com.azure.digitaltwins.core.BasicDigitalTwinMetadata;
 import com.azure.digitaltwins.core.DigitalTwinsClient;
 import com.azure.digitaltwins.core.DigitalTwinsClientBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unical.IoTOnChain.data.model.DTModel;
 import it.unical.IoTOnChain.data.model.MyDT;
 import it.unical.IoTOnChain.data.model.SensorsLog;
 import it.unical.IoTOnChain.repository.DTModelRepository;
 import it.unical.IoTOnChain.repository.SensorsLogRepository;
 import it.unical.IoTOnChain.service.DtService;
+import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.web3j.protocol.exceptions.TransactionException;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -33,12 +39,16 @@ public class DtServiceImpl implements DtService {
   private final String digitalTwinDefaultProperty;
   private final String digitalTwinDefaultId;
   private final SensorsLogRepository sensorsLogRepository;
+  private final NotarizeService notarizeService;
+  private final ObjectMapper objectMapper;
   
   public DtServiceImpl(@Value("${app.dt.dturl}") String dturl, @Value("${app.dt.dtiddefault}") String digitalTwinDefaultId, @Value("${app.dt.dtpropertydefault}") String digitalTwinDefaultProperty, SensorsLogRepository sensorsLogRepository,
-                       DTModelRepository dTModelRepository) {
+                       DTModelRepository dTModelRepository, NotarizeService notarizeService, ObjectMapper objectMapper) {
     this.digitalTwinDefaultId = digitalTwinDefaultId;
     this.digitalTwinDefaultProperty = digitalTwinDefaultProperty;
     this.sensorsLogRepository = sensorsLogRepository;
+    this.notarizeService = notarizeService;
+    this.objectMapper = objectMapper;
     TokenCredential tokenCredential = new DefaultAzureCredentialBuilder().build();
     digitalTwinsClientSync = new DigitalTwinsClientBuilder()
       .credential(tokenCredential)
@@ -84,6 +94,7 @@ public class DtServiceImpl implements DtService {
   }
   
   @Override
+  @Async
   public void updateSensors(List<MyDT> sensors) {
     sensors.forEach(sensor -> {
       log.debug("Sto aggiornando il sensore {}, sulle proprieta' {} {} {}", sensor.getDtid(), sensor.getProp1(), sensor.getProp2(), sensor.getProp3());
@@ -102,10 +113,11 @@ public class DtServiceImpl implements DtService {
       }
       
       Map<String, Object> res = this.getSensorData(sensor.getDtid(), props);
+      List<SensorsLog> sensorsLogs = new ArrayList<>();
       
       if (res.get(sensor.getProp1()) != null) {
         sensor.setVal1(String.valueOf(res.get(sensor.getProp1())));
-        sensorsLogRepository.save(SensorsLog.builder()
+        sensorsLogs.add(SensorsLog.builder()
           .sensorId(sensor.getDtid())
           .property(sensor.getProp1())
           .value(sensor.getVal1())
@@ -114,7 +126,7 @@ public class DtServiceImpl implements DtService {
       
       if (res.get(sensor.getProp2()) != null) {
         sensor.setVal2(String.valueOf(res.get(sensor.getProp2())));
-        sensorsLogRepository.save(SensorsLog.builder()
+        sensorsLogs.add(SensorsLog.builder()
           .sensorId(sensor.getDtid())
           .property(sensor.getProp2())
           .value(sensor.getVal2())
@@ -123,16 +135,23 @@ public class DtServiceImpl implements DtService {
       
       if (res.get(sensor.getProp3()) != null) {
         sensor.setVal3(String.valueOf(res.get(sensor.getProp3())));
-        sensorsLogRepository.save(SensorsLog.builder()
+        sensorsLogs.add(SensorsLog.builder()
           .sensorId(sensor.getDtid())
           .property(sensor.getProp3())
           .value(sensor.getVal3())
           .build());
       }
       
-      
-      // TODO Notarize Sensor Data!
-      
+      List<SensorsLog> saved = sensorsLogRepository.saveAll(sensorsLogs);
+      try {
+        notarizeService.notarize(saved);
+      } catch (NoSuchAlgorithmException e) {
+        throw new RuntimeException(e);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      } catch (TransactionException e) {
+        throw new RuntimeException(e);
+      }
     });
   }
   

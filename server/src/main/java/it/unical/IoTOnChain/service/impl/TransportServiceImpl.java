@@ -8,6 +8,7 @@ import it.unical.IoTOnChain.repository.MyDTRepository;
 import it.unical.IoTOnChain.repository.TransportRepository;
 import it.unical.IoTOnChain.repository.TruckRepository;
 import it.unical.IoTOnChain.service.DtService;
+import it.unical.IoTOnChain.service.NotarizeService;
 import it.unical.IoTOnChain.service.TransportService;
 import it.unical.IoTOnChain.service.TruckService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class TransportServiceImpl implements TransportService {
   private final DtService dtService;
   private final TruckRepository truckRepository;
   private final MyDTRepository myDTRepository;
+  private final NotarizeService notarizeService;
   
   @Override
   public Transport getOne(String id) {
@@ -81,35 +83,28 @@ public class TransportServiceImpl implements TransportService {
   @Async
   public void updateAllTransportDataFromDTHUb() throws InterruptedException {
     log.debug("Inizio updateAllTransportDataFromDTHUb");
-    
     List<Transport> transports = transportRepository.findAll();
     List<UUID> trucksId = new ArrayList<>();
     transports.stream().filter(el -> el.getTruckId() != null).forEach(el -> trucksId.add(UUID.fromString(el.getTruckId())));
     List<Truck> trucks = truckRepository.findAllById(trucksId);
-    
     List<MyDT> sensors = new ArrayList<>();
-    trucks.forEach(el -> sensors.add(el.getSensor()));
-    trucks.forEach(el -> el.setLastSensorsUpdate(LocalDateTime.now()));
-    
+    trucks.forEach(el -> {
+      el.setLastSensorsUpdate(LocalDateTime.now());
+      sensors.add(el.getSensor());
+    });
     log.debug("Sto aggiornando {} sensori ", sensors);
     dtService.updateSensors(sensors);
     sensors.forEach(el -> el.setLastUpdated(LocalDateTime.now()));
     myDTRepository.saveAll(sensors);
     log.debug("Ho aggiornato {} sensori ", sensors.size());
-    
-    notarizeData(sensors);
     checkASP(sensors);
-    
     truckRepository.saveAll(trucks);
     log.debug("Fine updateAllTransportDataFromDTHUb");
   }
   
   private void checkASP(List<MyDT> sensors) {
     // TODO
-  }
-  
-  private void notarizeData(List<MyDT> sensors) {
-    // TODO
+    // Controllo che non superino certe soglie, eventualmente emette un avviso?
   }
   
   @Override

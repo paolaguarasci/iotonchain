@@ -18,4 +18,6 @@ public interface NotarizeService {
   List<Notarize> getAll(Company company);
   
   void notarize(Company company, Transfer transfer) throws NoSuchAlgorithmException, IOException, TransactionException;
+  
+  void notarize(List<SensorsLog> saved) throws NoSuchAlgorithmException, IOException, TransactionException;
 }
