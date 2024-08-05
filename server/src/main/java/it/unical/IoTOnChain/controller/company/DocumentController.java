@@ -9,6 +9,8 @@ import it.unical.IoTOnChain.service.DocumentService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -90,7 +92,7 @@ public class DocumentController {
     }
     log.debug("Notarize document for company logged {} ", company.getName());
     try {
-      documentService.notarize(company, doc_id);
+      documentService.notarize(company, Jsoup.clean(doc_id, Safelist.none()));
       return ResponseEntity.ok().build();
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
@@ -104,7 +106,7 @@ public class DocumentController {
     if (company == null) {
       return null;
     }
-    Document document = documentService.getOneByCompanyLogged(company, doc_id);
+    Document document = documentService.getOneByCompanyLogged(company, Jsoup.clean(doc_id, Safelist.none()));
     if (document == null) {
       return null;
     }
@@ -118,7 +120,7 @@ public class DocumentController {
     if (company == null) {
       return null;
     }
-    Document document = documentService.getOneByCompanyLogged(company, doc_id);
+    Document document = documentService.getOneByCompanyLogged(company, Jsoup.clean(doc_id, Safelist.none()));
     if (document == null) {
       return null;
     }

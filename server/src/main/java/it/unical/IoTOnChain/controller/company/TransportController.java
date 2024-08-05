@@ -9,6 +9,8 @@ import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.TransportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -56,7 +58,7 @@ public class TransportController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.getOneByBatchID(batch_id)));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.getOneByBatchID(Jsoup.clean(batch_id, Safelist.none()))));
   }
   
   @GetMapping("/{transport_id}/truck")
@@ -66,7 +68,7 @@ public class TransportController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(transport_id)));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(Jsoup.clean(transport_id, Safelist.none()))));
   }
   
   

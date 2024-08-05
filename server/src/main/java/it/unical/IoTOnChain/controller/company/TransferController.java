@@ -46,7 +46,7 @@ public class TransferController {
     log.debug("Create one batch of product type for company logged");
     String companyLogged = principal.getClaimAsString("company");
     Company companyOwner = companyService.getOneByName(companyLogged);
-    return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, batch_id)));
+    return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, Jsoup.clean(batch_id, Safelist.none()))));
   }
   
   @PostMapping()

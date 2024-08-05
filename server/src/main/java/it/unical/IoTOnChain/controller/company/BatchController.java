@@ -13,6 +13,8 @@ import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.ProductTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,6 +46,16 @@ public class BatchController {
     return ResponseEntity.ok(mapper.mapForProductOwner(batchService.getAllProductByCompanyLogged(companyLogged)));
   }
   
+  @GetMapping("{batch_id}")
+  public ResponseEntity<BatchToOwner> getOneProductByCompanyLogged(@AuthenticationPrincipal Jwt principal, @PathVariable String batch_id) {
+    log.debug("Get one product {} for company logged {}", batch_id, principal);
+    String companyLogged = principal.getClaimAsString("company");
+    Company company = companyService.getOneByName(companyLogged);
+    if (company == null || batch_id == null) {
+      return ResponseEntity.badRequest().body(null);
+    }
+    return ResponseEntity.ok(mapper.map(batchService.getOneByBatchIdAndCompany(company, Jsoup.clean(batch_id, Safelist.none()))));
+  }
   
   @PostMapping
   public ResponseEntity<?> createBatch(@AuthenticationPrincipal Jwt principal, @RequestBody CreateBatchDTOFromOwner dto) throws NoEnoughRawMaterialsException, JsonProcessingException {
@@ -77,7 +89,7 @@ public class BatchController {
     if (company == null) {
       return ResponseEntity.badRequest().body(null);
     }
-    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, batch_id)));
+    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, Jsoup.clean(batch_id, Safelist.none()))));
   }
   
   

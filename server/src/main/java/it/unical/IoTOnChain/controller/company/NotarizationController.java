@@ -9,6 +9,8 @@ import it.unical.IoTOnChain.service.NotarizeService;
 import it.unical.IoTOnChain.service.ProductionProcessBatchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -50,7 +52,7 @@ public class NotarizationController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    ProductionStepBatch ps = productionProcessBatchService.getOneById(step_id);
+    ProductionStepBatch ps = productionProcessBatchService.getOneById(Jsoup.clean(step_id, Safelist.none()));
     if (ps == null) {
       return ResponseEntity.notFound().build();
     }
