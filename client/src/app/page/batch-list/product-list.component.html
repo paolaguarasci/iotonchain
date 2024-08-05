@@ -57,6 +57,13 @@
                   item.quantity + "" + item.unity
                 }}</span>
                 <div class="flex flex-row-reverse md:flex-row gap-2">
+
+                  <p-button
+                  icon="pi pi-search"
+                  (onClick)="goToDetail(item.id)"
+                  class="flex-auto md:flex-initial white-space-nowrap"
+                />
+
                   <p-button
                     icon="pi pi-info-circle"
                     (onClick)="showInfoDialog(item, $event)"
@@ -70,7 +77,7 @@
                     [disabled]="item.quantity <= 0"
                   />
                   <p-button
-                    icon="pi pi-send"
+                    icon="pi pi-truck"
                     class="flex-auto md:flex-initial white-space-nowrap"
                     (onClick)="goToTrack(item.id)"
                     label="Track"

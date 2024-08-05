@@ -11,6 +11,7 @@ import { TransportComponent } from './page/transport/transport.component';
 import { TruckListComponent } from './page/truck-list/truck-list.component';
 import { NotarizeListComponent } from './page/notarize-list/notarize-list.component';
 import { TransfertListComponent } from './page/transfert-list/transfert-list.component';
+import { BatchSingleComponent } from './page/batch-single/batch-single.component';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,10 @@ export const routes: Routes = [
   {
     path: 'track/:id',
     component: TraceOneBatchComponent,
+  },
+  {
+    path: 'batch/:id',
+    component: BatchSingleComponent,
   },
   {
     path: 'transport',

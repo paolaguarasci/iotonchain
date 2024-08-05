@@ -30,4 +30,6 @@ public interface BatchService {
   void refound(Company company, String batchID, int quantity);
   
   List<String> findBatchesByQuantityAndType(String companyName, String productType, int quantity) throws IOException, URISyntaxException;
+  
+  Batch getOneByIdAndCompany(Company company, String id);
 }

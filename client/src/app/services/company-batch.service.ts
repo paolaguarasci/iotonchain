@@ -17,4 +17,8 @@ export class CompanyBatchService {
   produceBatch(data: any) {
     return this.http.post('/api/v1/company/batch', data);
   }
+
+  getOne(id: any) {
+    return this.http.get(`/api/v1/company/batch/${id}`);
+  }
 }

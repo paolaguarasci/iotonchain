@@ -189,11 +189,9 @@ public class BatchServiceImpl implements BatchService {
   
   @Override
   public Batch getOneByBatchIdAndCompany(Company companyOwner, String batchID) {
-    List<Batch> batches = batchRepository.findAllByBatchIdAndCompanyOwner(batchID, companyOwner);
-    if (batches.isEmpty()) {
-      return null;
-    }
-    return batches.getFirst();
+    Optional<Batch> batch = batchRepository.findByBatchIdAndCompanyOwner(batchID, companyOwner);
+    log.debug("Batch found {}", batch.get().getBatchId());
+    return batch.orElse(null);
   }
   
   @Override
@@ -368,4 +366,9 @@ public class BatchServiceImpl implements BatchService {
     return new ArrayList<>();
   }
   
+  @Override
+  public Batch getOneByIdAndCompany(Company company, String id) {
+    Optional<Batch> batch = batchRepository.findByIdAndCompanyOwner(UUID.fromString(id), company);
+    return batch.orElse(null);
+  }
 }

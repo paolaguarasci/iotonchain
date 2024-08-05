@@ -113,6 +113,11 @@ export class ComapnyBatchListComponent implements OnInit {
     this.router.navigate(['/track', id])
   }
 
+  goToDetail(id: any) {
+    this.router.navigate(['/batch', id])
+  }
+
+
   showTrasferDialog(items: any) {
     this.visibleTrasferDialog = true;
     this.selectedBatch = items;

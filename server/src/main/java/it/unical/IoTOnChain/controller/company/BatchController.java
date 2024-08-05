@@ -46,15 +46,15 @@ public class BatchController {
     return ResponseEntity.ok(mapper.mapForProductOwner(batchService.getAllProductByCompanyLogged(companyLogged)));
   }
   
-  @GetMapping("{batch_id}")
-  public ResponseEntity<BatchToOwner> getOneProductByCompanyLogged(@AuthenticationPrincipal Jwt principal, @PathVariable String batch_id) {
-    log.debug("Get one product {} for company logged {}", batch_id, principal);
+  @GetMapping("/{id}")
+  public ResponseEntity<BatchToOwner> getOneProductByCompanyLogged(@AuthenticationPrincipal Jwt principal, @PathVariable String id) {
+    log.debug("Get one product {} for company logged {}", id, principal);
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
-    if (company == null || batch_id == null) {
+    if (company == null || id == null) {
       return ResponseEntity.badRequest().body(null);
     }
-    return ResponseEntity.ok(mapper.map(batchService.getOneByBatchIdAndCompany(company, Jsoup.clean(batch_id, Safelist.none()))));
+    return ResponseEntity.ok(mapper.map(batchService.getOneByIdAndCompany(company, Jsoup.clean(id, Safelist.none()))));
   }
   
   @PostMapping
@@ -81,15 +81,15 @@ public class BatchController {
     }
   }
   
-  @GetMapping("/{batch_id}/track")
-  public ResponseEntity<String> getTrackInfo(@AuthenticationPrincipal Jwt principal, @PathVariable String batch_id) throws JsonProcessingException {
+  @GetMapping("/{id}/track")
+  public ResponseEntity<String> getTrackInfo(@AuthenticationPrincipal Jwt principal, @PathVariable String id) throws JsonProcessingException {
     log.debug("Get single product information for company logged {}", principal);
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
     if (company == null) {
       return ResponseEntity.badRequest().body(null);
     }
-    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, Jsoup.clean(batch_id, Safelist.none()))));
+    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, Jsoup.clean(id, Safelist.none()))));
   }
   
   
