@@ -848,7 +848,7 @@ Specifiche dei casi d'uso:
 \end{figure}
 
 
-\subsubsection{Base di dati}
+\subsubsection{Persistenza}
 
 La piattaforma che si sta sviluppando utilizza un sistema di gestione della persistenza che è di tipo relazionale. Nello specifico utilizza il database managment system MariaDB con Hibernate come strato di comunicazione con l'applicazione. Hibernate implementa le API Java Persistence (JPA).
 
@@ -864,7 +864,7 @@ Hibernate not only takes care of the mapping from Java classes to database table
 \end{figure}
 
 
-\subsubsection{Definizione del modello di dominio}
+\subsubsection{Definizione del modello di dominio}\label{modellodominio}
 
 La definizione di un modello di dominio a partire dai concetti principali che caratterizzano il modello di business individuato per l'applicazione.
 Sono stati individuati i seguenti concetti propri dell'ambito applicativo.
@@ -1195,7 +1195,7 @@ Sono state effettuate delle scelte a livello implementativo.
 
 
 \subsubsection{Autenticazione}
-L'autenticazione degli utenti è gestita dal server autoritativo Keycloak. In un contesto OAuth2 il componente Spring riveste il ruolo di \textit{resource server}, Keycloak è l' \textit{authentication server}, le risorse sono le informazioni veicolate tramite le chiamate alle API\footnote{Application Programming Interface - per una lista degli endpoints disponibili vedere \ref{}} ed in fine la componente d'interfaccia, che viene eseguita nel browser dell'utente, è il client.
+L'autenticazione degli utenti è gestita dal server autoritativo Keycloak. In un contesto OAuth2 il componente Spring riveste il ruolo di resource server, Keycloak è l'authentication server, le risorse sono le informazioni veicolate tramite le chiamate alle API\footnote{Application Programming Interface - per una lista degli endpoints disponibili vedere ?? } ed in fine la componente d'interfaccia, che viene eseguita nel browser dell'utente, è il client.
 
 \begin{figure}[H]
   \includegraphics[width=1\linewidth]{img/oauth-authorization-code-flow.jpg}
@@ -1384,17 +1384,35 @@ Sono state definite i senguenti endpoints:
 
 \end{itemize}
 
-\subsubsection{Base di dati}
+\subsubsection{Persistenza}
 
-L'implementazione della base di dati è stata
+L'implementazione della persistenza da un punto di vista fisico e di basso livello è stata demandata all'ORM (Object Relational Mapping) utilizzato, Hibernate, nella versione XXX. Il DBMS usato in questa fase prototipale è MariaDB 11.4.2 installato in modo nativo sulla macchina di sviluppo (quindi non conteinerizzato).
 
-\subsubsection{Programmazione Asincrona}
+Per ogni concetto evidenziato in \ref{modellodominio} è stata creata una classe Java marcata come entità usando l'annotazione \texttt{@Entity} del layer di persistenza di Jakarta (specifica implementata da Hibernate).
+
+Ogni entità del modello di dominio estende la classe astratta \texttt{Auditable} così da permettere un tracciamento dettagliato delle modifiche alle entità stesse.
+Ogni entità utilizza come chiave primaria un identificativo univoco di tipo alfanumerico, uno Universally unique identifier (UUID). Gli UUID posso essere di diversi tipi, il tipo utilizzato è il tipo 4, il tipo randomico. Questo tipo di dato è utilizzabile in maniera nativa perché MariaDB dalla versione 10.7 \cite{mariadbUUIDData} supporta nativamente il tipo UUID.
 
 
+\subsubsection{Programmazione Asincrona e thread virtuali}
+Il server implementato è un server che ha un funzionamento sincrono e bloccante. Ovvero il sistema riceve e gestisce la connessione in ingresso e su di questa si blocca, attendendo l'esito della computazione prima di chiudere la connessione stessa. In un contesto simile è complesso gestire la comunicazione con la blockchain o con altri servizi quali la piattaforma di gestione dei digital twin. Si è rivelato indispensabile attivare la possibilità di effettuare chiamate asincrone che funzionano in un ottica multithread: la connessione in ingresso è gestita e chiusa dall'application server (Tomcat) quasi immediatamente, senza dover attendere il termine della chiamata asincrona. La chiamata a funzione asincrona esegue la computazione e poi salva il risultato della computazione stessa sulla base di dati, rendendo persistente l'informazione. Eliminando di fatto la necessità per l'utente di attendere il termine della connessione che durante alcuni test di scrittura sulla chain, con rete sovraffollata, può superare i 10 minuti di attesa. Il risultato della scrittura sulla blockchain quando disponibile si può ottenere effettuando una semplice interrogazione sulla base di dati. Per una migliore gestione delle risorse sono stati utilizzati i thread virtuali, che la JVM mette a disposizione degli sviluppatori a partire dalla versione 21. I thread virtuali, a differenza dei thread di sistema, sono gestiti dalla JVM e non richiedono chiamate di sistema. Offro il vantaggio di poter essere sospesi dalla JVM e liberare il thread di sistema sottostante,  quando per esempio si compiono operazioni I/O bloccanti, ed essere ripresi quando è possibile. Il thread di sistema liberato può eseguire altri thread virtuali. \cite{oraclevirtualthread}
 
+La configurazione utilizzata in piattaforma è la seguente:
+
+
+\begin{longlisting}
+  \inputminted{java}{./code/async.spring.java}
+  \caption{Configurazione Asincrona da \cite{baeldungWorkingWith}}
+  \label{listing:asyncconfig}
+\end{longlisting}
+
+Una funzione annotata come \texttt{@Bean} consente di utilizzate la funzione stessa in ogni porzione di codice, utilizzando la dependency injection e l'inversione del controllo forniti da Spring.
+Questi due Bean di configurazione specificano quale tipologia di Thread si vuole utilizzare, con il Tomcat fornito da Spring Boot e con le funzioni annotate come asincrone.
+I thread virtuali offrono prestazioni nettamente migliori in termini di richieste gestite nell'unità di tempo \cite{baeldungWorkingWith}.
 
 \subsubsection{Answer Set Programming}
 
+Per poter utilizzare all'interno di un contesto più ampio un programma in AnswareSetProgramming (ASP) che sia dinamico, ovvero che utilizzi dati che cambiano nel tempo e provengono da computazioni effettuate in altri moduli del software, è necessario in un primo momento effettuare una mappatura della struttura dati in input al programma stesso e successivamente a comp
 
 \begin{longlisting}
   \inputminted{prolog}{./code/checkBatchInput.lp}
@@ -1495,11 +1513,29 @@ Durante la fase preliminare di scouting delle librerie sono stati individuati al
 
 
 
-\begin{listing}[H]
-  \inputminted{javascript}{./code/hardhat.js}
-  \caption{Contratto di notarizzazione - }
-  \label{listing:hash3}
-\end{listing}
+\begin{longlisting}[H]
+  \inputminted{typescript}{./code/hardhat.config.ts}
+  \caption{HardHat Configurazione}
+  \label{listing:hardhatconf}
+\end{longlisting}
+
+\begin{longlisting}[H]
+  \inputminted{typescript}{./code/hash.deploy.ts}
+  \caption{Script per la distribuzione del contratto Hash}
+  \label{listing:hash4}
+\end{longlisting}
+
+\begin{longlisting}[H]
+  \inputminted{typescript}{./code/hash.listener.ts}
+  \caption{Script per l'utilizzo del contratto Hash - Observer}
+  \label{listing:hash5}
+\end{longlisting}
+
+\begin{longlisting}[H]
+  \inputminted{typescript}{./code/hash.sign.ts}
+  \caption{Script per l'utilizzo del contratto Hash - Signer}
+  \label{listing:hash6}
+\end{longlisting}
 
 
 \subsection{Implementazione - interfaccia}
