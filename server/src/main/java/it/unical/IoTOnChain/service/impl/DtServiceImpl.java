@@ -79,8 +79,6 @@ public class DtServiceImpl implements DtService {
         sensorData.put((String) key, value);
       }
     });
-    
-    
     return sensorData;
   }
   
@@ -107,7 +105,7 @@ public class DtServiceImpl implements DtService {
   @Async
   public void updateSensors(List<MyDT> sensors) {
     sensors.forEach(sensor -> {
-      log.debug("Sto aggiornando il sensore {}, sulle proprieta' {} {} {}", sensor.getDtid(), sensor.getProp1(), sensor.getProp2(), sensor.getProp3());
+      log.debug("Sto aggiornando il sensore {}, sulle proprietà {} {} {}", sensor.getDtid(), sensor.getProp1(), sensor.getProp2(), sensor.getProp3());
       
       
       List<String> props = new ArrayList<>();

@@ -27,6 +27,8 @@ public class Notarize implements Serializable {
   // sono mutualmente esclusivi
   @OneToOne
   private Document document;
+  
+  @Lob
   private String data;
   
   @ManyToOne

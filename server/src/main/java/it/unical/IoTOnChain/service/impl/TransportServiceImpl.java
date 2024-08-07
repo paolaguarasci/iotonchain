@@ -97,13 +97,16 @@ public class TransportServiceImpl implements TransportService {
     sensors.forEach(el -> el.setLastUpdated(LocalDateTime.now()));
     myDTRepository.saveAll(sensors);
     log.debug("Ho aggiornato {} sensori ", sensors.size());
-    checkASP(sensors);
+    
+    // TODO SE C'È TEMPO!
+    // checkASP(sensors);
+    
     truckRepository.saveAll(trucks);
     log.debug("Fine updateAllTransportDataFromDTHUb");
   }
   
   private void checkASP(List<MyDT> sensors) {
-    // TODO
+    // TODO SE C'È TEMPO!
     // Controllo che non superino certe soglie, eventualmente emette un avviso?
   }
   
