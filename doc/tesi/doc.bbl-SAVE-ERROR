@@ -1,0 +1,201 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{ydnt/global//global/global/global}
+    \entry{angularAngular}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://angular.dev/overview}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{A}ngular --- angular.dev}
+    \endentry
+    \entry{nestjsDocumentationNestJS}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://docs.nestjs.com/}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{D}ocumentation | {N}est{J}{S} - {A} progressive {N}ode.js framework --- docs.nestjs.com}
+    \endentry
+    \entry{expressjsExpressFramework}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://expressjs.com/it/}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{E}xpress - {F}ramework per applicazioni web {N}ode.js --- expressjs.com}
+    \endentry
+    \entry{hardhatGettingStarted}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://hardhat.org/hardhat-runner/docs/getting-started}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{G}etting started with {H}ardhat | {E}thereum development environment for professionals by {N}omic {F}oundation --- hardhat.org}
+    \endentry
+    \entry{restfulapiRESTArchitectural}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=5e62a7b48352d5902baceae28bf12638}{%
+           family={Gupta},
+           familyi={G\bibinitperiod},
+           given={Lokesh},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{5e62a7b48352d5902baceae28bf12638}
+      \strng{fullhash}{5e62a7b48352d5902baceae28bf12638}
+      \strng{fullhashraw}{5e62a7b48352d5902baceae28bf12638}
+      \strng{bibnamehash}{5e62a7b48352d5902baceae28bf12638}
+      \strng{authorbibnamehash}{5e62a7b48352d5902baceae28bf12638}
+      \strng{authornamehash}{5e62a7b48352d5902baceae28bf12638}
+      \strng{authorfullhash}{5e62a7b48352d5902baceae28bf12638}
+      \strng{authorfullhashraw}{5e62a7b48352d5902baceae28bf12638}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://restfulapi.net/rest-architectural-constraints/}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{R}{E}{S}{T} {A}rchitectural {C}onstraints --- restfulapi.net}
+    \endentry
+    \entry{ietf6749OAuth}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=645c23d98c8c0ad0899cb4be651e6a02}{%
+           family={Hardt},
+           familyi={H\bibinitperiod},
+           given={Dick},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{645c23d98c8c0ad0899cb4be651e6a02}
+      \strng{fullhash}{645c23d98c8c0ad0899cb4be651e6a02}
+      \strng{fullhashraw}{645c23d98c8c0ad0899cb4be651e6a02}
+      \strng{bibnamehash}{645c23d98c8c0ad0899cb4be651e6a02}
+      \strng{authorbibnamehash}{645c23d98c8c0ad0899cb4be651e6a02}
+      \strng{authornamehash}{645c23d98c8c0ad0899cb4be651e6a02}
+      \strng{authorfullhash}{645c23d98c8c0ad0899cb4be651e6a02}
+      \strng{authorfullhashraw}{645c23d98c8c0ad0899cb4be651e6a02}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://datatracker.ietf.org/doc/html/rfc6749}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{R}{F}{C} 6749: {T}he {O}{A}uth 2.0 {A}uthorization {F}ramework --- datatracker.ietf.org}
+    \endentry
+    \entry{jbossHibernateUser}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://docs.jboss.org/hibernate/stable/orm/userguide/html_single/Hibernate_User_Guide.html}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{H}ibernate {O}{R}{M} {U}ser {G}uide --- docs.jboss.org}
+    \endentry
+    \entry{jbossHibernateUserArch}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://docs.jboss.org/hibernate/stable/orm/userguide/html_single/Hibernate_User_Guide.html}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{H}ibernate {O}{R}{M} {U}ser {G}uide --- docs.jboss.org}
+    \endentry
+    \entry{wikipediaInversioneControllo}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://it.wikipedia.org/wiki/Inversione_del_controllo}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{I}nversione del controllo - {W}ikipedia --- it.wikipedia.org}
+    \endentry
+    \entry{web3jQuickstartWeb3j}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=b4624e228eb6c3e51cbf05c78b613aca}{%
+           family={Labs},
+           familyi={L\bibinitperiod},
+           given={Web3},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{b4624e228eb6c3e51cbf05c78b613aca}
+      \strng{fullhash}{b4624e228eb6c3e51cbf05c78b613aca}
+      \strng{fullhashraw}{b4624e228eb6c3e51cbf05c78b613aca}
+      \strng{bibnamehash}{b4624e228eb6c3e51cbf05c78b613aca}
+      \strng{authorbibnamehash}{b4624e228eb6c3e51cbf05c78b613aca}
+      \strng{authornamehash}{b4624e228eb6c3e51cbf05c78b613aca}
+      \strng{authorfullhash}{b4624e228eb6c3e51cbf05c78b613aca}
+      \strng{authorfullhashraw}{b4624e228eb6c3e51cbf05c78b613aca}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://docs.web3j.io/4.8.7/quickstart/}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{Q}uickstart - {W}eb3j --- docs.web3j.io}
+    \endentry
+    \entry{nodedontblock}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{N}ode.js — {D}on't {B}lock the {E}vent {L}oop (or the {W}orker {P}ool) --- nodejs.org}
+    \endentry
+    \entry{wikipediaReactweb}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://it.wikipedia.org/wiki/React_(web_framework)}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{R}eact (web framework) - {W}ikipedia --- it.wikipedia.org}
+    \endentry
+    \entry{soliditylangSolidityx2014}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://docs.soliditylang.org/en/latest/}}
+      \field{note}{[Accessed 14-07-2024]}
+      \field{title}{{S}olidity documentation --- docs.soliditylang.org}
+    \endentry
+    \entry{wikipediaSpringBoot}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{ https://en.wikipedia.org/wiki/Spring_Boot}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{S}pring {B}oot - {W}ikipedia --- en.wikipedia.org}
+    \endentry
+    \entry{stateofjsStateJavaScript}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://2023.stateofjs.com/en-US/libraries/front-end-frameworks/}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{S}tate of {J}ava{S}cript 2023: {F}ront-end {F}rameworks --- 2023.stateofjs.com}
+    \endentry
+    \entry{vuejsVuejs}{misc}{}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://vuejs.org/guide/introduction.html}}
+      \field{note}{[Accessed 06-08-2024]}
+      \field{title}{{V}ue.js --- vuejs.org}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
