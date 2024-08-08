@@ -1179,7 +1179,10 @@ I contratti utilizzati in piattaforma sono stati sviluppati seguendo un approcci
 
 Una delle motivazioni principali che hanno spinto verso questa scelta di separazione è stata il pieno supporto di questo altro stack tecnologico alla libreria OpenZeppelin, la cui adozione riveste un'importante scelta in ambito di sicurezza degli smart contract. Basti pensare che uno smart contract che non adotta strategie difensive di alcun tipo può essere utilizzato da chiunque ne conosca l'indirizzo (pubblico!). Questo sicuramente non è un comportamento voluto o desiderato dalla maggior parte dei contesti applicativi. Un primo rimedio che offre OpenZeppelin è la super classe Owanable che se implementata consente di porre vincoli sull'utente che può effettivamente utilizzare il contratto, anche se ne conosce l'indirizzo. Esistono livelli più avanzati di gestione degli accessi e dei ruoli ed OpenZeppelin offre supporto anche a questi casi d'uso.
 
-\subsubsection{Riflessioni sulla sicurezza degli smart contract}
+\subsubsection{Riflessioni sulla sicurezza degli smart contract} \label{par:openzeppelin}
+
+% https://docs.soliditylang.org/en/v0.8.26/security-considerations.html
+%
 
 \begin{longlisting}
   \inputminted{solidity}{./code/Hash.v2.sol}
@@ -1224,166 +1227,166 @@ Sono state definite i senguenti endpoints:
 
 \begin{itemize}
   \item \texttt{GET /api/v1/company/batch}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endpoint che tiene conto dell'utente loggato e restituisce la lista di prodotti riferiti all'azienda per cui l'utente opera
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: Lista dei lotti di produzione della compagnia
 
   \item \texttt{POST /api/v1/company/batch}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endpoint per la creazione di un lotto di prodotto
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: Dati in formato json che rappresentano il lotto da creare
+        \\ Output: Elemento appena creato
 
   \item \texttt{GET /api/v1/company/batch/{{id}}}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endopoint per l'ottenimento di un singolo lotto di produzione. Si effettua il check sull'azienda.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id del lotto (uuid)
+        \\ Output: rappresentazione per l'owner del lotto di produzione che risiede a livello persistenza
 
   \item \texttt{GET /api/v1/company/batch/{{id}}/track}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: informazioni di tracciamento del singolo lotto
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id del lotto (uuid)
+        \\ Output: informazioni aggregate in formato json sul lotto e sulle materie prime, riferimenti agli eventi di notarizzazione esistenti
 
   \item \texttt{GET /api/v1/company/product-type}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: lista dei tipi di prodotto aziendali
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: lista in formato json di una proiezione per owner di tipi di prodotto aziendali
 
   \item \texttt{POST /api/v1/company/product-type}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: creazione del tipo di prodotto aziendale
+        \\ Tipo di accesso:  Utente registrato
+        \\ Input: informazioni in formato json che definiscono il tipo di prodotto
+        \\ Output: elemento creato
 
   \item \texttt{GET /api/v1/company/client}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Lista di aziende presenti in piattaforma con solo nome e id (è un endpoint di \textit{servizio})
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: lista di elementi \texttt{\{id: "", name:""\}}
 
   \item \texttt{GET /api/v1/company/transfer}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Lista di elementi che descrivono i trasferimenti avviati da un'azienda oppure trasferimenti per cui l'azienda è destinataria.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: lista trasferimenti (proiezione per owner)
 
   \item \texttt{POST /api/v1/company/transfer}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Creazione di un trasferimento da una compagnia A ad una compagnia B. La compagnia A è sempre l'azienda legata all'utente che effettua la richiesta.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: mappatura del trasferimento in formato json
+        \\ Output: elemento creato
 
   \item \texttt{GET /api/v1/company/transfer/\{\{batch\_id\}\}}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Lista di trasferimenti in cui è coinvolto un singolo lotto di produzione
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: lotto di produzione
+        \\ Output: lista elementi trasferimento
 
   \item \texttt{GET /api/v1/company/transfer/\{\{trans\_id\}\}/abort}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endpoint per la gestione dei trasferimenti con accettazione. Eliminazione del trasferimento da parte della compagnia che lo ha avviato. L'operazione va a buon fine solo se il trasferimetno non è stato accettato/rifiutato dall'azienda destinataria.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id trasferimento (UUID)
+        \\ Output: messaggio di stato
 
   \item \texttt{GET /api/v1/company/transfer/\{\{trans\_id\}\}/accept}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endpoint per la gestione dei trasferimenti con accettazione. Accettazione di un trasferimento da parte della compagnia destinataria. L'operazione va a buon fine solo se l'utente che avvia la richiesta opera per conto della compagnia destinataria del trasferimento.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id trasferimento (UUID)
+        \\ Output: messaggio di stato
 
   \item \texttt{GET /api/v1/company/transfer/\{\{trans\_id\}\}/reject}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endpoint per la gestione dei trasferimenti con accettazione. Rifiuto del trasferimento da parte della compagnia destinataria. L'operazione va a buon fine solo se l'utente che avvia la richiesta opera per conto della compagnia destinataria del trasferimento.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id trasferimento (UUID)
+        \\ Output: messaggio di stato
 
   \item \texttt{GET /api/v1/company/doc}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Lista delle informazioni legare alle risorse presenti in piattaforma caricate dall'azienda, senza le risorse stesse. Per l'ottenimento dei file va usato l'endpoint che consente il download di una risorsa singola.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: lista in formato json delle informazioni presenti nella base di dati
 
   \item \texttt{GET /api/v1/company/doc/notarize/\{\{doc\_id\}\}}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endpoint che avvia la notarizzazione di uno specifico documento già presente in piattaforma
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id del documento (UUID)
+        \\ Output: --
 
   \item \texttt{POST /api/v1/company/doc/upload}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Upload del documento in piattaforma, caricamento del file e delle informazioni aggiuntive.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: file in formato multipart
+        \\ Output: elemento appena creato
 
   \item \texttt{GET /api/v1/company/doc/\{\{doc\_id\}\}}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Ottenimento di un singolo elemento documentale (no binario)
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id del documento (UUID)
+        \\ Output: json con le informazioni aggiuntive del file
 
   \item \texttt{GET /api/v1/company/doc/\{\{doc\_id\}\}/resource}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: download di una risorsa
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id del documento (UUID)
+        \\ Output: generico binario \texttt{application/octet-stream}
 
-  \item \texttt{POST /api/v1/public/doc/check/{{hash}}}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+  % \item \texttt{POST /api/v1/public/doc/check/{{hash}}}
+  %       \\ Descrizione:
+  %       \\ Tipo di accesso: Pubblico
+  %       \\ Input:
+  %       \\ Output:
 
   \item \texttt{GET /api/v1/company/transport}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Lista dei trasporti di azienda
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: lista proiezioni per owner
 
   \item \texttt{POST /api/v1/company/transport}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: creazione di un trasporto
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: proprietà del trasporto in formato json
+        \\ Output: elemento appena creato
 
   \item \texttt{GET /api/v1/company/transport/\{\{batch\_id\}\}}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Trasporto che riguarda uno specifico lotto di produzione
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: batch id (id di lotto, no uuid)
+        \\ Output: singola proiezione per owner
 
   \item \texttt{GET /api/v1/company/transport/\{\{transport\_id\}\}/truck}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Elemento truck legato al trasporto con id passato come parametro dell'url. Controllo azienda owner del truck e utente che effettua la richiesta.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id transport (UUID)
+        \\ Output: proiezione per owner con dati sui sensori
 
   \item \texttt{GET /api/v1/company/truck}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Lista elementi truck di azienda
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: lista proiezioni per owner con dati sui sensori
 
   \item \texttt{GET /api/v1/company/truck/update}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Endpoint \textit{di servizio} che attiva l'update dei gemelli digitali manualmente, prima che venga effettuato dallo sceduling di Spring.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: --
 
   \item \texttt{GET /api/v1/company/notarization}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Lista elementi di notarizzazione dell'azienda dell'utente loggato.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: --
+        \\ Output: lista proiezioni per owner
 
   \item \texttt{POST /api/v1/company/notarization/step/\{\{step\_id\}\}}
-        \\ Descrizione:
-        \\ Tipo di accesso:
-        \\ Input:
-        \\ Output:
+        \\ Descrizione: Notarizzazione di un passaggio del processo di produzione. Controlli su azienda e utente loggato.
+        \\ Tipo di accesso: Utente registrato
+        \\ Input: id step da notarizzare (UUID)
+        \\ Output: --
 
 \end{itemize}
 
@@ -1437,37 +1440,42 @@ Analizzando nel dettaglio otteniamo, istruzione per istruzione:
 
 \begin{itemize}
     \item \texttt{{ scelto(E, Q) } :- batch(E, X, Q), type(X).} \\
-    Il primo passaggio è effettuare una selezione dei lotti a disposizione filtrando per tipo. Quindi in scelto troviamo una proiezione dei batch del tipo presente in type.
+    Il primo passaggio è effettuare una selezione dei lotti a disposizione filtrando per tipo. Quindi in scelto troviamo una proiezione dei batch del tipo presente in type. Da notare la presenza delle parentesi quadre che indica l'opzionalità della regola: non è detto che ogni elemento debba essere scelto. L'assenza di questo costrutto impedisce alla regola di ottimizzazione espressa dopo di entrare in funzione.
+
 
     \item \texttt{tot(T) :- T = \#sum { Q, E : scelto(E, Q) }.} \\
 
-    Qui si sta utilizzando l'aggregato sum che somma gli elementi di un insieme, in questo caso l'insieme degli elementi Q nelle coppie (Q,E). È importante notare che l'aggregato opera su di un insieme pertanto se non si considera il valore Q all'interno della tupla (Q,E) due valori identici di Q non parteciperanno al computo totale.
-    L'aggregato somma nella sua forma generale è il seguente:
+    Qui si sta utilizzando l'aggregato \texttt{sum} che somma gli elementi di un insieme, in questo caso l'insieme degli elementi Q nelle coppie (Q,E). È importante notare che l'aggregato opera su di un insieme pertanto se non si considera il valore Q nel contesto della tupla (Q,E), due valori identici di Q non parteciperanno al computo totale.
+    L'aggregato \texttt{sum} nella sua forma generale è il seguente:
 
-    $$ \#aggr{e1;...;en} ≺ u $$
+    $$ \#aggr\{e1;...;en\} < u $$
 
-    where $e1 , . . . , en$ are aggregate elements for $n ≥ 0$, $#aggr ∈ {"#count", "#sum", "#max", "#min"}$ is an aggregate function name, $≺ ∈ {"<", "≤", "=", ",", ">", "≥"}$ is an aggregate relation and $u$ is a term. Given an aggregate atom a, the expressions a and not a are aggregate literals. da \cite{CALIMERI_2019} dove e
+    dove $e1,...,en$ sono elementi aggregati con $n \geq 0$, \\ $\#aggr \in \{"\#count", "\#sum", "\#max", "\#min"\}$ è il nome di una funzione aggregato,  $ < \in \{"<", "\leq", "=", ",", ">", "\geq"\}$ è una relazione e $u$ è un termine. Dato un atomo aggregato a, l'espressione $a$ e $!a$ sono letterali.\cite{CALIMERI_2019}
+    L'atomo \texttt{tot(T)} rappresenta la quantità totale di risorse selezionate.
 
     \item \texttt{:- amount(A), tot(B), A > B.}  \\
     Vincolo forte ( se non rispettato l'interpretazione non è un modello) per cui la valutazione è binaria, true/false, nella forma generica si ha
 
-    $$ : b1 , . . . , bn. [w@l, t1 , . . . , tm ] $$
+    $$ :- \space b1,...,bn. [w@l,t1,...,tm] $$
 
     da \cite{CALIMERI_2019}.
     Il vincolo esprime la necessità di avere una quantità totale per i lotti selezionati che non sia inferiore alla quantità richiesta.
-    \item \texttt{\#minimize { 1, Q : scelto(E,Q) }.} \\
-    Shorthand che indica una serie di vincoli deboli \footnote{ da ASP-Core-2 Input Language Format \cite{}} per cui si tende ad ottimizzare, minimizzando in questo caso, un peso per ogni termine scelto presente nel modello. L'obiettivo è di utilizzare il minor numero possibile di lotti.
+
+    \item \texttt{\#minimize { Q, Q : scelto(E,Q) }.} \\
+    Shorthand che indica una serie di vincoli deboli \cite{CALIMERI_2019} per cui si tende ad ottimizzare, minimizzando in questo caso, un peso per ogni termine scelto presente nel modello. L'obiettivo in questo caso è di utilizzare il minor numero possibile di lotti.
+    La penalità è proporzionale alla quantità di materia selezionata.
+
     \item \texttt{\#show scelto/2.} \\
     Filtro degli atomi in output, mostra solo il termine show con arità 2.
-\end{itemize}
+    \end{itemize}
 
-La funzione di mappatura in ingresso è specifica per atomi di una determinata arità. In questo contesto gli atomi hanno tutti arità non superiore a 3 quindi si è deciso di procedere con funzioni specifiche per arità 0, 1, 2 e 3. Qui è riportata a titolo esemplificativo la funzione che gestisce arità 3.
+    La funzione di mappatura in ingresso è specifica per atomi di una determinata arità. In questo contesto gli atomi hanno tutti arità non superiore a 3 quindi si è deciso di procedere con funzioni specifiche per arità 0, 1, 2 e 3. Qui è riportata a titolo esemplificativo la funzione che gestisce arità 3.
 
-\begin{longlisting}
-  \inputminted{java}{./code/asp.mapinput.java}
-  \caption{ASP - Mapping in ingresso}
-  \label{listing:asp3}
-\end{longlisting}
+    \begin{longlisting}
+      \inputminted{java}{./code/asp.mapinput.java}
+      \caption{ASP - Mapping in ingresso}
+      \label{listing:asp3}
+    \end{longlisting}
 
 Similmente in output si è scelto di differenziare gli atomi in base all'arità degli stessi, creando una funzione di selezione che tenga conto del note dell'atomo e della sua arità.
 
@@ -1477,7 +1485,7 @@ Similmente in output si è scelto di differenziare gli atomi in base all'arità 
   \label{listing:asp4}
 \end{longlisting}
 
-Le funzioni di mappatura dei risultati restituiscono in output liste di Pair o Triplet. Si tratta di tipi tuple gestiti dalla libreria JavaTuples \footnote{https://www.javatuples.org/apidocs/org/javatuples/Triplet.html}.
+Le funzioni di mappatura dei risultati restituiscono in output liste di \texttt{Pair} o \texttt{Triplet}. Sono elementi che formalizzano tuple gestiti dalla libreria JavaTuples \footnote{https://www.javatuples.org/apidocs/org/javatuples/Triplet.html}.
 
 Infine il solutore, che a basso livello effettua una chiamata al tool clingo, in un primo passaggio esegue il grounding del problema. L'output della fase di grounding, un programma senza variabili, costituisce poi l'input del solutore vero e proprio.
 
@@ -1488,28 +1496,22 @@ Infine il solutore, che a basso livello effettua una chiamata al tool clingo, in
 \end{longlisting}
 
 \subsubsection{Gemello digitale}
-La piattaforma costruita utilizza il concetto di gemello digitale per modellare degli ipotetici camion all'interno di un sistema di tracciamento. Il gemello digitale, definito usando DTDL \footnote{https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html}, è il seguente
+La piattaforma costruita utilizza il concetto di gemello digitale per modellare dei camion virtuali all'interno di un sistema di tracciamento. Il gemello digitale, definito usando Digital Twins Definition Language (DTDL) \footnote{https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html}, è il seguente
 
 \begin{longlisting}
   \inputminted{json}{./code/Truck.json}
-  \caption{Modello di Gemello Digitale implementato}
+  \caption{Modello di Gemello Digitale del camion virtuale}
   \label{listing:dt0}
 \end{longlisting}
 
-Poiché si sta compiendo un'operazione di astrazione, del camion interessano, in questo scenario, solo pochi dati:
+Poiché si sta compiendo un'operazione di astrazione del camion interessano, in questo scenario, solo alcune specifiche proprietà:
 
 \begin{itemize}
     \item Temperatura (Temperature)
     \item Posizione (Location)
 \end{itemize}
 
-% TODO TERMINARE!!!
-\begin{longlisting}
-  \inputminted{java}{./code/Truck.json}
-  \caption{Modello di Gemello Digitale implementato}
-  \label{listing:dt1}
-\end{longlisting}
-
+La creazione di un gemello digitale avviene ogni qualvolta si dispone la creazione di un elemento Truck (camion) in piattaforma, secondo una business logic che dal punto di vista dei gemelli digitali può essere considerata una scatola nera. Quindi la creazione dei gemelli digitali avviene dinamicamente attraverso l'utilizo del client sincrono del servizio Digital Twin fornito dall'SDK di Microsoft Azure. Si instanzia un generico elemento di tipo DigitalTwin gli si assegna un modello inizialmente caricato sulla piattaforma Azure e lo si configura con le proprietà volute.
 
 \begin{longlisting}
   \inputminted{java}{./code/dt.create.java}
@@ -1517,24 +1519,31 @@ Poiché si sta compiendo un'operazione di astrazione, del camion interessano, in
   \label{listing:dt2}
 \end{longlisting}
 
+L'instanziazione del client utilizzato avviene nel costruttore del servizio e fa uso di credenziali di sistema, attraverso l'ottenimento di un token dal servizio Identità di Azure (è una Active Directory) nell'ambiente locale in cui è eseguita l'applicazione. DefaulCredential esegue un controllo sulle variabili d'ambiente e arriva alla richiesta di login nel browser, passando per le impostazioni di diverse applicazioni tra cui visual studio code o il tool a riga dicomando di Azure.
 
 \begin{longlisting}
   \inputminted{java}{./code/dt.init.java}
-  \caption{Creazione del gemello digitale}
+  \caption{Gemello digitale - init del client}
   \label{listing:dt3}
 \end{longlisting}
 
+Gli aggiornamenti dei gemelli digitali sono ottenuti con la funzione \texttt{@Schedule} di Spring che consente di eseguire una funzione ad intervalli regolari. Il
+
 \begin{longlisting}
   \inputminted{java}{./code/dt.polling.java}
-  \caption{Creazione del gemello digitale}
+  \caption{Gemello digitale - Schediling e polling}
   \label{listing:dt4}
 \end{longlisting}
 
+Lo scheduling effettua una chiamata alla funzione di aggiornamento. La funzione di aggiornamento esegue una richiesta di update su tutti i gemelli digitali registrati in piattaforma e salva il dato aggiornato sulla base di dati, come item della tabella di log \texttt{SensorLog} ed invia anche una richiesta di notarizzazione dei dati. Questo è il passaggio che rende immutabili le informazioni provenienti dai sensori dei gemelli digitali.
+
 \begin{longlisting}
   \inputminted{java}{./code/dt.update.java}
-  \caption{Creazione del gemello digitale}
+  \caption{Gemello digitale - funzione di aggiornamento}
   \label{listing:dt5}
 \end{longlisting}
+
+Il software di gestione fornito da Microsoft Azure, Azure Digital Twin Explorer, offre diverse funzionalità tra cui anche una visualizzazione grafica dei gemelli digitali creati. In questa immagine di può osservare la presenza di sei camion registrati sulla piattaforma.
 
 \begin{figure}[H]
   \centering
@@ -1543,14 +1552,26 @@ Poiché si sta compiendo un'operazione di astrazione, del camion interessano, in
   \label{fig:azureexplorer}
 \end{figure}
 
-\subsubsection{Smart contract}
 
-Lo smart contract con funzione di notarizzazione è stato da prima costruito come si vede nel listato \ref{listing:hash1}.
+
+\subsubsection{Interazione con la blockchain e smart contract}
+
+Lo smart contract utilizzato ha una funzione di notarizzazione. Il contratto è stato da prima costruito come si vede nel listato \ref{listing:hash1}.
 
 \begin{listing}[H]
   \inputminted{solidity}{./code/Hash.v1.sol}
   \caption{Contratto di notarizzazione - versione iniziale}
   \label{listing:hash1}
+\end{listing}
+
+In una fase successiva sono state apportate alcune evoluzioni. Si è deciso di implementare la classe Ownable di OpenZeppelin, per ragioni di sicurezza espresse nel paragrafo dedicato \ref{par:openzeppelin}, e si è deciso di distribuire il contratto utilizzando il concetto di proxy di OpenZeppelin. Una delle maggiori problematiche emerse durante lo sviluppo è stata l'impossibilità di avere un unico riferimento che rimanesse il medesimo anche a dispetto di numerose redistribuzioni del contratto stesso. I contratti per definizione, essendo immutabili per definizione, non si possono aggiornare, senza l'utilizzo dei proxy l'aggiornamento di un contratto equivale ad una nuova distribuzione che lascia in essere la vecchia distribuzione, senza nessun riferimento ad essa. I proxy forniti da OpenZeppelin si frappongono tra l'utilizzatore e il contratto vero e proprio consentendo di avere sempre una versione aggiornata del contratto e utilizzando lo stesso indirizzo (quello del proxy). OpenZeppelin fornisce diverse implementazioni del concetto di proxy. Una di queste prevede semplicemente l'utilizzo della classe \texttt{Initializable}, che comporta l'eliminazione del costruttore e l'utilizzo di un metodo di inizializzazione. Questo perché i proxy non utilizzato il costruttore. \ref{openzeppelinProxiesOpenZeppelin}
+
+Quindi la versione finale del contratto ha questa forma:
+
+\begin{listing}[H]
+  \inputminted{solidity}{./code/Hash.v2.sol}
+  \caption{Contratto di notarizzazione - versione finale}
+  \label{listing:hash2}
 \end{listing}
 
 Durante la fase preliminare di scouting delle librerie sono stati individuati alcuni tool di interesse. Si è individuato il seguente stack tecnologico per la compilazione e la distribuzione di contratti scritti in Solidity ed eseguibili all'interno di una Ethereum Virtual Machine.
@@ -1561,7 +1582,7 @@ Durante la fase preliminare di scouting delle librerie sono stati individuati al
   \item \textbf{Ether.js} client Ethereum per NodeJS
 \end{itemize}
 
-
+Hardhat.js ha come requisito minimo per poter funzionare la creazione di un file di configurazione all'interno della root di progetto chiamato \texttt{hardhat.config.ts}. La versione utilizziata in piattaforma è la seguente:
 
 \begin{longlisting}[H]
   \inputminted{typescript}{./code/hardhat.config.ts}
@@ -1569,17 +1590,32 @@ Durante la fase preliminare di scouting delle librerie sono stati individuati al
   \label{listing:hardhatconf}
 \end{longlisting}
 
+Per distribuire il contratto utilizzato, Hash, è stato necessario costruire un piccolo script che richiamasse le funzione di libreria atte allo scopo.
+
 \begin{longlisting}[H]
   \inputminted{typescript}{./code/hash.deploy.ts}
   \caption{Script per la distribuzione del contratto Hash}
   \label{listing:hash4}
 \end{longlisting}
 
+La fase di testing dei contratti riveste un ruolo fondamentale durante lo sviluppo degli stessi perché, come si è visto, i contratti sono immutabili e complessi da debuggare. Pertanto è conveniente utilizzare un approccio orientato al testing, come il Test Drive Development (TDD). Il contratto hash è stato largamente testato usando le librerie per tdd mocha e chai integrate in HardHat.
+
+% \begin{longlisting}[H]
+%   \inputminted{bash}{./code/hash.test.sh}
+%   \caption{Output testing contratto}
+%   \label{listing:hashxx}
+% \end{longlisting}
+
+Solidity mette a disposizione gli eventi che sono definiti come un'astrazione del concetto di log sulle macchine virtuali etherium \footnote{Documentazione ufficiale https://docs.soliditylang.org/en/v0.8.26/contracts.html\#events}. A ben guardare però possono essere utilizzati con un pattern observer ed inseriti in un più ampio contesto di programmazione ad eventi. Per effettuare test di integrazione riguardo gli eventi e che coinvolgessero anche il modulo Spring sono stati utilizzati dei semplici script con ruoli di ascoltatori e scrittori. L'ascoltatore si pone in ascolto sugli eventi emessi dal contratto e ad ogni evento ricevuto compie un'azione triviale (effettua una stampa).
+
 \begin{longlisting}[H]
+% \ffigbox[\FBwidth]
   \inputminted{typescript}{./code/hash.listener.ts}
   \caption{Script per l'utilizzo del contratto Hash - Observer}
   \label{listing:hash5}
 \end{longlisting}
+
+Lo script scrittore è leggermente più complesso perché effettua la scrittura sulla chain effettuando la chiamata alla funzione \texttt{signData}, avendo cura di codificare l'input nel formato atteso e successivamente viene decodificato l'output ricevuto.
 
 \begin{longlisting}[H]
   \inputminted{typescript}{./code/hash.sign.ts}
@@ -1589,7 +1625,6 @@ Durante la fase preliminare di scouting delle librerie sono stati individuati al
 
 
 \subsection{Implementazione - interfaccia}
-
 
 \paragraph{Login}
 \begin{figure}[H]
