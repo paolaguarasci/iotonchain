@@ -89,6 +89,7 @@ export class ProductTypeListComponent implements OnInit {
     { name: 'Liter', code: 'lt' },
     { name: 'Kilograms', code: 'kg' },
     { name: 'Unit', code: 'unit' },
+    { name: 'Percentage', code: 'percent' },
   ];
   newBatch!: any;
   createBatchDialogVisible: boolean = false;
