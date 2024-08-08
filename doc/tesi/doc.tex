@@ -37,19 +37,22 @@ sorting=ydnt
 \addbibresource{./ref.bib}
 
 \setminted{
-    linenos=true,
+    % linenos=true,
     autogobble,
     breaklines,
-    frame=single
+    %frame=single
 }
 \usepackage{mathptmx}
+\usepackage{thmtools}
 \usepackage{geometry}
  \geometry{
  a4paper,
  left=35mm
  }
 \onehalfspacing
-\newenvironment{longlisting}{\captionsetup{type=figure}}{}
+
+\DeclareCaptionLabelFormat{custom}{Listing #2}
+\newenvironment{longlisting}{\captionsetup{type=figure,labelformat=custom}}{}
 
 \title{Blockchain e IoT \\ tracciabilità e controlli automatici}
 \author{Paola Guarasci}
@@ -131,7 +134,7 @@ Le reti blockchain principali hanno definite \textit{layer 1} e rappresentalo re
 
 \section{Analisi dello stato dell’arte della tecnologia blockchain applicata alle supplychain}
 \section{Definizione di un caso d’uso}
-Il caso d'uso che si vuole analizzare riguarda la tracciabilità di un prodotto inserito nella filiera agroalimentare. Un esempio potrebbe essere la tracciabilità di un ipotetico prodotto surgelato, ad esempio un minestrone, di cui si vuole tenere traccia, in modo immutabile dalla raccolta delle materie prime fino alla vendita finale.
+Il caso d'uso che si vuole analizzare riguarda la tracciabilità di un prodotto inserito nella filiera agroalimentare. Un esempio potrebbe essere la tracciabilità di un ipotetico prodotto surgelato, ad esempio un minestrone, di cui si vuole tenere traccia, in modo immutabile dalla raccolta delle materie prime fino alla vendita finale. dfsdfsdf
 
 
 
@@ -1208,7 +1211,7 @@ Keycloak è implementato utilizzando la tecnologia di conteinerizzazione Docker.
 In questo contesto prototipale, il server autoritativo è stato avviato in modalità di sviluppo. Le limitazioni e le semplificazioni apportate riguardano la gestione del TLS e della mutua autenticazione. In fase di sviluppo non è richiesta la configurazione di un keystore java.
 
 \begin{listing}
-  \inputminted{shell}{./code/avvio.kc.sh}
+  \inputminted{bash}{./code/avvio.kc.sh}
   \caption{Keycloak - Comando di avvio}
   \label{listing:avviokc}
 \end{listing}
@@ -1221,166 +1224,166 @@ Sono state definite i senguenti endpoints:
 
 \begin{itemize}
   \item \texttt{GET /api/v1/company/batch}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{POST /api/v1/company/batch}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/batch/{{id}}}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/batch/{{id}}/track}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/product-type}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{POST /api/v1/company/product-type}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/client}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transfer}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{POST /api/v1/company/transfer}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transfer/\{\{batch\_id\}\}}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transfer/\{\{trans\_id\}\}/abort}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transfer/\{\{trans\_id\}\}/accept}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transfer/\{\{trans\_id\}\}/reject}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/doc}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/doc/notarize/\{\{doc\_id\}\}}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{POST /api/v1/company/doc/upload}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/doc/\{\{doc\_id\}\}}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/doc/\{\{doc\_id\}\}/resource}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{POST /api/v1/public/doc/check/{{hash}}}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transport}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{POST /api/v1/company/transport}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transport/\{\{batch\_id\}\}}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/transport/\{\{transport\_id\}\}/truck}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/truck}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/truck/update}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{GET /api/v1/company/notarization}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
   \item \texttt{POST /api/v1/company/notarization/step/\{\{step\_id\}\}}
-    \\ Descrizione:
-    \\ Tipo di accesso:
-    \\ Input:
-    \\ Output:
+        \\ Descrizione:
+        \\ Tipo di accesso:
+        \\ Input:
+        \\ Output:
 
 \end{itemize}
 
@@ -1412,7 +1415,7 @@ I thread virtuali offrono prestazioni nettamente migliori in termini di richiest
 
 \subsubsection{Answer Set Programming}
 
-Per poter utilizzare all'interno di un contesto più ampio un programma in AnswareSetProgramming (ASP) che sia dinamico, ovvero che utilizzi dati che cambiano nel tempo e provengono da computazioni effettuate in altri moduli del software, è necessario in un primo momento effettuare una mappatura della struttura dati in input al programma stesso e successivamente a comp
+Per poter utilizzare all'interno di un contesto più ampio un programma in Answare Set Programming (ASP) che sia dinamico, ovvero che utilizzi dati che cambiano nel tempo e provengono da computazioni effettuate in altri moduli del software, è necessario in un primo momento effettuare una mappatura della struttura dati in input al programma stesso e successivamente, al termine della computazione da parte del solutore ASP, effettuare una mappatura inversa, tokenizzando l'output in formato stringa e costruendo gli oggetti di interesse. Nella porzione di codice che segue si puo' vedere il programma in ASP che effettua un'ottimizzazione sulla ricerca dei lotti da inserire nella produzione di uno specifico lotto, nei termini di materie prime. Questo per evitare che l'utente debba attivamente e manualmente selezionare quanta parte prelevare da ogni lotto a sua disposizione (aziendale) per effettuare la produzione del lotto che si sta realizzando e per cui i lotti selezionati dal programma ASP costituiscono le materie prime.
 
 \begin{longlisting}
   \inputminted{prolog}{./code/checkBatchInput.lp}
@@ -1421,11 +1424,44 @@ Per poter utilizzare all'interno di un contesto più ampio un programma in Answa
 \end{longlisting}
 
 
+Il programma attualmente in uso nella piattaforma è il seguente \texttt{IotChain}.
+
 \begin{longlisting}
   \inputminted{prolog}{./code/checkBatch.lp}
   \caption{Programma ASP - Ricerca lotto}
   \label{listing:asp2}
 \end{longlisting}
+
+Analizzando nel dettaglio otteniamo, istruzione per istruzione:
+
+
+\begin{itemize}
+    \item \texttt{{ scelto(E, Q) } :- batch(E, X, Q), type(X).} \\
+    Il primo passaggio è effettuare una selezione dei lotti a disposizione filtrando per tipo. Quindi in scelto troviamo una proiezione dei batch del tipo presente in type.
+
+    \item \texttt{tot(T) :- T = \#sum { Q, E : scelto(E, Q) }.} \\
+
+    Qui si sta utilizzando l'aggregato sum che somma gli elementi di un insieme, in questo caso l'insieme degli elementi Q nelle coppie (Q,E). È importante notare che l'aggregato opera su di un insieme pertanto se non si considera il valore Q all'interno della tupla (Q,E) due valori identici di Q non parteciperanno al computo totale.
+    L'aggregato somma nella sua forma generale è il seguente:
+
+    $$ \#aggr{e1;...;en} ≺ u $$
+
+    where $e1 , . . . , en$ are aggregate elements for $n ≥ 0$, $#aggr ∈ {"#count", "#sum", "#max", "#min"}$ is an aggregate function name, $≺ ∈ {"<", "≤", "=", ",", ">", "≥"}$ is an aggregate relation and $u$ is a term. Given an aggregate atom a, the expressions a and not a are aggregate literals. da \cite{CALIMERI_2019} dove e
+
+    \item \texttt{:- amount(A), tot(B), A > B.}  \\
+    Vincolo forte ( se non rispettato l'interpretazione non è un modello) per cui la valutazione è binaria, true/false, nella forma generica si ha
+
+    $$ : b1 , . . . , bn. [w@l, t1 , . . . , tm ] $$
+
+    da \cite{CALIMERI_2019}.
+    Il vincolo esprime la necessità di avere una quantità totale per i lotti selezionati che non sia inferiore alla quantità richiesta.
+    \item \texttt{\#minimize { 1, Q : scelto(E,Q) }.} \\
+    Shorthand che indica una serie di vincoli deboli \footnote{ da ASP-Core-2 Input Language Format \cite{}} per cui si tende ad ottimizzare, minimizzando in questo caso, un peso per ogni termine scelto presente nel modello. L'obiettivo è di utilizzare il minor numero possibile di lotti.
+    \item \texttt{\#show scelto/2.} \\
+    Filtro degli atomi in output, mostra solo il termine show con arità 2.
+\end{itemize}
+
+La funzione di mappatura in ingresso è specifica per atomi di una determinata arità. In questo contesto gli atomi hanno tutti arità non superiore a 3 quindi si è deciso di procedere con funzioni specifiche per arità 0, 1, 2 e 3. Qui è riportata a titolo esemplificativo la funzione che gestisce arità 3.
 
 \begin{longlisting}
   \inputminted{java}{./code/asp.mapinput.java}
@@ -1433,12 +1469,17 @@ Per poter utilizzare all'interno di un contesto più ampio un programma in Answa
   \label{listing:asp3}
 \end{longlisting}
 
+Similmente in output si è scelto di differenziare gli atomi in base all'arità degli stessi, creando una funzione di selezione che tenga conto del note dell'atomo e della sua arità.
 
 \begin{longlisting}
   \inputminted{java}{./code/asp.mapout.java}
   \caption{ASP - Mapping in uscita}
   \label{listing:asp4}
 \end{longlisting}
+
+Le funzioni di mappatura dei risultati restituiscono in output liste di Pair o Triplet. Si tratta di tipi tuple gestiti dalla libreria JavaTuples \footnote{https://www.javatuples.org/apidocs/org/javatuples/Triplet.html}.
+
+Infine il solutore, che a basso livello effettua una chiamata al tool clingo, in un primo passaggio esegue il grounding del problema. L'output della fase di grounding, un programma senza variabili, costituisce poi l'input del solutore vero e proprio.
 
 \begin{longlisting}
   \inputminted{java}{./code/asp.solve.java}
@@ -1447,6 +1488,7 @@ Per poter utilizzare all'interno di un contesto più ampio un programma in Answa
 \end{longlisting}
 
 \subsubsection{Gemello digitale}
+La piattaforma costruita utilizza il concetto di gemello digitale per modellare degli ipotetici camion all'interno di un sistema di tracciamento. Il gemello digitale, definito usando DTDL \footnote{https://azure.github.io/opendigitaltwins-dtdl/DTDL/v3/DTDL.v3.html}, è il seguente
 
 \begin{longlisting}
   \inputminted{json}{./code/Truck.json}
@@ -1454,6 +1496,14 @@ Per poter utilizzare all'interno di un contesto più ampio un programma in Answa
   \label{listing:dt0}
 \end{longlisting}
 
+Poiché si sta compiendo un'operazione di astrazione, del camion interessano, in questo scenario, solo pochi dati:
+
+\begin{itemize}
+    \item Temperatura (Temperature)
+    \item Posizione (Location)
+\end{itemize}
+
+% TODO TERMINARE!!!
 \begin{longlisting}
   \inputminted{java}{./code/Truck.json}
   \caption{Modello di Gemello Digitale implementato}
@@ -1541,6 +1591,135 @@ Durante la fase preliminare di scouting delle librerie sono stati individuati al
 \subsection{Implementazione - interfaccia}
 
 
+\paragraph{Login}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0001.png}
+  \caption{Pagina di login (fornita da keycloak)}
+  \label{fig:screen1_login}
+\end{figure}
+
+La schermata di login prevede l'inserimento di uno username e di una password utilizzando la pagina web servita direttamente dal server Keycloak.
+
+
+\paragraph{Dashboard}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.50\linewidth]{screenIotChain/0002.png}
+  \caption{Dashboard (template)}
+  \label{fig:screen2}
+\end{figure}
+
+Dopo avere effettuato con successo il login, l'utente visualizza una dashboard contenente informazioni sintetiche e aggregate sullo stato della piattaforma dal punto di vista dell'azienda per cui opera. Ogni utente, è bene ricordarlo, non opera mai in prima persona ma opera sempre per conto dell'azienda per cui lavora. L'utente si muove all'interno della piattaforma utilizzando il menu situato nella barra superiore. Nella stessa barra, all'estrema destra dello schermo è possibile effettuare login/logout e sono visibili informazioni di base sull'identità dell'utente connesso (username e nome dell'azienda).
+
+\paragraph{Lista dei lotti di produzione}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0003.png}
+  \caption{Lista dei lotti di produzione}
+  \label{fig:screen3}
+\end{figure}
+
+Elenco per azienda dei lotti prodotti (dall'azienda) e registrati in piattaforma. Da questa visualizzazione è possibile accedere ad alcuni dettagli del lotto stesso:
+
+\begin{itemize}
+    \item \textbf{click su (i)nformazioni} lista delle transazioni che riguardano le operazioni di scambio di uno specifico lotto (si veda Fig.\ref{fig:screen4})
+    \item \textbf{click su transfert} disporre il trasferimento del lotto o porzione di esso, in modalità atomica o con accettazione (si vedano Fig.\ref{fig:screen5} e Fig.\ref{fig:screen6})
+    \item  \textbf{click su track} informazioni di tracciamento del prodotto e delle sue materie prime, con eventuale indicazione di notarizzazione inserita (si veda Fig. \ref{fig:screen14}
+    \item  \textbf{click su lente di ingrandimento} % TODO pagina di lotto ( va fatta ???)
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0004.png}
+  \caption{Operazioni di scambio che riguardano il lotto selezionato}
+  \label{fig:screen4}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0006.png}
+  \caption{Disposizione di un trasferimento}
+  \label{fig:screen6}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0014.png}
+  \caption{Visualizzazione di tracciamento di un lotto con track delle materie prime e operazioni di notarizzazione}
+  \label{fig:screen14}
+\end{figure}
+
+\paragraph{Tipi di prodotto}
+
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0007.png}
+  \caption{Lista tipi di prodotto}
+  \label{fig:screen7}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0008.png}
+  \caption{Lista tipi di prodotto - Particolare su ricetta di tipo}
+  \label{fig:screen8}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0009.png}
+  \caption{Creazione di un tipo di prodotto}
+  \label{fig:screen9}
+\end{figure}
+\paragraph{Creazione di un lotto di prodotto} In questa schermata è possibile inserire le informazioni necessarie alla creazione di un lotto di prodotto. I campi nome e descrizione sono campi di testo liberi. Anche se l'inserimento del testo è libero il campo nome verrà trasformato in modo tale da eliminare gli spazi e sostituirli con il carattere underscore. La selezione del tipo di prodotto comporta la modifica degli elementi \texttt{Recipe} e \texttt{Step di produzione} all'interno della pagina stessa quindi è consigliabile effettuare la selezione del tipo corretto in una fase iniziale della compilazione del form. Se si arriva in questa pagina dalla lista di tipi prodotto, il modulo risulta già in parte compilato con il tipo selezionato. Quindi dopo aver deciso il tipo di prodotto per cui si sta creando una istanza di produzione si procede alla selezione di un sottoinsieme di elementi sia per quanto riguarda gli elementi della ricetta di tipo (che andranno a costituire la ricetta di prodotto) e sia alla selezione di un sottoinsieme di passi nel processo produttivo di cui si vuole tenere conto nelle fasi di tracciamento (che andranno a costituire il processo produttivo di lotto). Infine è possibile allegare uno o più documenti precedentemente caricati in piattaforma ed inserire una quantità espressa usando l'unità di misura del tipo di prodotto e definita in fase di creazione dello stesso. Dopo aver terminato la compilazione del form e cliccato su \texttt{Salva} il sistema restituisce una notifica di avvenuto salvataggio o di errore, a seconda dei casi.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0010.png}
+  \caption{Creazione di un lotto di prodotto}
+  \label{fig:screen10}
+\end{figure}
+
+
+\paragraph{Lista dei documenti}
+In questa sezione della piattaforma è visibile una lista di elementi documentali che verosimilmente saranno certificati, analisi e altre attestazioni. Possono essere di prodotto o di azienda. Dopo aver caricato il file in uno dei formati accettati (pdf, jpg, png) è possibile procedere alla notarizzazione dello stesso e successivamente accedere alla pagina di dettaglio su cui sono riportare le informazioni della documentazione stessa. Ogni documento per poter essere allegato ad un lotto di produzione deve prima essere inserito in questa lista.
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0011.png}
+  \caption{Lista di documenti caricati con anteprima}
+  \label{fig:screen11}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{example-image-a}
+  \caption{Informazioni di tracciamento e notarizzazione del documento}
+  \label{fig:screen11a}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0012.png}
+  \caption{Lista di documenti caricati con anteprima}
+  \label{fig:screen12}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.5\linewidth]{screenIotChain/0013.png}
+  \caption{Lista di documenti caricati con anteprima}
+  \label{fig:screen13}
+\end{figure}
+
+
+
+\clearpage
 \section{Risultati e conclusioni}
 
 \clearpage
@@ -1553,4 +1732,21 @@ Durante la fase preliminare di scouting delle librerie sono stati individuati al
 \listoflistings % Now typeset the list
 \clearpage
 \printbibliography
+\clearpage
+\pagenumbering{gobble}
+% \section*{Ringraziamenti}
+\centering
+\vspace*{\fill}
+Al Professore Alviano, per la stima e la fiducia.
+\\
+Alla mia famiglia, per la pazienza in questi anni e soprattutto durante il periodo di stesura della tesi.
+\\
+A Marida, per il supporto e la gioia diffusa a piene mani.
+\\
+Ad Angelo, per gli animati confronti, i preziosi suggerimenti e l’effetto \textit{paperella}.
+\\
+Ai colleghi di Artémat, per la loro vicinanza.
+\\
+A tutto il corso di laurea, per avermi accolta e fatta crescere come persona e come informatica.
+\vspace*{\fill}
 \end{document}
