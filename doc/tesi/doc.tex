@@ -1260,8 +1260,7 @@ Anche OWASP fornisce dal 2023 una lista \cite{owaspOWASPSmart} delle principali 
     \item Controllo degli accessi improprio
 \end{itemize}
 
-Nel dettaglio sull'attacco di reentrancy possiamo leggere \quote {
-Un attacco di reentrancy sfrutta la vulnerabilità degli smart contract quando una funzione effettua una chiamata esterna a un altro contratto prima di aggiornare il proprio stato. Ciò consente al contratto esterno, eventualmente malevolo, di rientrare nella funzione originale e ripetere alcune azioni, come i prelievi, utilizzando lo stesso stato. Attraverso tali attacchi, un aggressore può eventualmente prosciugare tutti i fondi di un contratto. } \cite{owaspOWASPSmart}
+Un attacco di reentrancy sfrutta la vulnerabilità degli smart contract quando una funzione effettua una chiamata esterna a un altro contratto prima di aggiornare il proprio stato. Ciò consente al contratto esterno, eventualmente malevolo, di rientrare nella funzione originale e ripetere alcune azioni, come i prelievi, utilizzando lo stesso stato. Attraverso tali attacchi, un aggressore può eventualmente prosciugare tutti i fondi di un contratto. \cite{owaspOWASPSmart}
 
 Le mitigazioni suggerite sono:
 
@@ -1272,13 +1271,10 @@ Le mitigazioni suggerite sono:
 
 Si è deciso per questo di utilizzare la guardia della libreria OpenZeppelin.
 
-Un'altra potenziale vulnerabilità in questo contesto è un \textit{Controllo degli accessi improprio}, definito come \quote{
-Una vulnerabilità del controllo degli accessi è una falla nella sicurezza che consente a utenti non autorizzati di accedere o modificare i dati o le funzioni di un contratto. Queste vulnerabilità si verificano quando il codice del contratto non limita correttamente l'accesso in base alle autorizzazioni dell'utente.
-} \cite{owaspOWASPSmart}
+Un'altra potenziale vulnerabilità in questo contesto è un \textit{Controllo degli accessi improprio}, definito come una vulnerabilità del controllo degli accessi è una falla nella sicurezza che consente a utenti non autorizzati di accedere o modificare i dati o le funzioni di un contratto. Queste vulnerabilità si verificano quando il codice del contratto non limita correttamente l'accesso in base alle autorizzazioni dell'utente. \cite{owaspOWASPSmart} Le mitigazioni suggerite sono diverse tra cui l'uso del pattern \texttt{Ownable} nell'implementazione fornita da OpenZeppelin.
 
-e le mitigazioni suggerite sono divere tra cui l'uso del pattern \texttt{Ownable} nell'implementazione fornita da OpenZeppelin.
-
-Pertanto la versione finale del contratto fa uso di Reentrancy  Guard e Ownable, come si vede in figura TODO RIFERIMENTO ALLO SMART CONTRACT !!!!
+Pertanto la versione finale del contratto fa uso di Reentrancy  Guard e Ownable, come si vede in figura
+% TODO RIFERIMENTO ALLO SMART CONTRACT !!!!
 
 \subsection{Implementazione - server side}
 
