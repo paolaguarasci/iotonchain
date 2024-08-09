@@ -285,7 +285,7 @@ I requisiti funzionali di alto livello sono i seguenti:
   \item Un utente registrato deve poter visualizzare informazioni telemetriche delle spedizioni in corso
   \item Un utente non registrato deve poter visualizzare le informazioni pubbliche di tracciamento di un lotto di produzione
 \end{itemize}
-s
+
 I requisiti non funzionali sono applicabili alla quasi totalità dei sistemi, ovvero:
 
 \begin{itemize}
@@ -306,11 +306,14 @@ Sono stati individuati i seguenti casi d'uso:
 
 \begin{itemize}
   \item CU1: Registrazione di un tipo di prodotto
+  \item CU1a: Creazione di una ricetta (estende CU1 Registrazione di un tipo di prodotto)
   \item CU2: Registrazione di un lotto prodotto
   \item CU3: Tracciamento di un lotto (utente registrato)
+  \item CU3a: Notarizzazione di uno step di processo (estende: CU3)
   \item CU4: Tracciamento di un lotto (utente non registrato)
-  \item CU5: Trasferimento di un lotto (atomico) [INCLUDE trasferimento]
-  \item CU6: Trasferimento di un lotto (con accettazione) [INCLUDE trasferimento]
+  \item CU6x: Trasferimento
+  \item CU5: Trasferimento di un lotto (atomico) [include CU6x]
+  \item CU6: Trasferimento di un lotto (con accettazione) [include CU6x]
   \item CU7: Accettazione di un trasferimento
   \item CU8: Ritiro di un trasferimento
   \item CU9: Rifiuto di un trasferimento
@@ -571,10 +574,10 @@ Specifiche dei casi d'uso:
   \centering
   \begin{tabular}{|m{2cm}|m{10.5cm}|}
     \hline
-    \multicolumn{2}{|c|}{\textbf{Trasferimento di un lotto (atomico) [INCLUDE trasferimento])}} \\ \hline
-    \multicolumn{1}{|l|}{\textbf{ID}}              & CU6x                                       \\ \hline
-    \multicolumn{1}{|l|}{\textbf{Attori}}          & --                                         \\ \hline
-    \multicolumn{1}{|l|}{\textbf{Precondizioni}}   & --                                         \\ \hline
+    \multicolumn{2}{|c|}{\textbf{Trasferimento}}          \\ \hline
+    \multicolumn{1}{|l|}{\textbf{ID}}              & CU6x \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Attori}}          & --   \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Precondizioni}}   & --   \\ \hline
     \multicolumn{1}{|l|}{\textbf{Sequenza}}        &
 
     \begin{itemize}
@@ -802,8 +805,8 @@ Specifiche dei casi d'uso:
   \centering
   \begin{tabular}{|m{2cm}|m{10.5cm}|}
     \hline
-    \multicolumn{2}{|c|}{\textbf{Avvio di una spedizione)}} \\ \hline
-    \multicolumn{1}{|l|}{\textbf{ID}}              & CU11   \\ \hline
+    \multicolumn{2}{|c|}{\textbf{Avvio di una spedizione}} \\ \hline
+    \multicolumn{1}{|l|}{\textbf{ID}}              & CU11  \\ \hline
     \multicolumn{1}{|l|}{\textbf{Attori}}          &
 
     Utente registrato in piattaforma
@@ -843,6 +846,83 @@ Specifiche dei casi d'uso:
   \label{cu:CU11}
 \end{table}
 
+
+
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|m{2cm}|m{10.5cm}|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Registrazione di un utente}}                                                                       \\ \hline
+    \multicolumn{1}{|l|}{\textbf{ID}}              & CU12                                                                           \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Attori}}          & Amministratore di sistema                                                      \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Precondizioni}}   & Utente autenticato in piattaforma                                              \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Sequenza}}        &
+    \begin{itemize}
+      \item Il caso d'uso inizia quando l'amministratore di sistema clicca su "aggiungi nuovo utente"
+      \item L'amministratore inserisce uno username, una password temporanea e un'azienda associta all'utente
+      \item L'amministratore clicca su "Salva"
+            \begin{itemize}
+              \item Il sistema verifica che non ci siano altri utenti con il medesimo username
+                    \begin{itemize}
+                      \item Se non sono presenti altri utenti con lo stesso username
+                            \begin{itemize}
+                              \item Il sistema notifica all'amministratore l'impossibilità a procedere invitandolo a modificare il dato inserito
+                              \item L'amministratore modifica lo username
+                              \item L'amministratore clicca su salva e il caso d'uso riparete dal punto 3
+                            \end{itemize}
+                      \item Se sono presenti altri utenti con lo stesso username
+                            \begin{itemize}
+                              \item Il sistema salva il nuovo utente
+                            \end{itemize}
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}                          \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Post-condizioni}} & L'utente è registrato in piattaforma e puoò effetuare il login (\ref{cu:CU13}) \\ \hline
+  \end{tabular}
+  \caption{Caso d'uso 12 - Registrazione di un utente}
+  \label{cu:CU12}
+\end{table}
+
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|m{2cm}|m{10.5cm}|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Login di un utente}}                                                    \\ \hline
+    \multicolumn{1}{|l|}{\textbf{ID}}              & CU13                                                \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Attori}}          & Utente registrato                                   \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Precondizioni}}   & Utente registrato ma non autenticato in piattaforma \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Sequenza}}        &
+    \begin{itemize}
+      \item Il caso d'uso inizia quando l'utente clicca su "login"
+      \item L'utente inserisce username e password
+      \item Il sistema verifica la correttezza dei dati inseriti dall'utente
+            \begin{itemize}
+              \item Se i dati inseriti sono corretti ed è la prima volta che l'utente effettua il login
+                    \begin{itemize}
+                      \item Il sistema impone il cambio password
+                      \item L'utente inserisce una nuova password
+                      \item Il sistema salva la nuova password
+                      \item Il sistema autentica l'utente
+                    \end{itemize}
+              \item Se i dati inseriti sono corretti e non è la prima volta che l'utente effettua il login
+                    \begin{itemize}
+                      \item il sistema autentica l'utente
+                    \end{itemize}
+              \item Se dati inseriti non sono corretti
+                    \begin{itemize}
+                      \item il sistema notifica all'utente l'impossibilità a procedere
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}                                \\ \hline
+    \multicolumn{1}{|l|}{\textbf{Post-condizioni}} & --                                                  \\ \hline
+  \end{tabular}
+  \caption{Caso d'uso 13 - Login di un utente registrato}
+  \label{cu:CU13}
+\end{table}
+
+I casi d'uso esplicitati finqui si possono riasssumere in un diagramma UML che li contiene tutti e schematizza le relazioni che intercorrono tra di essi.
 
 \begin{figure}[H]
   \includegraphics[width=1\linewidth]{example-image-b}
@@ -1184,11 +1264,11 @@ Una delle motivazioni principali che hanno spinto verso questa scelta di separaz
 % https://docs.soliditylang.org/en/v0.8.26/security-considerations.html
 %
 
-\begin{longlisting}
-  \inputminted{solidity}{./code/Hash.v2.sol}
-  \caption{Contratto di notarizzazione - versione finale}
-  \label{listing:hash2}
-\end{longlisting}
+% \begin{longlisting}
+%   \inputminted{solidity}{./code/Hash.v2.sol}
+%   \caption{Contratto di notarizzazione - versione finale}
+%   \label{listing:hash2a}
+% \end{longlisting}
 
 % Open zeppelin
 % tipi di attacchi ed eventuali vulnerabilità
@@ -1334,11 +1414,11 @@ Sono state definite i senguenti endpoints:
         \\ Input: id del documento (UUID)
         \\ Output: generico binario \texttt{application/octet-stream}
 
-  % \item \texttt{POST /api/v1/public/doc/check/{{hash}}}
-  %       \\ Descrizione:
-  %       \\ Tipo di accesso: Pubblico
-  %       \\ Input:
-  %       \\ Output:
+        % \item \texttt{POST /api/v1/public/doc/check/{{hash}}}
+        %       \\ Descrizione:
+        %       \\ Tipo di accesso: Pubblico
+        %       \\ Input:
+        %       \\ Output:
 
   \item \texttt{GET /api/v1/company/transport}
         \\ Descrizione: Lista dei trasporti di azienda
@@ -1439,43 +1519,43 @@ Analizzando nel dettaglio otteniamo, istruzione per istruzione:
 
 
 \begin{itemize}
-    \item \texttt{{ scelto(E, Q) } :- batch(E, X, Q), type(X).} \\
-    Il primo passaggio è effettuare una selezione dei lotti a disposizione filtrando per tipo. Quindi in scelto troviamo una proiezione dei batch del tipo presente in type. Da notare la presenza delle parentesi quadre che indica l'opzionalità della regola: non è detto che ogni elemento debba essere scelto. L'assenza di questo costrutto impedisce alla regola di ottimizzazione espressa dopo di entrare in funzione.
+  \item \texttt{{ scelto(E, Q) } :- batch(E, X, Q), type(X).} \\
+        Il primo passaggio è effettuare una selezione dei lotti a disposizione filtrando per tipo. Quindi in scelto troviamo una proiezione dei batch del tipo presente in type. Da notare la presenza delle parentesi quadre che indica l'opzionalità della regola: non è detto che ogni elemento debba essere scelto. L'assenza di questo costrutto impedisce alla regola di ottimizzazione espressa dopo di entrare in funzione.
 
 
-    \item \texttt{tot(T) :- T = \#sum { Q, E : scelto(E, Q) }.} \\
+  \item \texttt{tot(T) :- T = \#sum { Q, E : scelto(E, Q) }.} \\
 
-    Qui si sta utilizzando l'aggregato \texttt{sum} che somma gli elementi di un insieme, in questo caso l'insieme degli elementi Q nelle coppie (Q,E). È importante notare che l'aggregato opera su di un insieme pertanto se non si considera il valore Q nel contesto della tupla (Q,E), due valori identici di Q non parteciperanno al computo totale.
-    L'aggregato \texttt{sum} nella sua forma generale è il seguente:
+        Qui si sta utilizzando l'aggregato \texttt{sum} che somma gli elementi di un insieme, in questo caso l'insieme degli elementi Q nelle coppie (Q,E). È importante notare che l'aggregato opera su di un insieme pertanto se non si considera il valore Q nel contesto della tupla (Q,E), due valori identici di Q non parteciperanno al computo totale.
+        L'aggregato \texttt{sum} nella sua forma generale è il seguente:
 
-    $$ \#aggr\{e1;...;en\} < u $$
+        $$ \#aggr\{e1;...;en\} < u $$
 
-    dove $e1,...,en$ sono elementi aggregati con $n \geq 0$, \\ $\#aggr \in \{"\#count", "\#sum", "\#max", "\#min"\}$ è il nome di una funzione aggregato,  $ < \in \{"<", "\leq", "=", ",", ">", "\geq"\}$ è una relazione e $u$ è un termine. Dato un atomo aggregato a, l'espressione $a$ e $!a$ sono letterali.\cite{CALIMERI_2019}
-    L'atomo \texttt{tot(T)} rappresenta la quantità totale di risorse selezionate.
+        dove $e1,...,en$ sono elementi aggregati con $n \geq 0$, \\ $\#aggr \in \{"\#count", "\#sum", "\#max", "\#min"\}$ è il nome di una funzione aggregato,  $ < \in \{"<", "\leq", "=", ",", ">", "\geq"\}$ è una relazione e $u$ è un termine. Dato un atomo aggregato a, l'espressione $a$ e $!a$ sono letterali.\cite{CALIMERI_2019}
+        L'atomo \texttt{tot(T)} rappresenta la quantità totale di risorse selezionate.
 
-    \item \texttt{:- amount(A), tot(B), A > B.}  \\
-    Vincolo forte ( se non rispettato l'interpretazione non è un modello) per cui la valutazione è binaria, true/false, nella forma generica si ha
+  \item \texttt{:- amount(A), tot(B), A > B.}  \\
+        Vincolo forte ( se non rispettato l'interpretazione non è un modello) per cui la valutazione è binaria, true/false, nella forma generica si ha
 
-    $$ :- \space b1,...,bn. [w@l,t1,...,tm] $$
+        $$ :- \space b1,...,bn. [w@l,t1,...,tm] $$
 
-    da \cite{CALIMERI_2019}.
-    Il vincolo esprime la necessità di avere una quantità totale per i lotti selezionati che non sia inferiore alla quantità richiesta.
+        da \cite{CALIMERI_2019}.
+        Il vincolo esprime la necessità di avere una quantità totale per i lotti selezionati che non sia inferiore alla quantità richiesta.
 
-    \item \texttt{\#minimize { Q, Q : scelto(E,Q) }.} \\
-    Shorthand che indica una serie di vincoli deboli \cite{CALIMERI_2019} per cui si tende ad ottimizzare, minimizzando in questo caso, un peso per ogni termine scelto presente nel modello. L'obiettivo in questo caso è di utilizzare il minor numero possibile di lotti.
-    La penalità è proporzionale alla quantità di materia selezionata.
+  \item \texttt{\#minimize { Q, Q : scelto(E,Q) }.} \\
+        Shorthand che indica una serie di vincoli deboli \cite{CALIMERI_2019} per cui si tende ad ottimizzare, minimizzando in questo caso, un peso per ogni termine scelto presente nel modello. L'obiettivo in questo caso è di utilizzare il minor numero possibile di lotti.
+        La penalità è proporzionale alla quantità di materia selezionata.
 
-    \item \texttt{\#show scelto/2.} \\
-    Filtro degli atomi in output, mostra solo il termine show con arità 2.
-    \end{itemize}
+  \item \texttt{\#show scelto/2.} \\
+        Filtro degli atomi in output, mostra solo il termine show con arità 2.
+\end{itemize}
 
-    La funzione di mappatura in ingresso è specifica per atomi di una determinata arità. In questo contesto gli atomi hanno tutti arità non superiore a 3 quindi si è deciso di procedere con funzioni specifiche per arità 0, 1, 2 e 3. Qui è riportata a titolo esemplificativo la funzione che gestisce arità 3.
+La funzione di mappatura in ingresso è specifica per atomi di una determinata arità. In questo contesto gli atomi hanno tutti arità non superiore a 3 quindi si è deciso di procedere con funzioni specifiche per arità 0, 1, 2 e 3. Qui è riportata a titolo esemplificativo la funzione che gestisce arità 3.
 
-    \begin{longlisting}
-      \inputminted{java}{./code/asp.mapinput.java}
-      \caption{ASP - Mapping in ingresso}
-      \label{listing:asp3}
-    \end{longlisting}
+\begin{longlisting}
+  \inputminted{java}{./code/asp.mapinput.java}
+  \caption{ASP - Mapping in ingresso}
+  \label{listing:asp3}
+\end{longlisting}
 
 Similmente in output si è scelto di differenziare gli atomi in base all'arità degli stessi, creando una funzione di selezione che tenga conto del note dell'atomo e della sua arità.
 
@@ -1507,8 +1587,8 @@ La piattaforma costruita utilizza il concetto di gemello digitale per modellare 
 Poiché si sta compiendo un'operazione di astrazione del camion interessano, in questo scenario, solo alcune specifiche proprietà:
 
 \begin{itemize}
-    \item Temperatura (Temperature)
-    \item Posizione (Location)
+  \item Temperatura (Temperature)
+  \item Posizione (Location)
 \end{itemize}
 
 La creazione di un gemello digitale avviene ogni qualvolta si dispone la creazione di un elemento Truck (camion) in piattaforma, secondo una business logic che dal punto di vista dei gemelli digitali può essere considerata una scatola nera. Quindi la creazione dei gemelli digitali avviene dinamicamente attraverso l'utilizo del client sincrono del servizio Digital Twin fornito dall'SDK di Microsoft Azure. Si instanzia un generico elemento di tipo DigitalTwin gli si assegna un modello inizialmente caricato sulla piattaforma Azure e lo si configura con le proprietà volute.
@@ -1609,7 +1689,7 @@ La fase di testing dei contratti riveste un ruolo fondamentale durante lo svilup
 Solidity mette a disposizione gli eventi che sono definiti come un'astrazione del concetto di log sulle macchine virtuali etherium \footnote{Documentazione ufficiale https://docs.soliditylang.org/en/v0.8.26/contracts.html\#events}. A ben guardare però possono essere utilizzati con un pattern observer ed inseriti in un più ampio contesto di programmazione ad eventi. Per effettuare test di integrazione riguardo gli eventi e che coinvolgessero anche il modulo Spring sono stati utilizzati dei semplici script con ruoli di ascoltatori e scrittori. L'ascoltatore si pone in ascolto sugli eventi emessi dal contratto e ad ogni evento ricevuto compie un'azione triviale (effettua una stampa).
 
 \begin{longlisting}[H]
-% \ffigbox[\FBwidth]
+  % \ffigbox[\FBwidth]
   \inputminted{typescript}{./code/hash.listener.ts}
   \caption{Script per l'utilizzo del contratto Hash - Observer}
   \label{listing:hash5}
@@ -1660,28 +1740,28 @@ Dopo avere effettuato con successo il login, l'utente visualizza una dashboard c
 Elenco per azienda dei lotti prodotti (dall'azienda) e registrati in piattaforma. Da questa visualizzazione è possibile accedere ad alcuni dettagli del lotto stesso:
 
 \begin{itemize}
-    \item \textbf{click su (i)nformazioni} lista delle transazioni che riguardano le operazioni di scambio di uno specifico lotto (si veda Fig.\ref{fig:screen4})
-    \item \textbf{click su transfert} disporre il trasferimento del lotto o porzione di esso, in modalità atomica o con accettazione (si vedano Fig.\ref{fig:screen5} e Fig.\ref{fig:screen6})
-    \item  \textbf{click su track} informazioni di tracciamento del prodotto e delle sue materie prime, con eventuale indicazione di notarizzazione inserita (si veda Fig. \ref{fig:screen14}
-    \item  \textbf{click su lente di ingrandimento} % TODO pagina di lotto ( va fatta ???)
+  \item \textbf{click su (i)nformazioni} lista delle transazioni che riguardano le operazioni di scambio di uno specifico lotto (si veda Fig.\ref{fig:screen4})
+  \item \textbf{click su transfert} disporre il trasferimento del lotto o porzione di esso, in modalità atomica o con accettazione (si vedano Fig.\ref{fig:screen5} e Fig.\ref{fig:screen6})
+  \item  \textbf{click su track} informazioni di tracciamento del prodotto e delle sue materie prime, con eventuale indicazione di notarizzazione inserita (si veda Fig. \ref{fig:screen14}
+  \item  \textbf{click su lente di ingrandimento} % TODO pagina di lotto ( va fatta ???)
 \end{itemize}
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0004.png}
   \caption{Operazioni di scambio che riguardano il lotto selezionato}
   \label{fig:screen4}
 \end{figure}
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0006.png}
   \caption{Disposizione di un trasferimento}
   \label{fig:screen6}
 \end{figure}
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0014.png}
   \caption{Visualizzazione di tracciamento di un lotto con track delle materie prime e operazioni di notarizzazione}
   \label{fig:screen14}
@@ -1691,21 +1771,21 @@ Elenco per azienda dei lotti prodotti (dall'azienda) e registrati in piattaforma
 
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0007.png}
   \caption{Lista tipi di prodotto}
   \label{fig:screen7}
 \end{figure}
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0008.png}
   \caption{Lista tipi di prodotto - Particolare su ricetta di tipo}
   \label{fig:screen8}
 \end{figure}
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0009.png}
   \caption{Creazione di un tipo di prodotto}
   \label{fig:screen9}
@@ -1713,7 +1793,7 @@ Elenco per azienda dei lotti prodotti (dall'azienda) e registrati in piattaforma
 \paragraph{Creazione di un lotto di prodotto} In questa schermata è possibile inserire le informazioni necessarie alla creazione di un lotto di prodotto. I campi nome e descrizione sono campi di testo liberi. Anche se l'inserimento del testo è libero il campo nome verrà trasformato in modo tale da eliminare gli spazi e sostituirli con il carattere underscore. La selezione del tipo di prodotto comporta la modifica degli elementi \texttt{Recipe} e \texttt{Step di produzione} all'interno della pagina stessa quindi è consigliabile effettuare la selezione del tipo corretto in una fase iniziale della compilazione del form. Se si arriva in questa pagina dalla lista di tipi prodotto, il modulo risulta già in parte compilato con il tipo selezionato. Quindi dopo aver deciso il tipo di prodotto per cui si sta creando una istanza di produzione si procede alla selezione di un sottoinsieme di elementi sia per quanto riguarda gli elementi della ricetta di tipo (che andranno a costituire la ricetta di prodotto) e sia alla selezione di un sottoinsieme di passi nel processo produttivo di cui si vuole tenere conto nelle fasi di tracciamento (che andranno a costituire il processo produttivo di lotto). Infine è possibile allegare uno o più documenti precedentemente caricati in piattaforma ed inserire una quantità espressa usando l'unità di misura del tipo di prodotto e definita in fase di creazione dello stesso. Dopo aver terminato la compilazione del form e cliccato su \texttt{Salva} il sistema restituisce una notifica di avvenuto salvataggio o di errore, a seconda dei casi.
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0010.png}
   \caption{Creazione di un lotto di prodotto}
   \label{fig:screen10}
@@ -1723,7 +1803,7 @@ Elenco per azienda dei lotti prodotti (dall'azienda) e registrati in piattaforma
 \paragraph{Lista dei documenti}
 In questa sezione della piattaforma è visibile una lista di elementi documentali che verosimilmente saranno certificati, analisi e altre attestazioni. Possono essere di prodotto o di azienda. Dopo aver caricato il file in uno dei formati accettati (pdf, jpg, png) è possibile procedere alla notarizzazione dello stesso e successivamente accedere alla pagina di dettaglio su cui sono riportare le informazioni della documentazione stessa. Ogni documento per poter essere allegato ad un lotto di produzione deve prima essere inserito in questa lista.
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0011.png}
   \caption{Lista di documenti caricati con anteprima}
   \label{fig:screen11}
@@ -1731,14 +1811,14 @@ In questa sezione della piattaforma è visibile una lista di elementi documental
 
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{example-image-a}
   \caption{Informazioni di tracciamento e notarizzazione del documento}
   \label{fig:screen11a}
 \end{figure}
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0012.png}
   \caption{Lista di documenti caricati con anteprima}
   \label{fig:screen12}
@@ -1746,7 +1826,7 @@ In questa sezione della piattaforma è visibile una lista di elementi documental
 
 
 \begin{figure}[H]
-\centering
+  \centering
   \includegraphics[width=0.5\linewidth]{screenIotChain/0013.png}
   \caption{Lista di documenti caricati con anteprima}
   \label{fig:screen13}

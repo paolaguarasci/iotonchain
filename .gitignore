@@ -739,3 +739,9 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,java,maven,node,python,latex
 n
 client/src/environments/environment.ts
+
+
+
+
+doc.bbl-SAVE-ERROR
+doc.bcf-SAVE-ERROR
