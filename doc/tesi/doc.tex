@@ -105,14 +105,10 @@ sorting=ydnt
 \subsection{Blockchain}
 La tecnologia dei registri distribuiti, distribuited ledger tecnlogy o DLT, consenta di utilizzare dati digitali in modo distribuito, condiviso e sincronizzato. Non necessita di una entità centrale. La blockchain identifica un particolare tipo di registro distribuito.
 
-
 \paragraph{Scalabilità}
 % Il concetto di scalabilita' all'interno delle blockchain
-
 \paragraph{Il trilemma delle blockchain}
-
 % Non si possono avere tutte insieme!
-
 \begin{figure}[h!]
   \includegraphics[width=1\linewidth]{img/trilemma.png}
   \caption{Il trilemma della blockchain}
@@ -120,78 +116,40 @@ La tecnologia dei registri distribuiti, distribuited ledger tecnlogy o DLT, cons
 \end{figure}
 
 \paragraph{Layer1 e Layer2}
-Le reti blockchain principali hanno definite \textit{layer 1} e rappresentalo reti che funzionano da sole. Le reti layer 2, di contro, sono reti che si pongo, utilizzando diverse metodologie, come sovrastuttura rispetto alla layer 1 che espandono. Di fatto rappresentano appunto delle espansioni delle reti principali. Il motibvo
-
+Le reti blockchain principali hanno definite \textit{layer 1} e rappresentalo reti che funzionano da sole. Le reti layer 2, di contro, sono reti che si pongo, utilizzando diverse metodologie, come sovrastuttura rispetto alla layer 1 che espandono. Di fatto rappresentano appunto delle espansioni delle reti principali. Il motivo
 \paragraph{Algoritmi di consenso}
 \paragraph{Permiossionless e Permissioned}
 \paragraph{Ethereum}
 \paragraph{Polygon}
-\paragraph{Tools}
 
+% TODO:
+% inserire un confronto tra le varie chian e indicare perché è stata scelta poligon
+
+\paragraph{Tools}
 \subsection{ASP}
 
 \subsection{Concetti di Tracciabilità e di Filiera}
-
 \section{Analisi dello stato dell’arte della tecnologia blockchain applicata alle supplychain}
 \section{Definizione di un caso d’uso}
-Il caso d'uso che si vuole analizzare riguarda la tracciabilità di un prodotto inserito nella filiera agroalimentare. Un esempio potrebbe essere la tracciabilità di un ipotetico prodotto surgelato, ad esempio un minestrone, di cui si vuole tenere traccia, in modo immutabile dalla raccolta delle materie prime fino alla vendita finale. dfsdfsdf
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% TODO:
-
-
-% inserire un confronto tra le varie chian e indicare perché è stata scelta poligon
-
-
-
-
-
-
-
-
-
-
-
+Il caso d'uso che si vuole analizzare riguarda la tracciabilità di un prodotto inserito nella filiera agroalimentare. Un esempio potrebbe essere la tracciabilità di un ipotetico prodotto surgelato, ad esempio un prodotto surgelato, di cui si vuole tenere traccia, in modo immutabile, dalla raccolta delle materie prime fino alla vendita finale.
 
 
 \subsection{Progettazione}
-Il software presenta un'architettura client-server con un componente principale, il server, ed un componente secondario, il client. Il client è un client non corrisponde del tutto alla definizione di client stupido. Si avvicina infatti più alla definizione di fat client.
-Il sistema implementa un'architettura a tre livelli in cui il livello di presentazione è stratificato. I livelli di un'applicazione a tre tier sono:
+
+Il software che si intende sviluppare avrà un'architettura client-server, con un componente principale, il server, ed un componente secondario, il client, ed un'architettura 3-tier (3 livelli). I livelli di un'applicazione a tre tier sono:
 \begin{itemize}
   \item Livello di presentazione
   \item Livello applicazione (business logic)
   \item Livello dati
 \end{itemize}
 
+In questo caso il livello presentazione sarà stratificato, utilizzerà il pattern MVVM (Model-View-ViewModel \cite{wikipediaModelviewviewmodelWikipedia}) in cui il \textit{Model} è costituito da servizi che fanno da layer intermedi tra il livello presentazione e il livello applicazione. La comunicazione tra quesi due livelli avviene tramite chiamate RESTAPI.
+
 \begin{figure}[H]
   \includegraphics[width=1\linewidth]{img/arch0.png}
   \caption{Architettura a livelli}
   \label{fig:architettura a livelli}
 \end{figure}
-
-% (immagine architettura)
-% (descrizione dei livelli)
-
 
 Si è deciso di utilizzare una struttura monolitica e non a microservizi.La comunicazione tra componente server e componente client avviene tramite RestAPI. La costruzione di api rest implica alcuni vincoli architeturali \cite{restfulapiRESTArchitectural}
 
@@ -600,7 +558,7 @@ Specifiche dei casi d'uso:
 
 
 
-\begin{longtable}{|p{2cm}|p{13cm}|}
+\begin{longtable}{|m{2cm}|m{10.5cm}|}
   \multicolumn{2}{c}{\textbf{Trasferimento di un lotto (con accettazione) [INCLUDE trasferimento]}} \\ \hline
   \textbf{ID}              & CU6                                                                    \\ \hline
   \textbf{Attori}          &
@@ -1261,31 +1219,86 @@ Una delle motivazioni principali che hanno spinto verso questa scelta di separaz
 
 \subsubsection{Riflessioni sulla sicurezza degli smart contract} \label{par:openzeppelin}
 
-% https://docs.soliditylang.org/en/v0.8.26/security-considerations.html
-%
+I componenti che incidono sugli aspetti di sicurezza di un sistema software possono essere divisi in 3 grandi macro aree: \cite{slideMetodi}
 
-% \begin{longlisting}
-%   \inputminted{solidity}{./code/Hash.v2.sol}
-%   \caption{Contratto di notarizzazione - versione finale}
-%   \label{listing:hash2a}
-% \end{longlisting}
+\begin{itemize}
+    \item Meccanismi di sicurezza, quali autenticazione, autorizzazione o autid.
+    \item Modello di minaccia, ovvero fare delle assunzioni sull'attaccante: che tipo di informazioni possiede e che poteri riesce ad ottenere. È importante che sia verosimile.
+    \item Politica di gestione delle informazioni (integrità, confidenzialità, disponibilità, autenticità, non ripudio)
+\end{itemize}
 
-% Open zeppelin
-% tipi di attacchi ed eventuali vulnerabilità
+La modellazione di questi elementi e delle loro relazioni definisce la vulnerabilità di un sistema software.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{img/securityComponent.png}
+    \caption{Elementi di sicurezza di un sistema informatico \cite{slideMetodi}}
+    \label{fig:sec1}
+\end{figure}
+
+In questo paragrafo vogliamo porre l'attenzione su di un particolare aspetto della piattaforma che si sta sviluppando, gli smart contract, e valutare le potenziali minacce e le possibili mitigazioni.
+
+La documentazione ufficiale di Solidity elenca una serie di problematiche note \cite{soliditylangSolidityx2014} che possono dare vita a minacce di diversa natura, tra cui:
+
+\begin{itemize}
+    \item Tutto quello che si usa in uno smart contract è pubblico
+    \item L'utilizzo di numeri random è complesso se si vuole evitare la manomissione di questi numeri da parti di chi costruisce il blocco.
+    \item Attacchi di reentrancy
+    \item Gestione del gas (limiti e loop)
+    \item Gestione dell'autenticazione in un contratto che fa uso dei proxy
+    \item Overflow o underflow del complemento a due
+    \item Campo \texttt{origin} della transazione usato per controllo ruoli o autenticazione
+    \item Tipo mapping \textit{sporco}
+\end{itemize}
+
+Anche OWASP fornisce dal 2023 una lista \cite{owaspOWASPSmart} delle principali minacce di uno smart contract. In questa lista possiamo trovare ai primi posti:
+
+\begin{itemize}
+    \item Attacco di reentrancy
+    \item Overflow e underflow di interi
+    \item Dipendenza dal timestamp
+    \item Controllo degli accessi improprio
+\end{itemize}
+
+Nel dettaglio sull'attacco di reentrancy possiamo leggere \quote {
+Un attacco di reentrancy sfrutta la vulnerabilità degli smart contract quando una funzione effettua una chiamata esterna a un altro contratto prima di aggiornare il proprio stato. Ciò consente al contratto esterno, eventualmente malevolo, di rientrare nella funzione originale e ripetere alcune azioni, come i prelievi, utilizzando lo stesso stato. Attraverso tali attacchi, un aggressore può eventualmente prosciugare tutti i fondi di un contratto. } \cite{owaspOWASPSmart}
+
+Le mitigazioni suggerite sono:
+
+\begin{itemize}
+    \item Always ensure that every state change happens before calling external contracts, i.e., update balances or code internally before calling external code. \cite{owaspReentrancy}
+    \item Use function modifiers that prevent reentrancy, like Open Zepplin’s Re-entrancy Guard. \cite{owaspReentrancy}
+\end{itemize}
+
+Si è deciso per questo di utilizzare la guardia della libreria OpenZeppelin.
+
+Un'altra potenziale vulnerabilità in questo contesto è un \textit{Controllo degli accessi improprio}, definito come \quote{
+Una vulnerabilità del controllo degli accessi è una falla nella sicurezza che consente a utenti non autorizzati di accedere o modificare i dati o le funzioni di un contratto. Queste vulnerabilità si verificano quando il codice del contratto non limita correttamente l'accesso in base alle autorizzazioni dell'utente.
+} \cite{owaspOWASPSmart}
+
+e le mitigazioni suggerite sono divere tra cui l'uso del pattern \texttt{Ownable} nell'implementazione fornita da OpenZeppelin.
+
+Pertanto la versione finale del contratto fa uso di Reentrancy  Guard e Ownable, come si vede in figura TODO RIFERIMENTO ALLO SMART CONTRACT !!!!
 
 \subsection{Implementazione - server side}
 
-Sono state effettuate delle scelte a livello implementativo.
-- Ultima versione Java attualmente disponibile (22) in versione OpenJDK.
-- Utilizzo di Keycloak in versione dockerizzata
 
-
+Il caso d'uso implementato nel suo completto ha l'architettura che si vede in figura \ref{fig:architettura}
 
 \begin{figure}[H]
   \includegraphics[width=1\linewidth]{img/architettura.png}
   \caption{Architettura implementata}
   \label{fig:architettura}
 \end{figure}
+In questa sezione verranno analizzate le implementazioni più rilevanti. Sono state omesse descrizioni dettagliate di alcune componenti accessorie quali ad esempio le componenti responsabili della gestione delle operazioni CRUD \footnote{Acronimo che sta per Create, Read, Update, Delete. Rappresenta in breve la maggior parte delle operazioni effettuabili su di una specifica entità.} di entità generiche. Sono state inserite le descrizioni delle medesime operazioni quando rilevanti nel contesto blockchain o digital twin.
+
+La parte implementativa della componente principale, definita \textit{server} o \textit{componente spring}, inizia dalla creazione di un progetto di base utilizzando il tool online Spring Inizializer \footnote{Si tratta di un generatore di boilerplate uffiiciale, disponibile gratuitamente all'indirizzo https://start.spring.io/}.
+
+Successivamente si è proceduto alla configurazione del progetto e alla definizione delle variabili d'ambiente.
+
+Dopo aver ottenuto un progetto Spring embrionale, si è avviata l'integrazione di servizi e componenti, tra cui ASP con clingo, la blockchain con la libreria Web3j e i gemelli digitali usando il client fornito dalle SDK di Microsoft Azure. Si è proceduto anche a configurare il servizio spring come resource server in un contesto Oauth2 e a configurare l'authentication server Keylcoak.
+
+I passi principali di queste integrazioni verranno spiegati di seguito.
 
 
 \subsubsection{Autenticazione}
@@ -1713,6 +1726,19 @@ Lo script scrittore è leggermente più complesso perché effettua la scrittura 
 
 
 \subsection{Implementazione - interfaccia}
+
+Come anticipato nell'introduzione alla parte implementativa della componente server, anche in questo caso si è deciso di utilizzare un generatore di boilerplate, in questo caso si tratta del tool a riga di comando \texttt{ng} (Angular CLI), fornito dagli stessi sviluppatori del progetto principale. Successivamente si è proceduto alla configurazione personalizzata e all'implementazione di servizi che utilizzino le API fornite dalla componente server. I servizi costituiscono la componente \textit{ponte} tra il livello applicazione e il livello presentazione e rappresentano la parte Model del pattern Model-View-ViewModel. La logica di visualizzazione e di aggiornamento della stessa risiede nei componenti di Angular che sfruttano il concetto di collegamento a due vie, 2way databinding. Il 2way dabinding è la caratteristica di un componente di compiere delle azioni (tipicamente aggiornare la View) in risposta a degli eventi nel ViewModel. Un esempio triviale di 2way databinding può essere la visualizzazione di una variabile collegata ad un campo di input che riflette quello che l'utente sta digitando, in tempo reale e senza ricaricare la pagina.
+
+Il passo finale è stata la modellazione di un interfaccia votata alla chiarezza e alla semplicità di utilizzo. Le librerie di componenti utilizzate sono:
+
+\begin{itemize}
+    \item PrimeNG latest 17.18.8 \footnote{https://primeng.org/}
+    \item PrimeFlex 3.3.1 \footnote{https://primeflex.org/}
+\end{itemize}
+
+In entrambi i casi si tratta di progetti con una versione denominata \textit{community} e rilasciata con licenza MIT \footnote{https://en.wikipedia.org/wiki/MIT\_License}.
+
+Nelle pagine che seguono sono stati inserti delle immagini dalla piattaforma con spiegazioni dettagliate delle interfacce.
 
 \paragraph{Login}
 \begin{figure}[H]
