@@ -153,12 +153,14 @@ In questo caso il livello presentazione sarà stratificato, utilizzerà il patte
 
 Si è deciso di utilizzare una struttura monolitica e non a microservizi.La comunicazione tra componente server e componente client avviene tramite RestAPI. La costruzione di api rest implica alcuni vincoli architeturali \cite{restfulapiRESTArchitectural}
 
-- Bisogna definire un'interfaccia uniforme
-- Avere un'architettura client server in cui un componente chiede risorse (client) e un altro le espone (server)
-- Il server è senza stato ovvero il server non ha memoria delle connessioni precedenti
-- Per le richieste in lettura si può prevedere un meccanismo di cache in cui il server propone gli stessi contenuti. Bisogna prevedere anche criteri di aggiornamento e invalidamento dei contenuti in cache.
-- Implementare un sistema a livelli, in cui il client si connette ad un servizio senza conoscere l'architettura interna
-- Codice on demand (opzionale) quando necessario, oltre alle risorse statiche, è possibile inserire del codice eseguibile nella risposta del server
+\begin{itemize}
+  \item Bisogna definire un'interfaccia uniforme
+  \item Avere un'architettura client server in cui un componente chiede risorse (client) e un altro le espone (server)
+  \item Il server è senza stato ovvero il server non ha memoria delle connessioni precedenti
+  \item Per le richieste in lettura si può prevedere un meccanismo di cache in cui il server propone gli stessi contenuti. Bisogna prevedere anche criteri di aggiornamento e invalidamento dei contenuti in cache.
+  \item Implementare un sistema a livelli, in cui il client si connette ad un servizio senza conoscere l'architettura interna
+  \item Codice on demand (opzionale) quando necessario, oltre alle risorse statiche, è possibile inserire del codice eseguibile nella risposta del server
+\end{itemize}
 
 L'autenticazione utilizza il protocollo OAuth2 ed un'istanza di Keycloak come authentication server. \cite{ietf6749OAuth}
 
@@ -169,59 +171,59 @@ L'autenticazione utilizza il protocollo OAuth2 ed un'istanza di Keycloak come au
 \end{figure}
 
 Lo stack tecnologico utilizzato comprende
-Sono stati presi in esame diversi framework per la componente server. In ambito NodeJS sono stati presi in considerazione NestJS ed Express.
 
-\paragraph{Descrizione di Nest}
-Nest (NestJS) is a framework for building efficient, scalable Node.js server-side applications. It uses progressive JavaScript, is built with and fully supports TypeScript (yet still enables developers to code in pure JavaScript) and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming). [...] In recent years, thanks to Node.js, JavaScript has become the "lingua franca" of the web for both front and backend applications. This has given rise to awesome projects like Angular, React and Vue, which improve developer productivity and enable the creation of fast, testable, and extensible frontend applications. However, while plenty of superb libraries, helpers, and tools exist for Node (and server-side JavaScript), none of them effectively solve the main problem of - Architecture. Nest provides an out-of-the-box application architecture which allows developers and teams to create highly testable, scalable, loosely coupled, and easily maintainable applications. The architecture is heavily inspired by Angular. \cite{nestjsDocumentationNestJS}
 
-\paragraph{Descrizione di Express}
+\paragraph{Scelta dello stack tecnologico e considerazioni personali }
+
+Sono stati presi in esame diversi framework per la componente server. In ambito NodeJS sono stati presi in considerazione NestJS ed Express, in ambiente Java invece è stato considerato Spring (SpringBoot).
+
+Nest.JS è un framework che condivide con Spring alcune caratteristiche essenziali quali l'uso dei pattern di inversione del controllo e injection delle dipendenze. È costruito come livello aggiuntivo sopra framework più di basso livello, Express e Fastify, il cui utilizzo è esplicito e lo sviluppatore può decidere se adottare uno piuttosto che l'altro. Sia spring che nestjs, come anche Angular, utilizzano le annotazioni. NestJS condivide con Angular l'uso di Typescript, una versione tipizzata di javascript.
 
 Express è un framework per applicazioni web Node.js flessibile e leggero che fornisce una serie di funzioni avanzate per le applicazioni web e per dispositivi mobili. Con una miriade di metodi di utilità HTTP e middleware a disposizione, la creazione di un'API affidabile è un processo facile e veloce. Express fornisce uno strato sottile di funzionalità di base per le applicazioni web, senza nascondere le funzioni Node.js. \cite{expressjsExpressFramework}
 
-\paragraph{Descrizione di Spring e Spring Boot}
-
-Spring è un framework java. Spring Boot è una sua estensione. Tipicamente si utilizzano insieme, è ormai difficile immaginare di usare Spring senza Spring Boot. Spring si basa sull'inversione del controllo e sull'injection delle dipendenze. Il principio di design di inversione del controllo, IoC, descrive quelle situazioni in cui un componente software applicativo riceve il controllo da parte di un componente di libreria e non il contrario come avviene in una programmazione procedurare tradizionale in cui il software applicativo utilizza (e controlla) le componenti di libreria. In questo contesto si inserisce l'iniezione delle dipendenze che è un altro aspetto fondamentale del framework Spring, che elimina dall'applicazione ogni logica di inizializzazione. È il framework stesso che quando necessario inietta un riferimento all'implementazione del servizio richiesto. \cite{wikipediaInversioneControllo}
-
-Spring Boot crea applicazioni Spring standalone, con un application server embedded a scelta tra Tomcat o Jetty.
-Spring Boot semplifica il processo di sviluppo perché abbraccia lo stile Convention-over-configuration ed utilizza configurazioni standard la dove il programmatore non ha definito una configurazione personalizzata per quel particolare aspetto del software in svilupo. Esistono difatti moduli di spring boot che fanno da "starter" per i diversi moduli di spring. La configurazione, quando è necessaria, non deve in ogni caso essere redatta in XML. \cite{wikipediaSpringBoot}
-
-\paragraph{Scelta del framework e considerazioni personali }
-
-Express.JS si è rivelato eccessivamente granulare e di basso livello per gli scopi del progetto. NestJS e Spring, sebbene molto simili tra di loro, soprattutto su alcuni aspetti di design quali l'inversione del controllo e l'injection delle dipendenze, che sono concetti che si possono ritrovare in entrambi i framework, utilizzano due ecosistemi differenti, il primo NodeJS ed il secondo Java. Si è scelto di utilizzare Java per poter utilizzare a pieno i vantaggi di una programmazione orientata agli oggetti in un ambiente multithread. NodeJs ha una natura asincrona e dalla documentazione di node.js \cite{nodedontblock} si legge
-
-In a one-thread-per-client system like Apache, each pending client is assigned its own thread. If a thread handling one client blocks, the operating system will interrupt it and give another client a turn. The operating system thus ensures that clients that require a small amount of work are not penalized by clients that require more work. Because Node.js handles many clients with few threads, if a thread blocks handling one client's request, then pending client requests may not get a turn until the thread finishes its callback or task. The fair treatment of clients is thus the responsibility of your application. This means that you shouldn't do too much work for any client in any single callback or task. This is part of why Node.js can scale well, but it also means that you are responsible for ensuring fair scheduling. The next sections talk about how to ensure fair scheduling for the Event Loop and for the Worker Pool.
+Spring è un framework java. Spring Boot è una sua estensione. Tipicamente si utilizzano insieme, è ormai difficile immaginare di usare Spring senza Spring Boot. Spring, come già accennato, si basa sull'inversione del controllo e sull'injection delle dipendenze. Il principio di design di inversione del controllo, IoC, descrive quelle situazioni in cui un componente software applicativo riceve il controllo da parte di un componente di libreria e non il contrario come avviene in una programmazione procedurare tradizionale in cui il software applicativo utilizza (e controlla) le componenti di libreria. In questo contesto si inserisce l'iniezione delle dipendenze che è un altro aspetto fondamentale del framework Spring, che elimina dall'applicazione ogni logica di inizializzazione. È il framework stesso che quando necessario inietta un riferimento all'implementazione del servizio richiesto. \cite{wikipediaInversioneControllo} Spring Boot crea applicazioni Spring standalone, con un application server embedded a scelta tra Tomcat o Jetty. Spring Boot semplifica il processo di sviluppo perché abbraccia lo stile Convention-over-configuration ed utilizza configurazioni standard la dove il programmatore non ha definito una configurazione personalizzata per quel particolare aspetto del software in svilupo. Esistono difatti moduli di spring boot che fanno da "starter" per i diversi moduli di spring. La configurazione, quando è necessaria, non deve in ogni caso essere redatta in XML. \cite{wikipediaSpringBoot}
 
 
-Il server utilizza il pattern repository ed altri pattern in maniera più o meno esplicita
+Dopo aver valutato le caratteristiche dei singoli framewor, si è deciso che Express.JS si è rivelato eccessivamente granulare e di basso livello per gli scopi del progetto. NestJS e Spring, sebbene molto simili tra di loro, soprattutto su alcuni aspetti di design quali l'inversione del controllo e l'injection delle dipendenze, che sono concetti che si possono ritrovare in entrambi i framework, utilizzano due ecosistemi differenti, il primo NodeJS ed il secondo Java. Si è scelto di utilizzare Java per poter sfruttare a pieno i vantaggi di una programmazione orientata agli oggetti in un ambiente votato al multithread.
 
-Gestione delle transazioni
-% Una transazione è un'operazione atomica che avviene all'interno di un'applicazione server o su una base di dati. Tipicamente le transazioni hanno
-% vedi https://www.baeldung.com/spring-programmatic-transaction-management#transaction-template
-% TRANSAZIONI HIBERNATE e TRANSAZIONI DI SPRING
-% https://docs.jboss.org/hibernate/stable/orm/userguide/html_single/Hibernate_User_Guide.html#transactions
+Altra caratteristica importante che ha fatto preferire spring rispetto agli altri framework presi in esame è sicuramente la gestione delle transazioni, globalmente ovvero lato applicativo ma anche tramite hibernate quindi sul livello della persistenza. Una transazione è un'operazione atomica che avviene all'interno di un'applicazione server o su una base di dati. Più in dettaglio le transazioni possono essere:
+\begin{itemize}
+  \item Fisiche (transazioni della base di dati)
+  \item Logiche (riferite ad un contesto generico di persistenza)
+  \item Applicative (con riferimento al pattern architetturale Unit-of-Work)
+\end{itemize}
+In Hibernate le prime due vengono trattate come sinonimi. \cite{jbossHibernateUserArch}. Spring Boot abilita in automatico la gestione delle transazioni ed è possibile utilizzare l'annotazione \texttt{@Transactional} su componenti di varia natura, tipicamente servizi. Tramite l'annotazione si possono configurare diversi aspetti della transazione:
+\begin{itemize}
+  \item tipo di propagazione
+  \item livello di isolamento
+  \item timeout
+  \item flag readonly
+  \item regole di rollback
+\end{itemize}
+Le eccezioni che attivano un rollback sono eccezzioni non gestite e che avvengono a tempo di esecuzione (unchecked e runtime). Si può forzare un comportamento diverso con alcuni parametri nell'annotazione. È possibile utilizzare tramite l'annotazione le transazioni del pacchetto \texttt{jakarta.transaction.Transactional} al posto delle transazioni di spring. \cite{springUsingTransactional}
 
-LATO AUTENTICAZIONE
+Spring utilizza alcuni pattern:
 
+\begin{itemize}
+  \item Singleton: ogni container di inversione del controllo o contesto applicativo esisten una sola istanza di una specifica classe
+  \item Factory Method: sono alla base del concetto di iniezione delle dipendenze.
+  \item Proxy: gli oggetti provenienti dalla persstenza quando caricati in maniera lazy vengono sostituiti da un oggetto proxy. L'oggetto reale reale è istanziato quando acceduto per la prima volta. Vengono usati anche per il controllo degli accessi nei metodi transazionali.
+  \item Template Method: spring utilizza template per i contesti applicativi più comuni, ad esempio JDBC, JPA e transazioni.
+\end{itemize}
 
-LATO CLIENT
-
-I framework lato client presi in esame sono Vue.js, Angular e React.
+Per l'implementazione della componete client sono stai presi in esame i tre maggiori framework javascript ovvero Vue.js, Angular e React.
 I dati di diffusione di questi framework li pongono ai primi tre posti di una ipotetica classifica basata sull'utilizzo misurato in numero di repository pubblici. Se si guarda all'utilizzo al primo posto troviamo React seguito da Vue e poi da Angular. Riguardo l'awareness (conoscenza) invece Angular passsa in prima posizione, Vue mantiene il secondo posto e React scivola in terza posizione \cite{stateofjsStateJavaScript}.
 
-Vue.js
-
 Vue is a JavaScript framework for building user interfaces. It builds on top of standard HTML, CSS, and JavaScript and provides a declarative, component-based programming model that helps you efficiently develop user interfaces of any complexity. [...] Vue is a framework and ecosystem that covers most of the common features needed in frontend development. But the web is extremely diverse - the things we build on the web may vary drastically in form and scale. With that in mind, Vue is designed to be flexible and incrementally adoptable. [...] Despite the flexibility, the core knowledge about how Vue works is shared across all these use cases. Even if you are just a beginner now, the knowledge gained along the way will stay useful as you grow to tackle more ambitious goals in the future. If you are a veteran, you can pick the optimal way to leverage Vue based on the problems you are trying to solve, while retaining the same productivity. This is why we call Vue "The Progressive Framework": it's a framework that can grow with you and adapt to your needs. \cite{vuejsVuejs}
-
-React
 
 React (noto anche come React.js o ReactJS) è una libreria open-source, front-end, JavaScript per la creazione di interfacce utente. È mantenuto da Meta (già Facebook) e da una comunità di singoli sviluppatori e aziende.
 React può essere utilizzato come base nello sviluppo di applicazioni a pagina singola ma è utilizzabile anche su mobile tramite React Native, una libreria sempre sviluppata da Meta che tramuta i componenti React in componenti nativi (iOS e Android). Tuttavia, React si occupa solo del rendering dei dati sul DOM, pertanto la creazione di applicazioni React richiede generalmente l'uso di librerie aggiuntive per lo state management e il routing. Redux e React Router sono i rispettivi esempi di tali librerie. A questo fine è possibile utilizzare anche dei framework terzi, come ad esempio Next.js. \cite{wikipediaReactweb}
 
-Angular.JS
-
 Angular is a web framework that empowers developers to build fast, reliable applications. Maintained by a dedicated team at Google, Angular provides a broad suite of tools, APIs, and libraries to simplify and streamline your development workflow. Angular gives you a solid platform on which to build fast, reliable applications that scale with both the size of your team and the size of your codebase. \cite{angularAngular}
 
-Scelta e motivazioni
+La scelta è ricaduta su Angular per alcune sue caratteristiche interessanti: l'utilizzo delle annotazioni, l'uso di typescript e il 2way databinding.
+
+
 
 \subsubsection{Analisi dei requisiti}
 
@@ -909,6 +911,7 @@ Hibernate not only takes care of the mapping from Java classes to database table
 
 La definizione di un modello di dominio a partire dai concetti principali che caratterizzano il modello di business individuato per l'applicazione.
 Sono stati individuati i seguenti concetti propri dell'ambito applicativo.
+
 Entità e attributi:
 
 \begin{itemize}
@@ -1222,18 +1225,18 @@ Una delle motivazioni principali che hanno spinto verso questa scelta di separaz
 I componenti che incidono sugli aspetti di sicurezza di un sistema software possono essere divisi in 3 grandi macro aree: \cite{slideMetodi}
 
 \begin{itemize}
-    \item Meccanismi di sicurezza, quali autenticazione, autorizzazione o autid.
-    \item Modello di minaccia, ovvero fare delle assunzioni sull'attaccante: che tipo di informazioni possiede e che poteri riesce ad ottenere. È importante che sia verosimile.
-    \item Politica di gestione delle informazioni (integrità, confidenzialità, disponibilità, autenticità, non ripudio)
+  \item Meccanismi di sicurezza, quali autenticazione, autorizzazione o autid.
+  \item Modello di minaccia, ovvero fare delle assunzioni sull'attaccante: che tipo di informazioni possiede e che poteri riesce ad ottenere. È importante che sia verosimile.
+  \item Politica di gestione delle informazioni (integrità, confidenzialità, disponibilità, autenticità, non ripudio)
 \end{itemize}
 
 La modellazione di questi elementi e delle loro relazioni definisce la vulnerabilità di un sistema software.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.5\linewidth]{img/securityComponent.png}
-    \caption{Elementi di sicurezza di un sistema informatico \cite{slideMetodi}}
-    \label{fig:sec1}
+  \centering
+  \includegraphics[width=0.5\linewidth]{img/securityComponent.png}
+  \caption{Elementi di sicurezza di un sistema informatico \cite{slideMetodi}}
+  \label{fig:sec1}
 \end{figure}
 
 In questo paragrafo vogliamo porre l'attenzione su di un particolare aspetto della piattaforma che si sta sviluppando, gli smart contract, e valutare le potenziali minacce e le possibili mitigazioni.
@@ -1241,23 +1244,23 @@ In questo paragrafo vogliamo porre l'attenzione su di un particolare aspetto del
 La documentazione ufficiale di Solidity elenca una serie di problematiche note \cite{soliditylangSolidityx2014} che possono dare vita a minacce di diversa natura, tra cui:
 
 \begin{itemize}
-    \item Tutto quello che si usa in uno smart contract è pubblico
-    \item L'utilizzo di numeri random è complesso se si vuole evitare la manomissione di questi numeri da parti di chi costruisce il blocco.
-    \item Attacchi di reentrancy
-    \item Gestione del gas (limiti e loop)
-    \item Gestione dell'autenticazione in un contratto che fa uso dei proxy
-    \item Overflow o underflow del complemento a due
-    \item Campo \texttt{origin} della transazione usato per controllo ruoli o autenticazione
-    \item Tipo mapping \textit{sporco}
+  \item Tutto quello che si usa in uno smart contract è pubblico
+  \item L'utilizzo di numeri random è complesso se si vuole evitare la manomissione di questi numeri da parti di chi costruisce il blocco.
+  \item Attacchi di reentrancy
+  \item Gestione del gas (limiti e loop)
+  \item Gestione dell'autenticazione in un contratto che fa uso dei proxy
+  \item Overflow o underflow del complemento a due
+  \item Campo \texttt{origin} della transazione usato per controllo ruoli o autenticazione
+  \item Tipo mapping \textit{sporco}
 \end{itemize}
 
 Anche OWASP fornisce dal 2023 una lista \cite{owaspOWASPSmart} delle principali minacce di uno smart contract. In questa lista possiamo trovare ai primi posti:
 
 \begin{itemize}
-    \item Attacco di reentrancy
-    \item Overflow e underflow di interi
-    \item Dipendenza dal timestamp
-    \item Controllo degli accessi improprio
+  \item Attacco di reentrancy
+  \item Overflow e underflow di interi
+  \item Dipendenza dal timestamp
+  \item Controllo degli accessi improprio
 \end{itemize}
 
 Un attacco di reentrancy sfrutta la vulnerabilità degli smart contract quando una funzione effettua una chiamata esterna a un altro contratto prima di aggiornare il proprio stato. Ciò consente al contratto esterno, eventualmente malevolo, di rientrare nella funzione originale e ripetere alcune azioni, come i prelievi, utilizzando lo stesso stato. Attraverso tali attacchi, un aggressore può eventualmente prosciugare tutti i fondi di un contratto. \cite{owaspOWASPSmart}
@@ -1265,8 +1268,8 @@ Un attacco di reentrancy sfrutta la vulnerabilità degli smart contract quando u
 Le mitigazioni suggerite sono:
 
 \begin{itemize}
-    \item Always ensure that every state change happens before calling external contracts, i.e., update balances or code internally before calling external code. \cite{owaspReentrancy}
-    \item Use function modifiers that prevent reentrancy, like Open Zepplin’s Re-entrancy Guard. \cite{owaspReentrancy}
+  \item Always ensure that every state change happens before calling external contracts, i.e., update balances or code internally before calling external code. \cite{owaspReentrancy}
+  \item Use function modifiers that prevent reentrancy, like Open Zepplin’s Re-entrancy Guard. \cite{owaspReentrancy}
 \end{itemize}
 
 Si è deciso per questo di utilizzare la guardia della libreria OpenZeppelin.
@@ -1728,8 +1731,8 @@ Come anticipato nell'introduzione alla parte implementativa della componente ser
 Il passo finale è stata la modellazione di un interfaccia votata alla chiarezza e alla semplicità di utilizzo. Le librerie di componenti utilizzate sono:
 
 \begin{itemize}
-    \item PrimeNG latest 17.18.8 \footnote{https://primeng.org/}
-    \item PrimeFlex 3.3.1 \footnote{https://primeflex.org/}
+  \item PrimeNG latest 17.18.8 \footnote{https://primeng.org/}
+  \item PrimeFlex 3.3.1 \footnote{https://primeflex.org/}
 \end{itemize}
 
 In entrambi i casi si tratta di progetti con una versione denominata \textit{community} e rilasciata con licenza MIT \footnote{https://en.wikipedia.org/wiki/MIT\_License}.
@@ -1890,8 +1893,8 @@ A Marida, per il supporto e la gioia diffusa a piene mani.
 \\
 Ad Angelo, per gli animati confronti, i preziosi suggerimenti e l’effetto \textit{paperella}.
 \\
-Ai colleghi di Artémat, per la loro vicinanza.
-\\
 A tutto il corso di laurea, per avermi accolta e fatta crescere come persona e come informatica.
+\\
+Ai colleghi di Artémat, per la loro vicinanza.
 \vspace*{\fill}
 \end{document}
