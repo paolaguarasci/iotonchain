@@ -1275,7 +1275,7 @@ Si è deciso per questo di utilizzare la guardia della libreria OpenZeppelin.
 
 Un'altra potenziale vulnerabilità in questo contesto è un \textit{Controllo degli accessi improprio}, definito come una vulnerabilità del controllo degli accessi è una falla nella sicurezza che consente a utenti non autorizzati di accedere o modificare i dati o le funzioni di un contratto. Queste vulnerabilità si verificano quando il codice del contratto non limita correttamente l'accesso in base alle autorizzazioni dell'utente. \cite{owaspOWASPSmart} Le mitigazioni suggerite sono diverse tra cui l'uso del pattern \texttt{Ownable} nell'implementazione fornita da OpenZeppelin.
 
-Pertanto la versione finale del contratto fa uso di Reentrancy  Guard e Ownable, come si vede in figura
+Pertanto la versione finale del contratto fa uso di Reentrancy Guard e Ownable, come si vede in figura
 % TODO RIFERIMENTO ALLO SMART CONTRACT !!!!
 
 \subsection{Implementazione - server side}
@@ -1699,11 +1699,11 @@ Per distribuire il contratto utilizzato, Hash, è stato necessario costruire un 
 
 La fase di testing dei contratti riveste un ruolo fondamentale durante lo sviluppo degli stessi perché, come si è visto, i contratti sono immutabili e complessi da debuggare. Pertanto è conveniente utilizzare un approccio orientato al testing, come il Test Drive Development (TDD). Il contratto hash è stato largamente testato usando le librerie per tdd mocha e chai integrate in HardHat.
 
-% \begin{longlisting}[H]
-%   \inputminted{bash}{./code/hash.test.sh}
-%   \caption{Output testing contratto}
-%   \label{listing:hashxx}
-% \end{longlisting}
+\begin{longlisting}[H]
+  \inputminted{bash}{./code/coverage.sh}
+  \caption{Output testing e coverage del contratto con previsione di consumo gas}
+  \label{listing:hashxx}
+\end{longlisting}
 
 Solidity mette a disposizione gli eventi che sono definiti come un'astrazione del concetto di log sulle macchine virtuali etherium \footnote{Documentazione ufficiale https://docs.soliditylang.org/en/v0.8.26/contracts.html\#events}. A ben guardare però possono essere utilizzati con un pattern observer ed inseriti in un più ampio contesto di programmazione ad eventi. Per effettuare test di integrazione riguardo gli eventi e che coinvolgessero anche il modulo Spring sono stati utilizzati dei semplici script con ruoli di ascoltatori e scrittori. L'ascoltatore si pone in ascolto sugli eventi emessi dal contratto e ad ogni evento ricevuto compie un'azione triviale (effettua una stampa).
 

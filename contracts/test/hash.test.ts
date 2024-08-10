@@ -38,7 +38,7 @@ describe('Hash', function () {
     });
   });
 
-  describe('Hash', function () {
+  describe('Sign', function () {
     it('Should set the right value', async function () {
       const { hash } = await loadFixture(deployFixture);
       let dataNow = cloneDeep(data);
