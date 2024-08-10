@@ -831,3 +831,263 @@ for i in *.jpg; do
 done
 
 
+
+Introduzione
+Il contesto in cui si colloca la tesi. Se si tratta di una tesi sperimentale, questa descrizione deve porre bene in evidenza qual è il problema irrisolto che il lavoro di tesi vuole affrontare. Se si tratta di una tesi legata allo sviluppo di un particolare modulo software, bisogna porre in evidenza il deficit che questo modulo software va a colmare. Se si tratta di una tesi compilativa, bisogna porre in evidenza la mancanza di documentazione organica correlata all'argomento.
+Gli obiettivi della propria tesi, espressi alla luce del contesto in cui questa si colloca.
+Un elenco dei contributi più importanti della propria tesi. Ad esempio, per una tesi di sviluppo, questo può essere l'elenco delle funzionalità più utili e originali implementate.
+Un elenco dei problemi tecnici che è stato necessario risolvere.
+La descrizione del contenuto della propria tesi, capitolo per capitolo.
+Conclusione
+In genere nelle conclusioni si riassume il lavoro svolto, lo si commenta alla luce dei risultati ottenuti, e si indicano possibili direzioni in cui il lavoro potrebbe continuare.
+
+
+- titolo (ci vanno le indicazioni come il frontespizio della tesi)
+- contesto e motivazioni
+  - L’argomento della tua tesi
+  – Quali sono le motivazioni per il problema che è stato
+  risolto/argomento che è stato affrontato
+  – Eventualmente Indicare esplicitamente il problema
+  che è stato risolto
+- contributo
+  – I risultati della tesi in termini di
+  • Sistemi software / Software Systems
+- conclusioni
+  - Hai studiato il problema X
+  - Che lo hai risolto così
+  - Ottenendo questo (meraviglioso) risultato
+- Thanks for your attention!!
+
+
+lista librerie usare
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.1</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+  <groupId>it.unical</groupId>
+  <artifactId>IoTOnChain</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>IoTOnChain</name>
+  <description>Tracciabilita&apos; di filiera con iot e blockchain</description>
+  <url/>
+  <licenses>
+    <license/>
+  </licenses>
+  <developers>
+    <developer/>
+  </developers>
+  <scm>
+    <connection/>
+    <developerConnection/>
+    <tag/>
+    <url/>
+  </scm>
+  <properties>
+    <java.version>22</java.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>1.5.5.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-fileupload2-jakarta</artifactId>
+      <version>2.0.0-M1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.web3j</groupId>
+      <artifactId>core</artifactId>
+      <version>4.12.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+      <version>1.18.32</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.azure/azure-core -->
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-core</artifactId>
+      <version>1.50.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.18.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.potassco</groupId>
+      <artifactId>clingo</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-digitaltwins-core</artifactId>
+      <version>1.3.22</version>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-identity</artifactId>
+      <version>1.13.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.javatuples</groupId>
+      <artifactId>javatuples</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <!--        <dependency>-->
+    <!--            <groupId>org.springframework.boot</groupId>-->
+    <!--            <artifactId>spring-boot-starter-actuator</artifactId>-->
+    <!--        </dependency>-->
+
+
+    <!--        <dependency>-->
+    <!--            <groupId>org.springframework.boot</groupId>-->
+    <!--            <artifactId>spring-boot-starter-websocket</artifactId>-->
+    <!--        </dependency>-->
+
+
+    <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core &ndash;&gt;-->
+    <!--        <dependency>-->
+    <!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+    <!--            <artifactId>jackson-core</artifactId>-->
+    <!--            <version>2.17.2</version>-->
+    <!--        </dependency>-->
+
+    <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind &ndash;&gt;-->
+    <!--        <dependency>-->
+    <!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+    <!--            <artifactId>jackson-databind</artifactId>-->
+    <!--            <version>2.17.2</version>-->
+    <!--        </dependency>-->
+
+
+    <!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-boot-starter &ndash;&gt;-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.keycloak</groupId>-->
+    <!--            <artifactId>keycloak-spring-boot-starter</artifactId>-->
+    <!--            <version>24.0.5</version>-->
+    <!--        </dependency>-->
+
+
+    <!--        <dependency>-->
+    <!--            <groupId>org.springframework.security</groupId>-->
+    <!--            <artifactId>spring-security-oauth2-client</artifactId>-->
+    <!--            <version>6.3.1</version>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-admin-client</artifactId>
+      <version>25.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+
+
+      <plugin>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok-maven-plugin</artifactId>
+        <version>1.18.20.0</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>testDelombok</goal>
+              <goal>delombok</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <source>22</source>
+          <target>22</target>
+
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>1.18.32</version>
+            </path>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>1.5.5.Final</version>
+            </path>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok-mapstruct-binding</artifactId>
+              <version>0.2.0</version>
+            </path>
+            <path>
+              <groupId>org.hibernate.orm</groupId>
+              <artifactId>hibernate-jpamodelgen</artifactId>
+              <version>6.4.3.Final</version>
+
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <compilerArg>
+              -Amapstruct.defaultComponentModel=spring
+            </compilerArg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
