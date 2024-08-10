@@ -131,11 +131,11 @@ Le reti blockchain principali hanno definite \textit{layer 1} e rappresentalo re
 \subsection{Concetti di Tracciabilità e di Filiera}
 \section{Analisi dello stato dell’arte della tecnologia blockchain applicata alle supplychain}
 \section{Definizione di un caso d’uso}
-Il caso d'uso che si vuole analizzare riguarda la tracciabilità di un prodotto inserito in un contesto di filiera. Il progetto generalizza molti aspetti della tracciabilità rendendolo di fatto agnostico rispetto al tipo di filiera che riesce a gestire. Nello specifico il prototipo tratta una filiera agroalimentare, ad esempio un prodotto surgelato di cui si vuole tenere traccia, in modo immutabile, dalla raccolta delle materie prime fino alla vendita finale. Si è deciso di implementare una piattaforma di gestione della filiera sottoforma di applicazione web che integri gli aspetti tecnologici visti in precedenza: l'utilizzo dei gemelli digitali in un contesto di blockchain e che per qualche aspetto della logica di business risolva un quesito computazionale utilizzando l'answer set programming. Da qui in avanti sarà descritta la piattaforma software iotchain, analizzando la fase progettuale e poi dettagliando la fase implementativa. Descrivere minuziosamente ogni aspetto di un software che si è rivelato essere sufficiente complesso non è lo scopo di questa tesi, piuttosto ci si concentrerà di volta in volta sugli aspetti principali della progettazione e dell'implementazione con collegamenti diretti alle tecnologie richieste.
+Il caso d'uso che si vuole analizzare riguarda la tracciabilità di un prodotto inserito in un contesto di filiera. Il progetto generalizza molti aspetti della tracciabilità rendendolo di fatto agnostico rispetto al tipo di filiera che riesce a gestire. Nello specifico il prototipo tratta una filiera agroalimentare, ad esempio un prodotto surgelato di cui si vuole tenere traccia, in modo immutabile, dalla raccolta delle materie prime fino alla vendita finale. Si è deciso di implementare una piattaforma di gestione della filiera che integri gli aspetti tecnologici visti in precedenza: l'utilizzo dei gemelli digitali in un contesto di blockchain e che per qualche aspetto della logica di business risolva un quesito computazionale utilizzando l'answer set programming. Da qui in avanti sarà descritta la piattaforma software iotchain, analizzando la fase progettuale e poi dettagliando la fase implementativa. Descrivere minuziosamente ogni aspetto di un software che si è rivelato essere sufficiente complesso non è lo scopo di questa tesi, piuttosto ci si concentrerà di volta in volta sugli aspetti principali della progettazione e dell'implementazione con collegamenti diretti alle tecnologie richieste.
 
 \subsection{Progettazione}
 
-Il software che si intende sviluppare è una web app che avrà un'architettura client-server, con un componente principale, il server, ed un componente secondario, il client, ed un'architettura 3-tier (3 livelli). I livelli di un'applicazione a tre tier sono:
+Il software che si intende sviluppare avrà un'architettura client-server, con un componente principale, il server, ed un componente secondario, il client, ed un'architettura 3-tier (3 livelli). I livelli di un'applicazione a tre tier sono:
 \begin{itemize}
   \item Livello di presentazione
   \item Livello applicazione (business logic)
@@ -1296,31 +1296,6 @@ Successivamente si è proceduto alla configurazione del progetto e alla definizi
 
 Dopo aver ottenuto un progetto Spring embrionale, si è avviata l'integrazione di servizi e componenti, tra cui ASP con clingo, la blockchain con la libreria Web3j e i gemelli digitali usando il client fornito dalle SDK di Microsoft Azure. Si è proceduto anche a configurare il servizio spring come resource server in un contesto Oauth2 e a configurare l'authentication server Keylcoak.
 
-Le dipendenze del modulo Spring sono le seguenti:
-
-\begin{itemize}
-\item spring-boot-starter-data-jpa 3.3.1
-\item spring-boot-starter-web 3.3.1
-\item spring-boot-configuration-processor 3.3.1
-\item mariadb-java-client
-\item javatuples 1.2
-\item lombok 1.18.32
-\item mapstruct 1.5.5.Final
-\item commons-fileupload2-jakarta 2.0.0-M1
-\item spring-boot-starter-security 3.3.1
-\item spring-boot-starter-oauth2-resource-server 3.3.1
-\item keycloak-admin-client 25.0.2
-\item jsoup 1.18.1
-\item clingo 1.1.0
-\item org.web3j.core 4.12.0
-\item azure-core 1.50.0
-\item azure-digitaltwins-core 1.3.22
-\item azure-identity 1.13.1
-\end{itemize}
-
-
-
-
 I passi principali di queste integrazioni verranno spiegati di seguito.
 
 
@@ -1688,7 +1663,7 @@ Lo smart contract utilizzato ha una funzione di notarizzazione. Il contratto è 
   \label{listing:hash1}
 \end{listing}
 
-In una fase successiva sono state apportate alcune evoluzioni. Si è deciso di implementare la classe Ownable di OpenZeppelin, per ragioni di sicurezza espresse nel paragrafo dedicato \ref{par:openzeppelin}, e si è deciso di distribuire il contratto utilizzando il concetto di proxy di OpenZeppelin. Una delle maggiori problematiche emerse durante lo sviluppo è stata l'impossibilità di avere un unico riferimento che rimanesse il medesimo anche a dispetto di numerose redistribuzioni del contratto stesso. I contratti per definizione, essendo immutabili per definizione, non si possono aggiornare, senza l'utilizzo dei proxy l'aggiornamento di un contratto equivale ad una nuova distribuzione che lascia in essere la vecchia distribuzione, senza nessun riferimento ad essa. I proxy forniti da OpenZeppelin si frappongono tra l'utilizzatore e il contratto vero e proprio consentendo di avere sempre una versione aggiornata del contratto e utilizzando lo stesso indirizzo (quello del proxy). OpenZeppelin fornisce diverse implementazioni del concetto di proxy. Una di queste prevede semplicemente l'utilizzo della classe \texttt{Initializable}, che comporta l'eliminazione del costruttore e l'utilizzo di un metodo di inizializzazione. Questo perché i proxy non utilizzato il costruttore. \ref{openzeppelinProxiesOpenZeppelin}
+In una fase successiva sono state apportate alcune evoluzioni. Si è deciso di implementare la classe Ownable di OpenZeppelin, per ragioni di sicurezza espresse nel paragrafo dedicato \ref{par:openzeppelin}, e si è deciso di distribuire il contratto utilizzando il concetto di proxy di OpenZeppelin. Una delle maggiori problematiche emerse durante lo sviluppo è stata l'impossibilità di avere un unico riferimento che rimanesse il medesimo anche a dispetto di numerose redistribuzioni del contratto stesso. I contratti, essendo immutabili per definizione, non si possono aggiornare e senza l'utilizzo dei proxy l'aggiornamento di un contratto equivale ad una nuova distribuzione che lascia comunque in essere la vecchia distribuzione, senza nessun riferimento ad essa. I proxy forniti da OpenZeppelin si frappongono tra l'utilizzatore e il contratto vero e proprio consentendo di avere sempre una versione aggiornata del contratto e utilizzando lo stesso indirizzo (quello del proxy). OpenZeppelin fornisce diverse implementazioni del concetto di proxy. Una di queste prevede semplicemente l'utilizzo della classe \texttt{Initializable}, che comporta l'eliminazione del costruttore e l'utilizzo di un metodo di inizializzazione. Questo perché i proxy non utilizzato il costruttore. \ref{openzeppelinProxiesOpenZeppelin}
 
 Quindi la versione finale del contratto ha questa forma:
 
@@ -1909,16 +1884,7 @@ In questa sezione della piattaforma è visibile una lista di elementi documental
 % \section*{Ringraziamenti}
 \centering
 \vspace*{\fill}
-Al Professore Alviano, per la stima e la fiducia.
-\\
-Alla mia famiglia, per la pazienza in questi anni e soprattutto durante il periodo di stesura della tesi.
-\\
-A Marida, per il supporto e la gioia diffusa a piene mani.
-\\
-Ad Angelo, per gli animati confronti, i preziosi suggerimenti e l’effetto \textit{paperella}.
-\\
-A tutto il corso di laurea, per avermi accolta e fatta crescere come persona e come informatica.
-\\
-Ai colleghi di Artémat, per la loro vicinanza.
+Ringraziamenti
+% TODO
 \vspace*{\fill}
 \end{document}

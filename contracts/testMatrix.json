@@ -1,0 +1,209 @@
+{
+ "contracts/Box.sol": {
+  "15": [],
+  "20": [],
+  "21": [],
+  "25": []
+ },
+ "contracts/Hash.sol": {
+  "20": [
+   {
+    "title": "Should set the right owner",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "24": [
+   {
+    "title": "Should set the right owner",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "28": [
+   {
+    "title": "Should set the right owner",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should set the right value",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should get error if try to sign same hash",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "hash emits an event",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "29": [
+   {
+    "title": "Should set the right owner",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should set the right value",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should get error if try to sign same hash",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "hash emits an event",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "31": [
+   {
+    "title": "Should set the right owner",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should set the right value",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should get error if try to sign same hash",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "hash emits an event",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "32": [
+   {
+    "title": "Should set the right owner",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should set the right value",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should get error if try to sign same hash",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "hash emits an event",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "38": [
+   {
+    "title": "Should set the right owner",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should set the right value",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should get error if try to sign same hash",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "hash emits an event",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "42": [
+   {
+    "title": "Should set the right value",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should be able to access the check function from another account",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "48": [
+   {
+    "title": "Should be able to get hashed data",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should get error if try to get not alredy hashed data",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "49": [
+   {
+    "title": "Should be able to get hashed data",
+    "file": "test/hash.test.ts"
+   },
+   {
+    "title": "Should get error if try to get not alredy hashed data",
+    "file": "test/hash.test.ts"
+   }
+  ],
+  "50": [
+   {
+    "title": "Should be able to get hashed data",
+    "file": "test/hash.test.ts"
+   }
+  ]
+ },
+ "contracts/Token.sol": {
+  "19": [],
+  "23": [],
+  "27": [],
+  "34": [],
+  "41": [],
+  "50": []
+ },
+ "contracts/TokenV2.sol": {
+  "39": [],
+  "43": [],
+  "47": [],
+  "58": [],
+  "59": [],
+  "60": [],
+  "65": [],
+  "66": [],
+  "71": [],
+  "78": [],
+  "84": [],
+  "86": [],
+  "87": [],
+  "90": [],
+  "96": [],
+  "97": [],
+  "103": [],
+  "104": [],
+  "106": [],
+  "107": [],
+  "108": [],
+  "109": [],
+  "110": [],
+  "112": [],
+  "113": [],
+  "116": [],
+  "125": [],
+  "136": [],
+  "178": [],
+  "179": [],
+  "180": [],
+  "181": [],
+  "193": [],
+  "195": [],
+  "206": [],
+  "207": [],
+  "211": [],
+  "212": [],
+  "217": [],
+  "220": [],
+  "228": [],
+  "237": [],
+  "242": [],
+  "243": [],
+  "247": [],
+  "250": [],
+  "257": [],
+  "259": [],
+  "273": [],
+  "277": [],
+  "283": []
+ }
+}
