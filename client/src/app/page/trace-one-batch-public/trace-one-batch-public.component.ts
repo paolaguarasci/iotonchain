@@ -10,6 +10,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
+import { PublicService } from '../../services/public.service';
 
 @Component({
   selector: 'app-trace-one-batch-public',
@@ -23,11 +24,11 @@ export class TraceOneBatchPublicComponent implements OnInit {
   productionSteps: any[] = []
   companyLogged !: any;
   faWheatAwn = faWheatAwn
-
+  company !: any;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private companyBatchService: CompanyBatchService,
+    private publicService: PublicService,
     private notarizeService: NotarizationService,
     private keyclokService: KeycloakService
   ) { }
@@ -63,9 +64,10 @@ export class TraceOneBatchPublicComponent implements OnInit {
     }
 
     this.route.paramMap.subscribe((param: any) => {
-      this.id = param.get("id");
+      this.id = param.get("batchid");
+      this.company = param.get("company");
       // this.makeTemplate();
-      this.companyBatchService.getTrack(this.id).subscribe({
+      this.publicService.getOneTrackInfo(this.company, this.id).subscribe({
         next: (res: any) => {
           console.log("RES ", res)
           this.productionSteps = []

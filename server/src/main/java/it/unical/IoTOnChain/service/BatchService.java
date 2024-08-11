@@ -32,4 +32,6 @@ public interface BatchService {
   List<String> findBatchesByQuantityAndType(String companyName, String productType, int quantity) throws IOException, URISyntaxException;
   
   Batch getOneByIdAndCompany(Company company, String id);
+  
+  Map<String, Object> trackInfoPublic(String companyName, String idCleaned);
 }

@@ -24,6 +24,18 @@ export const initializeKeycloak = (keycloak: KeycloakService) => {
         realm: environment.keycloakRealm,
         clientId: environment.keycloakClientId,
       },
+
+      shouldAddToken: (request) => {
+        const { method, url } = request;
+        const isGetRequest = 'GET' === method.toUpperCase();
+        const acceptablePaths = ['/assets', '/clients/public'];
+        const isAcceptablePathMatch = acceptablePaths.some((path) =>
+          url.includes(path)
+        );
+
+        return !(isGetRequest && isAcceptablePathMatch);
+      },
+
       shouldUpdateToken(request) {
         return !request.headers.get('token-update') === false;
       },

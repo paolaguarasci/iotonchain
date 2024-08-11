@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { mapToCanActivate, Routes } from '@angular/router';
 import { CreateStepsComponent } from './page/create-steps/create-steps.component';
 import { ComapnyBatchListComponent } from './page/batch-list/product-list.component';
 import { ProductTypeListComponent } from './page/product-type-list/product-type-list.component';
@@ -13,63 +13,77 @@ import { NotarizeListComponent } from './page/notarize-list/notarize-list.compon
 import { TransfertListComponent } from './page/transfert-list/transfert-list.component';
 import { BatchSingleComponent } from './page/batch-single/batch-single.component';
 import { TraceOneBatchPublicComponent } from './page/trace-one-batch-public/trace-one-batch-public.component';
+import { AuthGuard } from './utils/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'public-track/:company/:batchid',
+    component: TraceOneBatchPublicComponent,
+  },
+  {
     path: '',
     component: DashboardComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'product',
     component: ComapnyBatchListComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'product/new',
     component: CreateOneBatchComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'document',
     component: DocumentsListComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'product-type',
     component: ProductTypeListComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'production-step',
     component: CreateStepsComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'chain/:id',
     component: LandingChainComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'truck-list',
     component: TruckListComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'track/:id',
     component: TraceOneBatchComponent,
-  },
-  {
-    path: 'public-track/:id',
-    component: TraceOneBatchPublicComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'batch/:id',
     component: BatchSingleComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'transport',
     component: TransportComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'notarize-list',
-    component: NotarizeListComponent
+    component: NotarizeListComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   },
   {
     path: 'transfert-list',
-    component: TransfertListComponent
+    component: TransfertListComponent,
+    canActivate: mapToCanActivate([AuthGuard])
   }
 
 ];

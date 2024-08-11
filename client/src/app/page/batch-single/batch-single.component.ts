@@ -25,15 +25,25 @@ export class BatchSingleComponent implements OnInit {
 
   constructor(private keycloakService: KeycloakService, private batchService: CompanyBatchService, private router: Router, private route: ActivatedRoute) {
     this.baseUrlQrData = environment.baseUrlQrData;
+    
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+await this.getProfile();
     this.route.paramMap.subscribe((pm: any) => {
       this.clean();
       this.id = pm.get("id");
       this.update();
-      this.qrData = this.baseUrlQrData + "/" + this.id
+
     })
+  }
+
+  async getProfile() {
+        if (this.keycloakService.isLoggedIn()) {
+      let userProfile: any = await this.keycloakService.loadUserProfile();
+      this.companyLogged = userProfile['attributes']['company'][0];
+      console.log("Company logged ", this.companyLogged);
+    }
   }
 
   clean() {
@@ -47,9 +57,15 @@ export class BatchSingleComponent implements OnInit {
   update() {
     if (this.id) {
       this.batchService.getOne(this.id).subscribe({
-        next: (res: any) => {
+        next: async (res: any) => {
           console.log("RES", res)
           this.batch = res;
+
+          if (!this.companyLogged) {
+  await this.getProfile();
+          }
+
+          this.qrData = this.baseUrlQrData + "/" +  this.companyLogged  + "/" + this.batch.batchId
         },
         error: (err: any) => {
           console.log("Errore dal server", err)
