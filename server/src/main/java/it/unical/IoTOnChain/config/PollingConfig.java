@@ -14,6 +14,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 public class PollingConfig implements Serializable {
   private final TransportService transportService;
+  
   @Async
   @Scheduled(fixedDelayString = "${app.dt.interval-update-ms}", initialDelayString = "${app.dt.initial-update-ms}")
   public void poll() throws InterruptedException {

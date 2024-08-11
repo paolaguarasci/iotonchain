@@ -16,7 +16,9 @@ public interface BatchRepository extends JpaRepository<Batch, UUID> {
   List<Batch> findAllByCompanyOwner(Company company);
   
   List<Batch> findAllByBatchIdAndCompanyOwner(String batchId, Company company);
+  
   Optional<Batch> findByBatchIdAndCompanyOwner(String batchId, Company company);
+  
   Optional<Batch> findByIdAndCompanyOwner(UUID id, Company companyOwner);
   
   List<Batch> findAllByCompanyOwnerAndProductType(Company companyOwner, ProductType productType);
