@@ -1,28 +1,100 @@
-<div>
-  COMPANY LOGGED {{companyLogged}}
+
+
+
+<div class="" *ngIf="batch">
+    <div class="font-medium text-3xl text-900 mb-3">Batch Information</div>
+    <div class="text-500 mb-5">
+      
+
+
+    </div>
+    <ul class="list-none p-0 m-0">
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Id</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ batch.id }}</div>
+        </li>
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Batch Id</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ batch.batchId }}</div>
+        </li>
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Product Type</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ batch.productType.name }}</div>
+        </li>
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Quantity</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ batch.quantity }}{{batch.unity}} </div>
+        </li>
+
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Company Producer</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ companyOwnerName }} </div>
+        </li>
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Transaction info</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+                <div *ngFor="let tx of infobatch">
+                 {{ tx.date   }} - transfert from {{ tx.from   }} to {{ tx.to    }}
+                </div>
+            </div>
+        </li>
+
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Documents</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+                <div *ngFor="let doc of batch.documents">
+                  {{ doc.name }} ({{ doc.description }})
+                </div>
+            </div>
+        </li>
+
+
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Recipe (batch)</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+                <div *ngFor="let row of batch?.localRecipe?.recipeRow">
+                  {{ batchTruck[row?.product?.batchId][0].company }} {{ row?.product?.batchId }} ({{ row?.product.productType?.name }}) {{ row?.quantity }} {{ row?.product?.productType?.unity }} 
+                </div>
+            </div>
+        </li>
+
+
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Process Production (batch)</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+                <div *ngFor="let step of batch.localProcessProduction.steps">
+                  {{ step.name }} ({{ step.description }})
+                </div>
+            </div>
+        </li>
+
+
+
+
+       <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">Process Production (ingridients)</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+                <div *ngFor="let row of batch?.localRecipe?.recipeRow">
+                  <div *ngFor="let step of batchTruck[row?.product?.batchId]">
+                    {{ step.name }} ({{ step.description }}) {{ step.notarize ? "Certificated" : "" }}
+                  </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">QrCode Link</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+              {{ qrData }}
+            </div>
+        </li>
+
+        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium">QrCode</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+              <qrcode [qrdata]="qrData" [width]="512" [errorCorrectionLevel]="'M'" [margin]="1" ></qrcode>
+            </div>
+        </li>
+
+    </ul>
 </div>
-
-
-
-<div>
-  {{qrData}}
-</div>
-
-<div>
-  <qrcode [qrdata]="qrData" [width]="512" [errorCorrectionLevel]="'M'" [margin]="1" ></qrcode>
-</div>
-
-
-
-<div>
-  id parametro {{ id }}
-</div>
-
-<div>
-  data dal server {{ batch | json}}
-</div>
-
-<div>
-  data dal server truck {{ batchTruck | json}}
-</div>
-
