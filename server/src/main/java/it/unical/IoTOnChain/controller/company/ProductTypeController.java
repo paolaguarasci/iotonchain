@@ -7,6 +7,7 @@ import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.ProductTypeService;
+import it.unical.IoTOnChain.utils.StringTools;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class ProductTypeController {
   private final ProductTypeService productTypeService;
   private final CompanyService companyService;
   private final GenericMapper mapper;
-  
+  private final StringTools stringTools;
   @GetMapping
   public ResponseEntity<List<ProductTypeToOwner>> getAllProductTypesByLoggedCompany(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all product type  for company logged");
@@ -44,8 +45,8 @@ public class ProductTypeController {
     Company company = companyService.getOneByName(companyLogged);
     return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(
       company,
-      dto.getName(),
-      dto.getUnity(),
+      stringTools.clean(dto.getName()),
+      stringTools.clean(dto.getUnity()),
       mapper.map(dto.getRecipe()),
       mapper.map(dto.getProcess())
     )));

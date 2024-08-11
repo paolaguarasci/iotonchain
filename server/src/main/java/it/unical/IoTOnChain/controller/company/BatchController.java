@@ -11,10 +11,9 @@ import it.unical.IoTOnChain.exception.NoEnoughRawMaterialsException;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.ProductTypeService;
+import it.unical.IoTOnChain.utils.StringTools;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -38,6 +38,8 @@ public class BatchController {
   private final GenericMapper mapper;
   private final ProductTypeService productTypeService;
   private final ObjectMapper objectMapper;
+  private final StringTools stringTools;
+  private final String clean;
   
   @GetMapping
   public ResponseEntity<List<BatchToOwner>> getAllProductsByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
@@ -54,7 +56,7 @@ public class BatchController {
     if (company == null || id == null) {
       return ResponseEntity.badRequest().body(null);
     }
-    return ResponseEntity.ok(mapper.map(batchService.getOneByIdAndCompany(company, Jsoup.clean(id, Safelist.none()))));
+    return ResponseEntity.ok(mapper.map(batchService.getOneByIdAndCompany(company, stringTools.clean(id))));
   }
   
   @PostMapping
@@ -62,21 +64,34 @@ public class BatchController {
     log.debug("Create one batch of product type for company logged {}", dto.toString());
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
-    ProductType productType = productTypeService.getOneById(dto.getProductTypeID());
+    ProductType productType = productTypeService.getOneById(stringTools.clean(dto.getProductTypeID()));
     
     if (company == null || productType == null) {
       return ResponseEntity.badRequest().body(null);
     }
     
+    if (dto.getQuantity() < 1 || dto.getQuantity() > 100) {
+      return ResponseEntity.badRequest().body(null);
+    }
+    
     try {
-      return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType, dto.getQuantity(), dto.getBatchId(), dto.getDocuments(), dto.getIngredients(), dto.getProductionSteps())));
+      return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType,
+        dto.getQuantity(),
+        stringTools.clean(dto.getProductTypeID()),
+        dto.getDocuments().stream().map(stringTools::clean).toList(),
+        dto.getIngredients().stream().map(stringTools::clean).toList(),
+        dto.getProductionSteps().stream().map(el -> {
+          Map r = new HashMap();
+          r.put("id", stringTools.clean(el.get("id")));
+          r.put("position", stringTools.clean(el.get("position")));
+          return r;
+        }).collect(Collectors.toList())
+      )));
     } catch (NoSuchElementException e) {
       Map<String, String> errors = new HashMap<>();
       errors.put("message", "Not enough materials");
       return ResponseEntity.badRequest().body(objectMapper.writeValueAsString(errors));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (URISyntaxException e) {
+    } catch (IOException | URISyntaxException e) {
       throw new RuntimeException(e);
     }
   }
@@ -89,7 +104,7 @@ public class BatchController {
     if (company == null) {
       return ResponseEntity.badRequest().body(null);
     }
-    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, Jsoup.clean(id, Safelist.none()))));
+    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, stringTools.clean(id))));
   }
   
   

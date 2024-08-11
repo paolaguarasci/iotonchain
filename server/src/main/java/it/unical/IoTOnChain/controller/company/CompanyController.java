@@ -4,6 +4,7 @@ import it.unical.IoTOnChain.data.dto.CompanyLite;
 import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.service.CompanyService;
+import it.unical.IoTOnChain.utils.StringTools;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class CompanyController {
   
   private final CompanyService companyService;
   private final GenericMapper mapper;
+  private final StringTools stringTools;
   
   @GetMapping("/client")
   public ResponseEntity<List<CompanyLite>> getAllCompanies(@AuthenticationPrincipal Jwt principal) {

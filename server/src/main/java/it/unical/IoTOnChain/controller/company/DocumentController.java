@@ -7,10 +7,9 @@ import it.unical.IoTOnChain.data.model.Document;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.DocumentService;
 import it.unical.IoTOnChain.service.NotarizeService;
+import it.unical.IoTOnChain.utils.StringTools;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -39,6 +38,7 @@ public class DocumentController {
   private final DocumentService documentService;
   private final NotarizeService notarizeService;
   private final GenericMapper genericMapper;
+  private final StringTools stringTools;
   private final Path root = Paths.get("/tmp");
   
   @GetMapping
@@ -63,6 +63,7 @@ public class DocumentController {
     }
     log.debug("Upload document for company logged 0 {} ", company.getName());
     
+    
     Instant instant1 = Instant.ofEpochMilli(Long.parseLong(dateStart));
     Instant instant2 = Instant.ofEpochMilli(Long.parseLong(dateEnd));
     LocalDateTime localDateTime1 = LocalDateTime.ofInstant(instant1, ZoneId.of("Europe/Rome"));
@@ -74,7 +75,7 @@ public class DocumentController {
       Files.deleteIfExists(this.root.resolve(file.getOriginalFilename()));
       Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
       log.debug("Uploaded document to company logged {}", this.root.resolve(file.getOriginalFilename()));
-      return ResponseEntity.ok(genericMapper.map(documentService.createOne(company, name, description, localDateTime1, localDateTime2, this.root.resolve(file.getOriginalFilename()))));
+      return ResponseEntity.ok(genericMapper.map(documentService.createOne(company, stringTools.clean(name), stringTools.clean(description), localDateTime1, localDateTime2, this.root.resolve(file.getOriginalFilename()))));
     } catch (Exception e) {
       if (e instanceof FileAlreadyExistsException) {
         throw new RuntimeException("A file of that name already exists.");
@@ -92,7 +93,7 @@ public class DocumentController {
     }
     log.debug("Notarize document for company logged {} ", company.getName());
     try {
-      documentService.notarize(company, Jsoup.clean(doc_id, Safelist.none()));
+      documentService.notarize(company, stringTools.clean(doc_id));
       return ResponseEntity.ok().build();
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
@@ -106,7 +107,7 @@ public class DocumentController {
     if (company == null) {
       return null;
     }
-    Document document = documentService.getOneByCompanyLogged(company, Jsoup.clean(doc_id, Safelist.none()));
+    Document document = documentService.getOneByCompanyLogged(company, stringTools.clean(doc_id));
     if (document == null) {
       return null;
     }
@@ -120,7 +121,7 @@ public class DocumentController {
     if (company == null) {
       return null;
     }
-    Document document = documentService.getOneByCompanyLogged(company, Jsoup.clean(doc_id, Safelist.none()));
+    Document document = documentService.getOneByCompanyLogged(company, stringTools.clean(doc_id));
     if (document == null) {
       return null;
     }

@@ -7,10 +7,9 @@ import it.unical.IoTOnChain.data.model.ProductionStepBatch;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.NotarizeService;
 import it.unical.IoTOnChain.service.ProductionProcessBatchService;
+import it.unical.IoTOnChain.utils.StringTools;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -20,7 +19,6 @@ import org.web3j.protocol.exceptions.TransactionException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -32,7 +30,7 @@ public class NotarizationController {
   private final NotarizeService notarizeService;
   private final GenericMapper genericMapper;
   private final ProductionProcessBatchService productionProcessBatchService;
-  
+  private final StringTools stringTools;
   @GetMapping
   public ResponseEntity<List<NotarizeToOwnerDTO>> getAllNotarizationByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
     
@@ -45,14 +43,14 @@ public class NotarizationController {
   }
   
   @PostMapping("/step/{step_id}")
-  private ResponseEntity<?> notarizeOneStep(@PathVariable String step_id, @AuthenticationPrincipal Jwt principal, @RequestBody Map<String, String> body) throws TransactionException, NoSuchAlgorithmException, IOException {
+  private ResponseEntity<?> notarizeOneStep(@PathVariable String step_id, @AuthenticationPrincipal Jwt principal) throws TransactionException, NoSuchAlgorithmException, IOException {
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
     
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    ProductionStepBatch ps = productionProcessBatchService.getOneById(Jsoup.clean(step_id, Safelist.none()));
+    ProductionStepBatch ps = productionProcessBatchService.getOneById(stringTools.clean(step_id));
     if (ps == null) {
       return ResponseEntity.notFound().build();
     }

@@ -7,10 +7,9 @@ import it.unical.IoTOnChain.data.mapper.GenericMapper;
 import it.unical.IoTOnChain.data.model.Company;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.TransportService;
+import it.unical.IoTOnChain.utils.StringTools;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -26,7 +25,7 @@ public class TransportController {
   public final CompanyService companyService;
   public final TransportService transportService;
   public final GenericMapper genericMapper;
-  
+  private final StringTools stringTools;
   @GetMapping
   public ResponseEntity<List<TransportToOwnerDTO>> getAllTransports(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all transport for company logged");
@@ -43,11 +42,11 @@ public class TransportController {
     log.debug("Make one transport batch {} location {} from {} to {}", dto.getBatchId(), dto.getLocation(), dto.getCompanyFrom(), dto.getCompanyTo());
     String companyLogged = principal.getClaimAsString("company");
     Company companyFrom = companyService.getOneByName(companyLogged);
-    Company companyTo = companyService.getOneByName(dto.getCompanyTo());
+    Company companyTo = companyService.getOneByName(stringTools.clean(dto.getCompanyTo()));
     if (companyFrom == null || companyTo == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.createOne(dto.getBatchId(), dto.getLocation(), dto.getCompanyFrom(), dto.getCompanyTo())));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.createOne(stringTools.clean(dto.getBatchId()), stringTools.clean(dto.getLocation()), stringTools.clean(dto.getCompanyFrom()), stringTools.clean(dto.getCompanyTo()))));
   }
   
   @GetMapping("/{batch_id}")
@@ -58,7 +57,7 @@ public class TransportController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.getOneByBatchID(Jsoup.clean(batch_id, Safelist.none()))));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.getOneByBatchID(stringTools.clean(batch_id))));
   }
   
   @GetMapping("/{transport_id}/truck")
@@ -68,7 +67,7 @@ public class TransportController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(Jsoup.clean(transport_id, Safelist.none()))));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(stringTools.clean(transport_id))));
   }
   
   

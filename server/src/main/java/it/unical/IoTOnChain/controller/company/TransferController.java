@@ -9,10 +9,9 @@ import it.unical.IoTOnChain.exception.MoveIsNotPossibleException;
 import it.unical.IoTOnChain.service.BatchService;
 import it.unical.IoTOnChain.service.CompanyService;
 import it.unical.IoTOnChain.service.TransferService;
+import it.unical.IoTOnChain.utils.StringTools;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,11 +25,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/company/transfer")
 public class TransferController {
-  
   private final BatchService batchService;
   private final CompanyService companyService;
   private final TransferService transferService;
   private final GenericMapper mapper;
+  private final StringTools stringTools;
   
   @GetMapping()
   private ResponseEntity<List<TransferToOwnerDTO>> listAll(@AuthenticationPrincipal Jwt principal) {
@@ -46,7 +45,7 @@ public class TransferController {
     log.debug("Create one batch of product type for company logged");
     String companyLogged = principal.getClaimAsString("company");
     Company companyOwner = companyService.getOneByName(companyLogged);
-    return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, Jsoup.clean(batch_id, Safelist.none()))));
+    return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, stringTools.clean(batch_id))));
   }
   
   @PostMapping()
@@ -54,10 +53,10 @@ public class TransferController {
     String companyLogged = principal.getClaimAsString("company");
     log.debug("Transfer batch {} ", dto.toString());
     Company companyOwner = companyService.getOneByName(companyLogged);
-    Company companyReceiver = companyService.getOneById(dto.getCompanyRecipientID());
-    Batch batch = batchService.getOneByBatchIdAndCompany(companyOwner, dto.getBatchID());
+    Company companyReceiver = companyService.getOneById(stringTools.clean(dto.getCompanyRecipientID()));
+    Batch batch = batchService.getOneByBatchIdAndCompany(companyOwner, stringTools.clean(dto.getBatchID()));
     log.debug("Create one transfer from batch id {} owner {} to company {} quantity {} ", batch.getBatchId(), batch.getCompanyOwner().getName(), companyReceiver.getName(), dto.getQuantity());
-    if (dto.getType().toLowerCase().trim().equals("oneshot")) {
+    if (stringTools.clean(dto.getType()).toLowerCase().trim().equals("oneshot")) {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(transferService.makeTransactionOneShot(companyOwner, batch, companyReceiver, dto.getQuantity())));
     } else {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(transferService.makeTransactionWithAcceptance(companyOwner, batch, companyReceiver, dto.getQuantity())));
@@ -69,20 +68,20 @@ public class TransferController {
   private ResponseEntity<TransferToOwnerDTO> accept(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
     String companyName = principal.getClaimAsString("company");
     Company companyLogged = companyService.getOneByName(companyName);
-    return ResponseEntity.ok(mapper.map(transferService.accept(companyLogged, Jsoup.clean(trans_id, Safelist.none()))));
+    return ResponseEntity.ok(mapper.map(transferService.accept(companyLogged, stringTools.clean(trans_id))));
   }
   
   @GetMapping("/{trans_id}/reject")
   private ResponseEntity<TransferToOwnerDTO> reject(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
     String companyName = principal.getClaimAsString("company");
     Company companyLogged = companyService.getOneByName(companyName);
-    return ResponseEntity.ok(mapper.map(transferService.reject(companyLogged, Jsoup.clean(trans_id, Safelist.none()))));
+    return ResponseEntity.ok(mapper.map(transferService.reject(companyLogged, stringTools.clean(trans_id))));
   }
   
   @GetMapping("/{trans_id}/abort")
   private ResponseEntity<TransferToOwnerDTO> block(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
     String companyName = principal.getClaimAsString("company");
     Company companyLogged = companyService.getOneByName(companyName);
-    return ResponseEntity.ok(mapper.map(transferService.abort(companyLogged, Jsoup.clean(trans_id, Safelist.none()))));
+    return ResponseEntity.ok(mapper.map(transferService.abort(companyLogged, stringTools.clean(trans_id))));
   }
 }
