@@ -31,6 +31,7 @@ public class NotarizationController {
   private final GenericMapper genericMapper;
   private final ProductionProcessBatchService productionProcessBatchService;
   private final StringTools stringTools;
+  
   @GetMapping
   public ResponseEntity<List<NotarizeToOwnerDTO>> getAllNotarizationByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
     
@@ -50,7 +51,7 @@ public class NotarizationController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    ProductionStepBatch ps = productionProcessBatchService.getOneById(stringTools.clean(step_id));
+    ProductionStepBatch ps = productionProcessBatchService.getOneById(stringTools.cleanStr(step_id));
     if (ps == null) {
       return ResponseEntity.notFound().build();
     }

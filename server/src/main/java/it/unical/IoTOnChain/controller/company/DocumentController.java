@@ -75,7 +75,7 @@ public class DocumentController {
       Files.deleteIfExists(this.root.resolve(file.getOriginalFilename()));
       Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
       log.debug("Uploaded document to company logged {}", this.root.resolve(file.getOriginalFilename()));
-      return ResponseEntity.ok(genericMapper.map(documentService.createOne(company, stringTools.clean(name), stringTools.clean(description), localDateTime1, localDateTime2, this.root.resolve(file.getOriginalFilename()))));
+      return ResponseEntity.ok(genericMapper.map(documentService.createOne(company, stringTools.cleanStr(name), stringTools.cleanStr(description), localDateTime1, localDateTime2, this.root.resolve(file.getOriginalFilename()))));
     } catch (Exception e) {
       if (e instanceof FileAlreadyExistsException) {
         throw new RuntimeException("A file of that name already exists.");
@@ -93,7 +93,7 @@ public class DocumentController {
     }
     log.debug("Notarize document for company logged {} ", company.getName());
     try {
-      documentService.notarize(company, stringTools.clean(doc_id));
+      documentService.notarize(company, stringTools.cleanStr(doc_id));
       return ResponseEntity.ok().build();
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
@@ -107,7 +107,7 @@ public class DocumentController {
     if (company == null) {
       return null;
     }
-    Document document = documentService.getOneByCompanyLogged(company, stringTools.clean(doc_id));
+    Document document = documentService.getOneByCompanyLogged(company, stringTools.cleanStr(doc_id));
     if (document == null) {
       return null;
     }
@@ -121,7 +121,7 @@ public class DocumentController {
     if (company == null) {
       return null;
     }
-    Document document = documentService.getOneByCompanyLogged(company, stringTools.clean(doc_id));
+    Document document = documentService.getOneByCompanyLogged(company, stringTools.cleanStr(doc_id));
     if (document == null) {
       return null;
     }

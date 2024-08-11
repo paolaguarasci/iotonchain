@@ -26,6 +26,7 @@ public class TransportController {
   public final TransportService transportService;
   public final GenericMapper genericMapper;
   private final StringTools stringTools;
+  
   @GetMapping
   public ResponseEntity<List<TransportToOwnerDTO>> getAllTransports(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all transport for company logged");
@@ -42,11 +43,11 @@ public class TransportController {
     log.debug("Make one transport batch {} location {} from {} to {}", dto.getBatchId(), dto.getLocation(), dto.getCompanyFrom(), dto.getCompanyTo());
     String companyLogged = principal.getClaimAsString("company");
     Company companyFrom = companyService.getOneByName(companyLogged);
-    Company companyTo = companyService.getOneByName(stringTools.clean(dto.getCompanyTo()));
+    Company companyTo = companyService.getOneByName(stringTools.cleanStr(dto.getCompanyTo()));
     if (companyFrom == null || companyTo == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.createOne(stringTools.clean(dto.getBatchId()), stringTools.clean(dto.getLocation()), stringTools.clean(dto.getCompanyFrom()), stringTools.clean(dto.getCompanyTo()))));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.createOne(stringTools.cleanStr(dto.getBatchId()), stringTools.cleanStr(dto.getLocation()), stringTools.cleanStr(dto.getCompanyFrom()), stringTools.cleanStr(dto.getCompanyTo()))));
   }
   
   @GetMapping("/{batch_id}")
@@ -57,7 +58,7 @@ public class TransportController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.getOneByBatchID(stringTools.clean(batch_id))));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.getOneByBatchID(stringTools.cleanStr(batch_id))));
   }
   
   @GetMapping("/{transport_id}/truck")
@@ -67,7 +68,7 @@ public class TransportController {
     if (company == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(stringTools.clean(transport_id))));
+    return ResponseEntity.ok().body(genericMapper.map(transportService.getTruckByTransportId(stringTools.cleanStr(transport_id))));
   }
   
   

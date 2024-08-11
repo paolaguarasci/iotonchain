@@ -39,7 +39,6 @@ public class BatchController {
   private final ProductTypeService productTypeService;
   private final ObjectMapper objectMapper;
   private final StringTools stringTools;
-  private final String clean;
   
   @GetMapping
   public ResponseEntity<List<BatchToOwner>> getAllProductsByCompanyLogged(@AuthenticationPrincipal Jwt principal) {
@@ -56,7 +55,7 @@ public class BatchController {
     if (company == null || id == null) {
       return ResponseEntity.badRequest().body(null);
     }
-    return ResponseEntity.ok(mapper.map(batchService.getOneByIdAndCompany(company, stringTools.clean(id))));
+    return ResponseEntity.ok(mapper.map(batchService.getOneByIdAndCompany(company, stringTools.cleanStr(id))));
   }
   
   @PostMapping
@@ -64,7 +63,7 @@ public class BatchController {
     log.debug("Create one batch of product type for company logged {}", dto.toString());
     String companyLogged = principal.getClaimAsString("company");
     Company company = companyService.getOneByName(companyLogged);
-    ProductType productType = productTypeService.getOneById(stringTools.clean(dto.getProductTypeID()));
+    ProductType productType = productTypeService.getOneById(stringTools.cleanStr(dto.getProductTypeID()));
     
     if (company == null || productType == null) {
       return ResponseEntity.badRequest().body(null);
@@ -77,13 +76,13 @@ public class BatchController {
     try {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(batchService.produce(company, productType,
         dto.getQuantity(),
-        stringTools.clean(dto.getProductTypeID()),
-        dto.getDocuments().stream().map(stringTools::clean).toList(),
-        dto.getIngredients().stream().map(stringTools::clean).toList(),
+        stringTools.cleanStr(dto.getProductTypeID()),
+        dto.getDocuments().stream().map(stringTools::cleanStr).toList(),
+        dto.getIngredients().stream().map(stringTools::cleanStr).toList(),
         dto.getProductionSteps().stream().map(el -> {
-          Map r = new HashMap();
-          r.put("id", stringTools.clean(el.get("id")));
-          r.put("position", stringTools.clean(el.get("position")));
+          Map<String, String> r = new HashMap<>();
+          r.put("id", stringTools.cleanStr(el.get("id")));
+          r.put("position", stringTools.cleanStr(el.get("position")));
           return r;
         }).collect(Collectors.toList())
       )));
@@ -104,7 +103,7 @@ public class BatchController {
     if (company == null) {
       return ResponseEntity.badRequest().body(null);
     }
-    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, stringTools.clean(id))));
+    return ResponseEntity.ok(objectMapper.writeValueAsString(batchService.trackInfo(company, stringTools.cleanStr(id))));
   }
   
   

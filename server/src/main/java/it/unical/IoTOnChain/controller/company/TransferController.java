@@ -45,7 +45,7 @@ public class TransferController {
     log.debug("Create one batch of product type for company logged");
     String companyLogged = principal.getClaimAsString("company");
     Company companyOwner = companyService.getOneByName(companyLogged);
-    return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, stringTools.clean(batch_id))));
+    return ResponseEntity.status(HttpStatus.OK).body(mapper.mapListTransfer(transferService.getAllForCompanyLoggedAndBatchId(companyOwner, stringTools.cleanStr(batch_id))));
   }
   
   @PostMapping()
@@ -53,10 +53,10 @@ public class TransferController {
     String companyLogged = principal.getClaimAsString("company");
     log.debug("Transfer batch {} ", dto.toString());
     Company companyOwner = companyService.getOneByName(companyLogged);
-    Company companyReceiver = companyService.getOneById(stringTools.clean(dto.getCompanyRecipientID()));
-    Batch batch = batchService.getOneByBatchIdAndCompany(companyOwner, stringTools.clean(dto.getBatchID()));
+    Company companyReceiver = companyService.getOneById(stringTools.cleanStr(dto.getCompanyRecipientID()));
+    Batch batch = batchService.getOneByBatchIdAndCompany(companyOwner, stringTools.cleanStr(dto.getBatchID()));
     log.debug("Create one transfer from batch id {} owner {} to company {} quantity {} ", batch.getBatchId(), batch.getCompanyOwner().getName(), companyReceiver.getName(), dto.getQuantity());
-    if (stringTools.clean(dto.getType()).toLowerCase().trim().equals("oneshot")) {
+    if (stringTools.cleanStr(dto.getType()).toLowerCase().trim().equals("oneshot")) {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(transferService.makeTransactionOneShot(companyOwner, batch, companyReceiver, dto.getQuantity())));
     } else {
       return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(transferService.makeTransactionWithAcceptance(companyOwner, batch, companyReceiver, dto.getQuantity())));
@@ -68,20 +68,20 @@ public class TransferController {
   private ResponseEntity<TransferToOwnerDTO> accept(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
     String companyName = principal.getClaimAsString("company");
     Company companyLogged = companyService.getOneByName(companyName);
-    return ResponseEntity.ok(mapper.map(transferService.accept(companyLogged, stringTools.clean(trans_id))));
+    return ResponseEntity.ok(mapper.map(transferService.accept(companyLogged, stringTools.cleanStr(trans_id))));
   }
   
   @GetMapping("/{trans_id}/reject")
   private ResponseEntity<TransferToOwnerDTO> reject(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
     String companyName = principal.getClaimAsString("company");
     Company companyLogged = companyService.getOneByName(companyName);
-    return ResponseEntity.ok(mapper.map(transferService.reject(companyLogged, stringTools.clean(trans_id))));
+    return ResponseEntity.ok(mapper.map(transferService.reject(companyLogged, stringTools.cleanStr(trans_id))));
   }
   
   @GetMapping("/{trans_id}/abort")
   private ResponseEntity<TransferToOwnerDTO> block(@AuthenticationPrincipal Jwt principal, @PathVariable String trans_id) throws Exception, MoveIsNotPossibleException {
     String companyName = principal.getClaimAsString("company");
     Company companyLogged = companyService.getOneByName(companyName);
-    return ResponseEntity.ok(mapper.map(transferService.abort(companyLogged, stringTools.clean(trans_id))));
+    return ResponseEntity.ok(mapper.map(transferService.abort(companyLogged, stringTools.cleanStr(trans_id))));
   }
 }

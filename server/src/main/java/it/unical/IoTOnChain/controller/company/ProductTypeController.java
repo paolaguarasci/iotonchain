@@ -27,6 +27,7 @@ public class ProductTypeController {
   private final CompanyService companyService;
   private final GenericMapper mapper;
   private final StringTools stringTools;
+  
   @GetMapping
   public ResponseEntity<List<ProductTypeToOwner>> getAllProductTypesByLoggedCompany(@AuthenticationPrincipal Jwt principal) {
     log.debug("Get all product type  for company logged");
@@ -45,8 +46,8 @@ public class ProductTypeController {
     Company company = companyService.getOneByName(companyLogged);
     return ResponseEntity.ok(mapper.map(productTypeService.createProductTypeForCompany(
       company,
-      stringTools.clean(dto.getName()),
-      stringTools.clean(dto.getUnity()),
+      stringTools.cleanStr(dto.getName()),
+      stringTools.cleanStr(dto.getUnity()),
       mapper.map(dto.getRecipe()),
       mapper.map(dto.getProcess())
     )));
