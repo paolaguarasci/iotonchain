@@ -3,29 +3,36 @@ import { KeycloakService } from 'keycloak-angular';
 import { CompanyBatchService } from '../../services/company-batch.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import { ButtonModule } from 'primeng/button';
+import { QRCodeModule } from 'angularx-qrcode';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-batch-single',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonModule, QRCodeModule],
   templateUrl: './batch-single.component.html',
   styleUrl: './batch-single.component.scss'
 })
 export class BatchSingleComponent implements OnInit {
 
+  baseUrlQrData !: any;
   batch !: any;
   batchTruck !: any;
   id!: any;
   isMine !: any;
   companyLogged !: any;
+  qrData !: any;
 
-  constructor(private keycloakService: KeycloakService, private batchService: CompanyBatchService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private keycloakService: KeycloakService, private batchService: CompanyBatchService, private router: Router, private route: ActivatedRoute) {
+    this.baseUrlQrData = environment.baseUrlQrData;
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((pm: any) => {
       this.clean();
       this.id = pm.get("id");
       this.update();
+      this.qrData = this.baseUrlQrData + "/" + this.id
     })
   }
 

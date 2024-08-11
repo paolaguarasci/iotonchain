@@ -12,6 +12,7 @@ import { TruckListComponent } from './page/truck-list/truck-list.component';
 import { NotarizeListComponent } from './page/notarize-list/notarize-list.component';
 import { TransfertListComponent } from './page/transfert-list/transfert-list.component';
 import { BatchSingleComponent } from './page/batch-single/batch-single.component';
+import { TraceOneBatchPublicComponent } from './page/trace-one-batch-public/trace-one-batch-public.component';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,10 @@ export const routes: Routes = [
   {
     path: 'track/:id',
     component: TraceOneBatchComponent,
+  },
+  {
+    path: 'public/:id',
+    component: TraceOneBatchPublicComponent,
   },
   {
     path: 'batch/:id',
