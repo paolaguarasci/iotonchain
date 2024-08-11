@@ -1,1 +1,41 @@
-<p>trace-one-batch-public works!</p>
+<div class="card">
+  <div class="block bg-primary font-bold text-center p-4 border-round mb-3">
+    LOTTO: {{ id }}
+  </div>
+
+  <div
+    class="block bg-primary font-bold text-center p-4 border-round mb-3"
+  ></div>
+
+  <div class="block bg-primary font-bold text-center p-4 border-round mb-3">
+    <div class="card">
+      <p-timeline
+        [value]="productionSteps"
+        align="alternate"
+        styleClass="customized-timeline"
+      >
+        <ng-template pTemplate="marker" let-step>
+          <span
+            class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
+            [style]="{ 'background-color': step.color }"
+          >
+            <fa-icon [icon]="step.icon"></fa-icon>
+          </span>
+        </ng-template>
+        <ng-template pTemplate="content" let-step>
+          <p-card
+            [header]="step.name"
+            [subheader]="'#' + step.position + ' - ' + step.company"
+          >
+            <div *ngIf="step.notarization">
+              Notarized {{ step.notarization.id }}
+            </div>
+          </p-card>
+        </ng-template>
+      </p-timeline>
+    </div>
+  </div>
+  <div
+    class="block bg-primary font-bold text-center p-4 border-round mb-3"
+  ></div>
+</div>

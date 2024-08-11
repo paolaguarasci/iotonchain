@@ -52,7 +52,7 @@ export const routes: Routes = [
     component: TraceOneBatchComponent,
   },
   {
-    path: 'public/:id',
+    path: 'public-track/:id',
     component: TraceOneBatchPublicComponent,
   },
   {
