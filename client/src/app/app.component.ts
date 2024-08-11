@@ -25,5 +25,7 @@ export class AppComponent implements OnInit {
       menu: 1000, // overlay menus
       tooltip: 1100, // tooltip
     };
+
+
   }
 }

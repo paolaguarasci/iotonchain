@@ -43,9 +43,9 @@ export class MenuBarComponent implements OnInit {
     }
     this.items = [
       {
-        label: 'Home',
+        label: 'Dashboard',
         icon: 'pi pi-home',
-        route: '/',
+        route: '/dash',
       },
       {
         label: 'Manage',
