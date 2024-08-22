@@ -80,34 +80,38 @@ public class BatchServiceImpl implements BatchService {
     log.debug("ingredients {}", ingredients);
     log.debug("steps {}", steps);
     
+    Map<Batch, Integer> mappaLottoIdQuantity = new HashMap<>();
     
     if (type.getRecipe() != null) {
       for (RecipeRow recipeRow : type.getRecipe().getRecipeRow()) {
+        int q = 0;
         // FIXME potenziali side effect quando si mischiano diverse unita' di misura!
         if (!USEASP) {
           Map<String, Object> checkQuantityOfType1 = new HashMap<>();
           checkQuantityOfType1 = checkQuantityOfType(company, recipeRow.getProduct(), recipeRow.getQuantity());
           log.debug("Controllo {}", recipeRow.getProduct().getName());
-          int q = (int) Math.ceil((quantity / 100.00) * recipeRow.getQuantity());
+          q = (int) Math.ceil((quantity / 100.00) * recipeRow.getQuantity());
           if (Long.parseLong(String.valueOf(checkQuantityOfType1.get("k"))) < q) {
             checkMaterial = false;
             break;
           }
-          rawMaterials.addAll((Set<Batch>) checkQuantityOfType1.get("batch"));
+          Set<Batch> batches = (Set<Batch>) checkQuantityOfType1.get("batch");
+          rawMaterials.addAll(batches);
+          mappaLottoIdQuantity.put(batches.stream().findFirst().get(), q);
         } else {
           List<String> checkQuantityOfType1 = new ArrayList<>();
-          int q = (int) Math.ceil((quantity / 100.00) * recipeRow.getQuantity());
+          q = (int) Math.ceil((quantity / 100.00) * recipeRow.getQuantity());
           checkQuantityOfType1 = findBatchesByQuantityAndType(company.getName(), recipeRow.getProduct().getName(), q);
           Set<Batch> batches = batchRepository.findAllByBatchIdIsIn(checkQuantityOfType1);
-          log.debug("FUCK {}, {} ", checkQuantityOfType1.size(), checkQuantityOfType1);
+          log.debug("Check Quantity type {}, {} ", checkQuantityOfType1.size(), checkQuantityOfType1);
           log.debug("Parametri {}, {}, {}, risultato BATCH TROVATI {} ", company.getName(), recipeRow.getProduct().getName(), q, batches.size());
           if (batches.isEmpty()) {
             checkMaterial = false;
             break;
           }
+          mappaLottoIdQuantity.put(batches.stream().findFirst().get(), q);
           rawMaterials.addAll(batches);
         }
-        
       }
     }
     
@@ -137,7 +141,7 @@ public class BatchServiceImpl implements BatchService {
       
       if (ingredients != null && !ingredients.isEmpty()) {
         List<RecipeRow> rowFromDb = recipeService.getRecipeRowsByIdList(ingredients);
-        RecipeBatch localRecipe = recipeBatchService.createOneByCloneAndMaterialize(company, "recipe_" + batchId, quantity, rowFromDb);
+        RecipeBatch localRecipe = recipeBatchService.createOneByCloneAndMaterialize(mappaLottoIdQuantity);
         newProd.setLocalRecipe(localRecipe);
       }
       

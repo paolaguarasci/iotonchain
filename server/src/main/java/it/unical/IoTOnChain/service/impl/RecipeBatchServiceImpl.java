@@ -1,8 +1,7 @@
 package it.unical.IoTOnChain.service.impl;
 
-import it.unical.IoTOnChain.data.model.Company;
+import it.unical.IoTOnChain.data.model.Batch;
 import it.unical.IoTOnChain.data.model.RecipeBatch;
-import it.unical.IoTOnChain.data.model.RecipeRow;
 import it.unical.IoTOnChain.data.model.RecipeRowBatch;
 import it.unical.IoTOnChain.repository.BatchRepository;
 import it.unical.IoTOnChain.repository.RecipeBatchRepository;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -31,17 +31,15 @@ public class RecipeBatchServiceImpl implements RecipeBatchService {
   }
   
   @Override
-  public RecipeBatch createOneByCloneAndMaterialize(Company company, String s, int quantity, List<RecipeRow> rowFromDb) {
-    
+  public RecipeBatch createOneByCloneAndMaterialize(Map<Batch, Integer> localBatchAndQuantity) {
     List<RecipeRowBatch> recipeRows = new ArrayList<>();
-    
-    for (RecipeRow recipeRow : rowFromDb) {
+    for (Map.Entry<Batch, Integer> entry : localBatchAndQuantity.entrySet()) {
       recipeRows.add(RecipeRowBatch.builder()
-        .unity(recipeRow.getUnity())
-        .quantity(recipeRow.getQuantity() / 100 * quantity) // TODO esce sempre 0, sistemare!
-        .product(batchRepository.findAllByCompanyOwnerAndProductType(company, recipeRow.getProduct()).getFirst()) // FIXME E' una semplificazione!
+        .unity(entry.getKey().getProductType().getUnity())
+        .quantity(entry.getValue().longValue())
+        .product(entry.getKey())
         .build());
     }
-    return recipeBatchRepository.saveAndFlush(RecipeBatch.builder().note(s).recipeRow(recipeRows).build());
+    return recipeBatchRepository.saveAndFlush(RecipeBatch.builder().note("").recipeRow(recipeRows).build());
   }
 }

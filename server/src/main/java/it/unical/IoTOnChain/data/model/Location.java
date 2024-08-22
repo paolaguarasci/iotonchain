@@ -18,7 +18,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Location implements Serializable {
-  
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
@@ -26,6 +25,4 @@ public class Location implements Serializable {
   private String longitude;
   private String name;
   private String address;
-  
-  
 }

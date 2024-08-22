@@ -113,7 +113,7 @@ public class InitDB implements CommandLineRunner {
     Map<String, String> x1 = new HashMap<>();
     x1.put("id", pBasilico.getSteps().getFirst().getId().toString());
     x1.put("position", "0");
-    Batch basilicoBatch = produce(paolaSPA, basilicoType, 10, "batchId_123_basilico", List.of(), List.of(), List.of(x1));
+    Batch basilicoBatch = produce(paolaSPA, basilicoType, 100, "batchId_123_basilico", List.of(), List.of(), List.of(x1));
     notarizeProductionStep(basilicoBatch.getCompanyOwner(), basilicoBatch, basilicoBatch.getLocalProcessProduction().getSteps().getFirst());
     
     Company nicolaSPA = makeCompany("nicolaspa");
@@ -124,7 +124,7 @@ public class InitDB implements CommandLineRunner {
     Map<String, String> x2 = new HashMap<>();
     x2.put("id", pAglio.getSteps().getFirst().getId().toString());
     x2.put("position", "0");
-    Batch aglioBatch = produce(nicolaSPA, aglioType, 10, "batchId_123_aglio", List.of(), List.of(), List.of(x2));
+    Batch aglioBatch = produce(nicolaSPA, aglioType, 100, "batchId_123_aglio", List.of(), List.of(), List.of(x2));
     
     Company filippoSPA = makeCompany("filippospa");
     ProductionStep raccoltaOlive = ProductionStep.builder().position(0).name("Raccolta").description("Raccolta delle olive").build();
@@ -135,7 +135,7 @@ public class InitDB implements CommandLineRunner {
     Map<String, String> x3 = new HashMap<>();
     x3.put("id", pOlio.getSteps().getFirst().getId().toString());
     x3.put("position", "0");
-    Batch olioBatch = produce(filippoSPA, olioType, 10, "batchId_123_olio", List.of(), List.of(), List.of(x3));
+    Batch olioBatch = produce(filippoSPA, olioType, 100, "batchId_123_olio", List.of(), List.of(), List.of(x3));
     
     Company barillaSPA = makeCompany("barillaspa");
     Map<ProductType, List<String>> ingredientsOfPestoLigure = new HashMap<>();
@@ -145,7 +145,7 @@ public class InitDB implements CommandLineRunner {
     Recipe pestoRecipe = makeRecipe("pesto", ingredientsOfPestoLigure);
     
     
-    ProductionStep produzionePesto = ProductionStep.builder().position(0).name("Cucino").description("Produco il pesto").build();
+    ProductionStep produzionePesto = ProductionStep.builder().position(0).name("Preparo").description("Produco il pesto").build();
     ProductionProcess pPesto = makeProcess("processo produttivo dell'olio", List.of(produzionePesto));
     ProductType pestoType = makeProductTypeAndAssociateToCompany(barillaSPA, "pesto", "kg", pestoRecipe, pPesto);
     
@@ -170,13 +170,13 @@ public class InitDB implements CommandLineRunner {
       log.error("Hai prodotto del pesto!");
     } catch (NoEnoughRawMaterialsException e) {
       log.error("Non hai abbastanza materie prime!");
-      transferBatch(paolaSPA, basilicoBatch, barillaSPA, 5);
+      transferBatch(paolaSPA, basilicoBatch, barillaSPA, 30);
       //Transport transport2 = transportService.createOne(basilicoBatch.getBatchId(), null, paolaSPA.getName(), barillaSPA.getName());
-      transferBatch(nicolaSPA, aglioBatch, barillaSPA, 5);
+      transferBatch(nicolaSPA, aglioBatch, barillaSPA, 30);
       // Transport transport2 = transportService.createOne(aglioBatch, );
-      transferBatch(filippoSPA, olioBatch, barillaSPA, 5);
+      transferBatch(filippoSPA, olioBatch, barillaSPA, 30);
       // Transport transport3 = transportService.createOne(olioBatch, );
-      pestoBatch = produce(barillaSPA, pestoType, 1, "batchId_123_pesto", null, pestoType.getRecipe().getRecipeRow().stream().map(recipeRow -> recipeRow.getId().toString()).toList(), List.of(x4));
+      pestoBatch = produce(barillaSPA, pestoType, 20, "batchId_123_pesto", null, pestoType.getRecipe().getRecipeRow().stream().map(recipeRow -> recipeRow.getId().toString()).toList(), List.of(x4));
     }
     
     // Create one operator for paolaspa company
