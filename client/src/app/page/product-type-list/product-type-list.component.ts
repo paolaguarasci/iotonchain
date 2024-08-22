@@ -25,6 +25,7 @@ import { CompanyBatchService } from '../../services/company-batch.service';
 import { DocumentService } from '../../services/document.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Router } from '@angular/router';
+import { ChipsModule } from 'primeng/chips';
 @Component({
   selector: 'app-product-type-list',
   standalone: true,
@@ -63,7 +64,8 @@ import { Router } from '@angular/router';
     ToastModule,
     TableModule,
     ButtonModule,
-    MultiSelectModule
+    MultiSelectModule,
+    ChipsModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './product-type-list.component.html',
@@ -79,6 +81,7 @@ export class ProductTypeListComponent implements OnInit {
   submitted: boolean = false;
   statuses!: any[];
   inforecipe!: any;
+  infosteps!: any;
   selectedProductToReciperRow!: any;
   selectedProductToReciperRowquantity!: any;
   selectedBatchToProduce!: any;
@@ -95,8 +98,9 @@ export class ProductTypeListComponent implements OnInit {
   createBatchDialogVisible: boolean = false;
   documents: any[] = [];
   selectedDoc!: any;
-
+  pStepsString = "";
   @ViewChild('recipedetails', { static: false }) divHello!: OverlayPanel;
+  @ViewChild('stepsdetails', { static: false }) divHello2!: OverlayPanel;
 
   constructor(
     private productTypeService: ProductTypeService,
@@ -144,6 +148,14 @@ export class ProductTypeListComponent implements OnInit {
     this.divHello.show($event);
     this.inforecipe = product.recipe.recipeRow;
   }
+
+
+  showStepsInfo(product: any, $event: any) {
+    this.divHello2.show($event);
+    this.infosteps = product.productionProcess.steps;
+  }
+
+
   update() {
     this.productTypeService.getAll().subscribe({
       next: (res: any) => (this.products = res),
