@@ -92,13 +92,13 @@ export class ProductTypeListComponent implements OnInit {
     { name: 'Liter', code: 'lt' },
     { name: 'Kilograms', code: 'kg' },
     { name: 'Unit', code: 'unit' },
-    { name: 'Percentage', code: 'percent' },
+    /* { name: 'Percentage', code: 'percent' }, */
   ];
   newBatch!: any;
   createBatchDialogVisible: boolean = false;
   documents: any[] = [];
   selectedDoc!: any;
-  pStepsString = "";
+  pStepsString !: any;
   @ViewChild('recipedetails', { static: false }) divHello!: OverlayPanel;
   @ViewChild('stepsdetails', { static: false }) divHello2!: OverlayPanel;
 
@@ -109,7 +109,7 @@ export class ProductTypeListComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private documentService: DocumentService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.clean();
@@ -142,6 +142,7 @@ export class ProductTypeListComponent implements OnInit {
     this.selectedProductToReciperRowquantity = null;
     this.selectedProducts = null;
     this.selectedRecipe = null;
+    this.pStepsString = null;
   }
 
   showRecipeInfo(product: any, $event: any) {
@@ -229,6 +230,14 @@ export class ProductTypeListComponent implements OnInit {
     this.submitted = true;
     this.product.state = 'FINAL';
     this.product.unity = this.product.unity.code;
+    this.product.process = { steps: [] };
+
+    this.pStepsString.forEach((step: any, index: any) => {
+      this.product.process.steps.push({
+        position: index,
+        name: step
+      })
+    })
 
     this.productTypeService.createOne(this.product).subscribe({
       next: (res: any) => {

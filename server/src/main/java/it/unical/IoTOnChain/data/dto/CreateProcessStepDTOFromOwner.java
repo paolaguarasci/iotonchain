@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Builder
 @ToString
 public class CreateProcessStepDTOFromOwner implements Serializable {
-  private int order;
+  private int position;
   private String name;
   private String description;
 }
