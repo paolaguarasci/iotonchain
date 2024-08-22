@@ -22,9 +22,7 @@ import java.util.UUID;
 public class RecipeBatchServiceImpl implements RecipeBatchService {
   private final RecipeBatchRepository recipeBatchRepository;
   private final RecipeRowBatchRepository recipeRowBatchRepository;
-  private final BatchRepository batchRepository;
-  
-  
+
   @Override
   public List<RecipeRowBatch> getRecipeRowsByIdList(List<String> ingredients) {
     return recipeRowBatchRepository.findAllById(ingredients.stream().map(UUID::fromString).toList());

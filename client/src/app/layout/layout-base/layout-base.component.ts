@@ -14,13 +14,5 @@ import { MenuBarComponent } from '../../component/menu-bar/menu-bar.component';
   styleUrl: './layout-base.component.scss'
 })
 export class LayoutBaseComponent implements OnDestroy {
-
-
-  ngOnDestroy() {
-
-  }
-
+  ngOnDestroy() {}
 }
-
-
-

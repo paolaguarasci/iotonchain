@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -11,7 +11,8 @@ import { RouterModule } from '@angular/router';
   templateUrl: './layout-void.component.html',
   styleUrl: './layout-void.component.scss'
 })
-export class LayoutVoidComponent {
-
+export class LayoutVoidComponent implements OnInit {
+  constructor() {}
+  ngOnInit(): void {}
 }
 
