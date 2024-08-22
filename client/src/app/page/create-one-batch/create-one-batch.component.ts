@@ -67,10 +67,10 @@ export class CreateOneBatchComponent implements OnInit {
 
             this.selectedProductTypeFull = res.filter((pt: any) => pt.id === this.pTypeId)[0]
 
-            let tmpmap = [];
-            let tmpmap2 = [];
+            let tmpmap: any = [];
+            let tmpmap2: any = [];
 
-            if (res.filter((pt: any) => pt.id === this.pTypeId)[0].recipe) {
+/*             if (res.filter((pt: any) => pt.id === this.pTypeId)[0].recipe) {
               tmpmap = res.filter((pt: any) => pt.id === this.pTypeId)[0].recipe.recipeRow
                 .map((ingredient: any) => {
                   console.log("ingredient ", ingredient)
@@ -85,7 +85,7 @@ export class CreateOneBatchComponent implements OnInit {
                   })
                 })
             }
-
+ */
             tmpmap2 = res.filter((pt: any) => pt.id === this.pTypeId)[0].productionProcess.steps.map((step: any) => {
               return {
                 productTypeId: res.filter((pt: any) => pt.id === this.pTypeId)[0].id,
