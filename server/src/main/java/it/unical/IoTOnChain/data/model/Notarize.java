@@ -29,6 +29,7 @@ public class Notarize implements Serializable {
   private Document document;
   
   @Lob
+  @Column(columnDefinition="LONGTEXT")
   private String data;
   
   @ManyToOne
