@@ -1,3 +1,5 @@
 # Iot on chain
 
-[![DEMO](https://i9.ytimg.com/vi_webp/MK-rrqKWlNg/maxresdefault.webp?v=66c7b4a1&sqp=CODpnrYG&rs=AOn4CLCLWtrvfbGdKyRWrvSXINAvQ9M6Tg)](https://www.youtube.com/watch?v=MK-rrqKWlNg)
+## Video demo
+
+[![DEMO](https://img.youtube.com/vi/MK-rrqKWlNg/0.jpg)](https://www.youtube.com/watch?v=MK-rrqKWlNg)
