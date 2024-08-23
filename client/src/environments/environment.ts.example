@@ -1,0 +1,10 @@
+export const environment = {
+  production: false,
+  pyxabaiKey: "",
+  baseUrlQrData : "",
+  keycloakServer: '',
+  keycloakRealm: '',
+  keycloakClientId: '',
+  hashContract: '',
+  hashABI: []
+};
