@@ -10,6 +10,9 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY as string;
 const POLYSCAN_API_KEY = process.env.POLYSCAN_API_KEY as string;
 const INFURA_API_KEY = process.env.INFURA_API_KEY as string;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY as string;
+const OPTIMISMSCAN_API_KEY = process.env.OPTIMISMSCAN_API_KEY as string;
+const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY as string;
+const ARBITRIUMSCAN_API_KEY = process.env.ARBITRIUMSCAN_API_KEY as string;
 
 // La chiave privata dell'account di metamask
 const ACCOUNT_PVT_KEY = process.env.ACCOUNT_PVT_KEY as string;
@@ -67,13 +70,22 @@ const config = {
     currency: 'EUR',
     darkMode: true,
     // L1: "ethereum",
-    L1: 'polygon',
+    // L1: 'polygon',
     // L1: 'avalanche',
     // L1: "binance",
     // L1: "fantom",
     // L1: "moonbeam",
     // L1: "moonriver",
     // L1: "gnosis",
+
+    // L2: "arbitrum",
+    // L2: "optimism",
+    L2: "base",
+
+    L1Etherscan: ETHERSCAN_API_KEY,
+    // L2Etherscan: ARBITRIUMSCAN_API_KEY,
+    // L2Etherscan: OPTIMISMSCAN_API_KEY,
+    L2Etherscan: BASESCAN_API_KEY,
     currencyDisplayPrecision: 4,
     includeIntrinsicGas: true,
     coinmarketcap: COINMARKETCAP_API_KEY

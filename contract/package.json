@@ -13,6 +13,7 @@
     "clean": "rm -rf artifacts && rm -rf cache && rm -rf typechain-types && rm -rf coverage",
     "test": "npx hardhat test",
     "test:hash": "npx hardhat test test/hash.test.ts",
+    "test:box": "npx hardhat test test/box.test.ts",
     "cover": "npx hardhat coverage"
   },
   "author": "PaolaGuarasci",
