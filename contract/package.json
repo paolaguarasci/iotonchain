@@ -28,7 +28,7 @@
     "@openzeppelin/test-helpers": "^0.5.16",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.1",
-    "hardhat": "^2.22.8",
+    "hardhat": "^2.22.9",
     "hardhat-gas-reporter": "^2.2.0"
   },
   "dependencies": {
